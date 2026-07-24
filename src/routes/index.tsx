@@ -141,7 +141,7 @@ function Landing() {
             <Step n="1" title="Tell Cyrano what's going on">
               Paste a message, upload a screenshot, or just describe the situation.
             </Step>
-            <Step n="2" title="Get a fair, honest take">
+            <Step n="2" title="Get a fair, honest take and recommendations">
               Cyrano separates facts from interpretations and offers grounded next steps —
               never snarky, manipulative, or preachy.
             </Step>
