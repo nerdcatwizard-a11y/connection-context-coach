@@ -8,16 +8,19 @@ import {
   BookOpen,
   Settings,
   Sparkle,
+  Feather,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
 const nav = [
   { to: "/coach", label: "Coach", icon: MessageCircle },
-  { to: "/connections", label: "Connections", icon: Users },
-  { to: "/screenshots", label: "Screenshots", icon: ImageIcon },
-  { to: "/profile-review", label: "Profile", icon: UserCheck },
-  { to: "/conversations", label: "History", icon: MessageSquareText },
+  { to: "/help-me-reply", label: "Help Me Reply", icon: MessageSquareText },
+  { to: "/conversation-starter", label: "Start a Convo", icon: Feather },
+  { to: "/screenshots", label: "Read a Convo", icon: ImageIcon },
+  { to: "/profile-review", label: "Review a Profile", icon: UserCheck },
   { to: "/journal", label: "Journal", icon: BookOpen },
+  { to: "/connections", label: "Connections", icon: Users },
+  { to: "/conversations", label: "History", icon: MessageSquareText },
   { to: "/account", label: "Account", icon: Settings },
 ] as const;
 
