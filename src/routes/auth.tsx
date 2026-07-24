@@ -30,6 +30,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resending, setResending] = useState(false);
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -42,7 +43,7 @@ function AuthPage() {
           options: { emailRedirectTo: window.location.origin + "/home" },
         });
         if (error) throw error;
-        toast.success("Check your email to confirm your account.");
+        toast.success("Check your email (and spam folder) to confirm your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -52,6 +53,27 @@ function AuthPage() {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleResend() {
+    if (!email) {
+      toast.error("Enter your email above first.");
+      return;
+    }
+    setResending(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: window.location.origin + "/home" },
+      });
+      if (error) throw error;
+      toast.success("Confirmation email resent. Check your inbox and spam folder.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't resend email");
+    } finally {
+      setResending(false);
     }
   }
 
@@ -148,6 +170,17 @@ function AuthPage() {
               Forgot password?
             </Link>
           </div>
+
+          {mode === "signup" && (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="mt-3 w-full rounded-xl border border-dashed border-border px-4 py-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60"
+            >
+              {resending ? "Resending..." : "Didn't get the email? Resend confirmation"}
+            </button>
+          )}
         </div>
 
         <p className="mt-6 max-w-sm text-center text-xs text-muted-foreground">
