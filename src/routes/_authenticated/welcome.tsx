@@ -30,7 +30,6 @@ const TONES = ["Warm", "Playful", "Direct", "Thoughtful", "Confident", "Casual"]
 const STEPS = [
   "about_you",
   "help_with",
-  "dating_apps",
   "relationship_goal",
   "communication_style",
   "preferred_tone",
@@ -164,13 +163,30 @@ function Welcome() {
                   </div>
                 </div>
               ))}
+              <div>
+                <p className="text-sm font-medium">Which dating apps are you on?</p>
+                <p className="mt-1 text-xs text-muted-foreground">Choose any that apply.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {DATING_APPS.map((o) => {
+                    const active = apps.includes(o);
+                    return (
+                      <button
+                        key={o}
+                        onClick={() => toggle(apps, o, setApps)}
+                        className={`rounded-full border px-3 py-1.5 text-sm ${
+                          active ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-accent"
+                        }`}
+                      >
+                        {o}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
           {key === "help_with" && (
             <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
-          )}
-          {key === "dating_apps" && (
-            <MultiSelect label="Which dating apps do you use?" options={[...DATING_APPS]} selected={apps} onToggle={(v) => toggle(apps, v, setApps)} />
           )}
           {key === "relationship_goal" && (
             <SingleSelect
