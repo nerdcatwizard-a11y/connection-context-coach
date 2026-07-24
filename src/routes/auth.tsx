@@ -170,6 +170,17 @@ function AuthPage() {
               Forgot password?
             </Link>
           </div>
+
+          {mode === "signup" && (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="mt-3 w-full rounded-xl border border-dashed border-border px-4 py-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60"
+            >
+              {resending ? "Resending..." : "Didn't get the email? Resend confirmation"}
+            </button>
+          )}
         </div>
 
         <p className="mt-6 max-w-sm text-center text-xs text-muted-foreground">
