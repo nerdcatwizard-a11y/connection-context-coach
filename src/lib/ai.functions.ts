@@ -344,3 +344,62 @@ Give practical, honest feedback: what's working, what's flat or generic, and spe
 
     return { feedback };
   });
+
+// =========================
+// Connection insights
+// =========================
+export const generateConnectionInsight = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ connectionId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: conn, error: cErr } = await supabase
+      .from("connections")
+      .select("*")
+      .eq("id", data.connectionId)
+      .maybeSingle();
+    if (cErr) throw new Error(cErr.message);
+    if (!conn) throw new Error("Connection not found");
+
+    const { data: events } = await supabase
+      .from("connection_timeline_events")
+      .select("event_type, title, body, occurred_at")
+      .eq("connection_id", data.connectionId)
+      .order("occurred_at", { ascending: true })
+      .limit(80);
+
+    const summary = `Connection: ${conn.nickname || conn.first_name || "Unnamed"}
+Stage: ${conn.stage}
+Where met / app: ${conn.dating_app ?? "—"} / ${conn.where_met ?? "—"}
+User's goal: ${conn.user_goal ?? "—"}
+Important context: ${conn.important_context ?? "—"}
+Known boundaries: ${conn.known_boundaries ?? "—"}
+Concerns: ${conn.concerns ?? "—"}
+Positive developments: ${conn.positive_developments ?? "—"}
+
+Timeline:
+${(events ?? [])
+  .map(
+    (e) =>
+      `- [${new Date(e.occurred_at).toISOString().slice(0, 10)}] (${e.event_type}) ${e.title}${
+        e.body ? ` — ${e.body}` : ""
+      }`,
+  )
+  .join("\n") || "(no events yet)"}
+
+Give a short, honest pattern read: 2–4 observations (each 1–2 sentences), each grounded in specific timeline items. End with one grounded next step. Do NOT diagnose or label the other person. Separate facts from interpretations. If there's not enough context yet, say so briefly.`;
+
+    const reply = await callGateway([
+      { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      { role: "user", content: summary },
+    ]);
+
+    await supabase.from("connection_insights").insert({
+      user_id: userId,
+      connection_id: data.connectionId,
+      observation: reply,
+    });
+
+    return { insight: reply };
+  });
