@@ -40,7 +40,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/home" },
+          options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
         toast.success("Check your email (and spam folder) to confirm your account.");
@@ -66,7 +66,7 @@ function AuthPage() {
       const { error } = await supabase.auth.resend({
         type: "signup",
         email,
-        options: { emailRedirectTo: window.location.origin + "/home" },
+        options: { emailRedirectTo: window.location.origin },
       });
       if (error) throw error;
       toast.success("Confirmation email resent. Check your inbox and spam folder.");
@@ -81,7 +81,7 @@ function AuthPage() {
     setBusy(true);
     try {
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin + "/home",
+        redirect_uri: window.location.origin,
       });
       if (result.error) throw result.error;
       if (!result.redirected) navigate({ to: "/home" });
@@ -113,6 +113,7 @@ function AuthPage() {
 
           <div className="mt-6 space-y-2">
             <button
+              type="button"
               onClick={() => handleOAuth("google")}
               disabled={busy}
               className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
@@ -120,6 +121,7 @@ function AuthPage() {
               Continue with Google
             </button>
             <button
+              type="button"
               onClick={() => handleOAuth("apple")}
               disabled={busy}
               className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
@@ -163,7 +165,7 @@ function AuthPage() {
           </form>
 
           <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-            <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="hover:text-foreground">
+            <button type="button" onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="hover:text-foreground">
               {mode === "signup" ? "Already have an account? Sign in" : "New here? Create an account"}
             </button>
             <Link to="/reset-password" className="hover:text-foreground">
