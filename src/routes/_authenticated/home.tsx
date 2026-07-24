@@ -38,8 +38,8 @@ const features = [
   {
     to: "/profile-review",
     icon: UserCheck,
-    title: "Review My Profile",
-    body: "Get practical feedback on your photos, bio, prompts, tone, and conversation-starting potential.",
+    title: "Review a Profile",
+    body: "Upload your own profile or one from a person you're connected with for practical feedback on photos, bio, prompts, and tone.",
   },
   {
     to: "/journal",

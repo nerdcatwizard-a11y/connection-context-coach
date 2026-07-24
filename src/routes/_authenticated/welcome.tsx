@@ -28,6 +28,7 @@ const HELP_WITH = [
 const TONES = ["Warm", "Playful", "Direct", "Thoughtful", "Confident", "Casual"];
 
 const STEPS = [
+  "about_you",
   "help_with",
   "dating_apps",
   "relationship_goal",
@@ -36,9 +37,33 @@ const STEPS = [
   "writelikeme",
 ] as const;
 
+const ABOUT_YOU_GROUPS: { key: string; label: string; hint?: string; options: string[] }[] = [
+  {
+    key: "vibe",
+    label: "Which words feel most like you?",
+    options: ["Introverted", "Extroverted", "Ambivert", "Curious", "Analytical", "Creative", "Adventurous", "Homebody", "Empathetic", "Independent"],
+  },
+  {
+    key: "energy",
+    label: "How would friends describe your dating energy?",
+    options: ["Easygoing", "Intentional", "Playful", "Reserved", "Romantic", "Cautious", "Open book", "Slow to open up"],
+  },
+  {
+    key: "loves",
+    label: "What do you love spending time on?",
+    options: ["Travel", "Reading", "Music", "Fitness", "Food & cooking", "Movies & TV", "Outdoors", "Gaming", "Art", "Faith", "Family", "Career"],
+  },
+  {
+    key: "headspace",
+    label: "Where's your headspace right now?",
+    options: ["Feeling hopeful", "A little burnt out", "Getting back out there", "Healing from something", "Just exploring", "Ready for something real"],
+  },
+];
+
 function Welcome() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [aboutYou, setAboutYou] = useState<Record<string, string[]>>({});
   const [helpWith, setHelpWith] = useState<string[]>([]);
   const [apps, setApps] = useState<string[]>([]);
   const [goal, setGoal] = useState("");
@@ -56,6 +81,10 @@ function Welcome() {
       const { data } = await supabase.auth.getUser();
       const uid = data.user?.id;
       if (!uid) throw new Error("Not signed in");
+      const aboutYouFlat = Object.values(aboutYou).flat();
+      if (aboutYouFlat.length) {
+        await supabase.auth.updateUser({ data: { about_you: aboutYou } });
+      }
       await supabase.from("user_preferences").upsert({
         user_id: uid,
         help_with: helpWith.length ? helpWith : null,
@@ -78,6 +107,14 @@ function Welcome() {
   const toggle = (arr: string[], v: string, setter: (a: string[]) => void) =>
     setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
+  const toggleAbout = (group: string, v: string) => {
+    setAboutYou((prev) => {
+      const cur = prev[group] ?? [];
+      const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+      return { ...prev, [group]: next };
+    });
+  };
+
   return (
     <div className="mx-auto max-w-2xl">
       <div className="soft-card p-6 md:p-8">
@@ -98,6 +135,37 @@ function Welcome() {
         </p>
 
         <div className="mt-6">
+          {key === "about_you" && (
+            <div className="space-y-6">
+              <div>
+                <p className="text-sm font-medium">A little about you (all optional)</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  These help Cyrano get to know you before you start. Skip any you don't feel like answering.
+                </p>
+              </div>
+              {ABOUT_YOU_GROUPS.map((g) => (
+                <div key={g.key}>
+                  <p className="text-sm font-medium">{g.label}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {g.options.map((o) => {
+                      const active = (aboutYou[g.key] ?? []).includes(o);
+                      return (
+                        <button
+                          key={o}
+                          onClick={() => toggleAbout(g.key, o)}
+                          className={`rounded-full border px-3 py-1.5 text-sm ${
+                            active ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-accent"
+                          }`}
+                        >
+                          {o}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           {key === "help_with" && (
             <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
           )}
