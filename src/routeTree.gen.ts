@@ -29,6 +29,7 @@ import { Route as AuthenticatedConversationStarterRouteImport } from './routes/_
 import { Route as AuthenticatedConnectionsRouteImport } from './routes/_authenticated/connections'
 import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections.$id'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -135,6 +136,12 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConnectionsIdRoute =
+  AuthenticatedConnectionsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedConnectionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -147,7 +154,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
   '/coach': typeof AuthenticatedCoachRoute
-  '/connections': typeof AuthenticatedConnectionsRoute
+  '/connections': typeof AuthenticatedConnectionsRouteWithChildren
   '/conversation-starter': typeof AuthenticatedConversationStarterRoute
   '/conversations': typeof AuthenticatedConversationsRoute
   '/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/profile-review': typeof AuthenticatedProfileReviewRoute
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/connections/$id': typeof AuthenticatedConnectionsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -168,7 +176,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
   '/coach': typeof AuthenticatedCoachRoute
-  '/connections': typeof AuthenticatedConnectionsRoute
+  '/connections': typeof AuthenticatedConnectionsRouteWithChildren
   '/conversation-starter': typeof AuthenticatedConversationStarterRoute
   '/conversations': typeof AuthenticatedConversationsRoute
   '/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
@@ -177,6 +185,7 @@ export interface FileRoutesByTo {
   '/profile-review': typeof AuthenticatedProfileReviewRoute
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/connections/$id': typeof AuthenticatedConnectionsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -191,7 +200,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/coach': typeof AuthenticatedCoachRoute
-  '/_authenticated/connections': typeof AuthenticatedConnectionsRoute
+  '/_authenticated/connections': typeof AuthenticatedConnectionsRouteWithChildren
   '/_authenticated/conversation-starter': typeof AuthenticatedConversationStarterRoute
   '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
   '/_authenticated/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
@@ -200,6 +209,7 @@ export interface FileRoutesById {
   '/_authenticated/profile-review': typeof AuthenticatedProfileReviewRoute
   '/_authenticated/screenshots': typeof AuthenticatedScreenshotsRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
+  '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/profile-review'
     | '/screenshots'
     | '/welcome'
+    | '/connections/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/profile-review'
     | '/screenshots'
     | '/welcome'
+    | '/connections/$id'
   id:
     | '__root__'
     | '/'
@@ -266,6 +278,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile-review'
     | '/_authenticated/screenshots'
     | '/_authenticated/welcome'
+    | '/_authenticated/connections/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -422,13 +435,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/connections/$id': {
+      id: '/_authenticated/connections/$id'
+      path: '/$id'
+      fullPath: '/connections/$id'
+      preLoaderRoute: typeof AuthenticatedConnectionsIdRouteImport
+      parentRoute: typeof AuthenticatedConnectionsRoute
+    }
   }
 }
+
+interface AuthenticatedConnectionsRouteChildren {
+  AuthenticatedConnectionsIdRoute: typeof AuthenticatedConnectionsIdRoute
+}
+
+const AuthenticatedConnectionsRouteChildren: AuthenticatedConnectionsRouteChildren =
+  {
+    AuthenticatedConnectionsIdRoute: AuthenticatedConnectionsIdRoute,
+  }
+
+const AuthenticatedConnectionsRouteWithChildren =
+  AuthenticatedConnectionsRoute._addFileChildren(
+    AuthenticatedConnectionsRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedCoachRoute: typeof AuthenticatedCoachRoute
-  AuthenticatedConnectionsRoute: typeof AuthenticatedConnectionsRoute
+  AuthenticatedConnectionsRoute: typeof AuthenticatedConnectionsRouteWithChildren
   AuthenticatedConversationStarterRoute: typeof AuthenticatedConversationStarterRoute
   AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
   AuthenticatedHelpMeReplyRoute: typeof AuthenticatedHelpMeReplyRoute
@@ -442,7 +476,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedCoachRoute: AuthenticatedCoachRoute,
-  AuthenticatedConnectionsRoute: AuthenticatedConnectionsRoute,
+  AuthenticatedConnectionsRoute: AuthenticatedConnectionsRouteWithChildren,
   AuthenticatedConversationStarterRoute: AuthenticatedConversationStarterRoute,
   AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
   AuthenticatedHelpMeReplyRoute: AuthenticatedHelpMeReplyRoute,
