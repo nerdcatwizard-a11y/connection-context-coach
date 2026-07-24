@@ -188,9 +188,6 @@ function Welcome() {
           {key === "help_with" && (
             <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
           )}
-          {key === "dating_apps" && (
-            <MultiSelect label="Which dating apps do you use?" options={[...DATING_APPS]} selected={apps} onToggle={(v) => toggle(apps, v, setApps)} />
-          )}
           {key === "relationship_goal" && (
             <SingleSelect
               label="What type of relationship are you seeking?"
