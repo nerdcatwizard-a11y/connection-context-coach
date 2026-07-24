@@ -30,7 +30,6 @@ const TONES = ["Warm", "Playful", "Direct", "Thoughtful", "Confident", "Casual"]
 const STEPS = [
   "about_you",
   "help_with",
-  "dating_apps",
   "relationship_goal",
   "communication_style",
   "preferred_tone",
