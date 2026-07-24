@@ -78,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Cyrano — Your AI dating coach" },
+      { title: "Cyrano - Dating Coach" },
       { name: "description", content: "Thoughtful, personalized help with dating conversations, profiles, and relationships." },
       { name: "author", content: "Cyrano" },
       { name: "theme-color", content: "#f4efe6" },

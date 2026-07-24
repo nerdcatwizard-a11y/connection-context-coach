@@ -4,13 +4,13 @@ import { Sparkle, MessageCircle, Users, Image as ImageIcon, UserCheck, BookOpen,
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cyrano — Your AI dating coach, whenever you need one" },
+      { title: "Cyrano - Dating Coach" },
       {
         name: "description",
         content:
           "Thoughtful, personalized help with dating-app conversations, profiles, dates, and relationships — based on the full context, not just one message.",
       },
-      { property: "og:title", content: "Cyrano — Your AI dating coach" },
+      { property: "og:title", content: "Cyrano - Dating Coach" },
       {
         property: "og:description",
         content:
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Cyrano — Your AI dating coach" },
+      { name: "twitter:title", content: "Cyrano - Dating Coach" },
       {
         name: "twitter:description",
         content:
