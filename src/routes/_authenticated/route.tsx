@@ -6,7 +6,8 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ search }) => {
     // Temporary preview bypass so the onboarding screen can be viewed in the preview pane.
-    if ((search as Record<string, unknown>).preview === "1") {
+    const previewFlag = (search as Record<string, unknown> | undefined)?.preview;
+    if (previewFlag === "1" || previewFlag === 1) {
       return { user: null };
     }
     const { data, error } = await supabase.auth.getUser();
