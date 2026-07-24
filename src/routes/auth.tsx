@@ -57,18 +57,8 @@ function AuthPage() {
 
         const identities = data.user?.identities ?? [];
         if (identities.length === 0) {
-          try {
-            await requestConfirmationEmail(normalizedEmail);
-            toast.success("Confirmation email requested again. Check your inbox and spam folder.");
-          } catch (resendError) {
-            const message = resendError instanceof Error ? resendError.message.toLowerCase() : "";
-            if (message.includes("already") || message.includes("confirm")) {
-              toast.info("That email is already confirmed. Please sign in instead.");
-              setMode("signin");
-            } else {
-              throw resendError;
-            }
-          }
+          toast.info("That email already has an account. Sign in, or use Forgot password if needed.");
+          setMode("signin");
           return;
         }
 
