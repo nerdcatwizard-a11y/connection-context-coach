@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /home
+Disallow: /coach
+Disallow: /connections
+Disallow: /screenshots
+Disallow: /profile-review
+Disallow: /conversations
+Disallow: /journal
+Disallow: /account
+Disallow: /welcome
+Disallow: /help-me-reply
+Disallow: /conversation-starter

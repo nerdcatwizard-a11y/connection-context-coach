@@ -9,38 +9,335 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
+import { Route as AuthenticatedScreenshotsRouteImport } from './routes/_authenticated/screenshots'
+import { Route as AuthenticatedProfileReviewRouteImport } from './routes/_authenticated/profile-review'
+import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedHelpMeReplyRouteImport } from './routes/_authenticated/help-me-reply'
+import { Route as AuthenticatedConversationsRouteImport } from './routes/_authenticated/conversations'
+import { Route as AuthenticatedConversationStarterRouteImport } from './routes/_authenticated/conversation-starter'
+import { Route as AuthenticatedConnectionsRouteImport } from './routes/_authenticated/connections'
+import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedScreenshotsRoute =
+  AuthenticatedScreenshotsRouteImport.update({
+    id: '/screenshots',
+    path: '/screenshots',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileReviewRoute =
+  AuthenticatedProfileReviewRouteImport.update({
+    id: '/profile-review',
+    path: '/profile-review',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHelpMeReplyRoute =
+  AuthenticatedHelpMeReplyRouteImport.update({
+    id: '/help-me-reply',
+    path: '/help-me-reply',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedConversationsRoute =
+  AuthenticatedConversationsRouteImport.update({
+    id: '/conversations',
+    path: '/conversations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedConversationStarterRoute =
+  AuthenticatedConversationStarterRouteImport.update({
+    id: '/conversation-starter',
+    path: '/conversation-starter',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedConnectionsRoute =
+  AuthenticatedConnectionsRouteImport.update({
+    id: '/connections',
+    path: '/connections',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoachRoute = AuthenticatedCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/coach': typeof AuthenticatedCoachRoute
+  '/connections': typeof AuthenticatedConnectionsRoute
+  '/conversation-starter': typeof AuthenticatedConversationStarterRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
+  '/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/journal': typeof AuthenticatedJournalRoute
+  '/profile-review': typeof AuthenticatedProfileReviewRoute
+  '/screenshots': typeof AuthenticatedScreenshotsRoute
+  '/welcome': typeof AuthenticatedWelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/coach': typeof AuthenticatedCoachRoute
+  '/connections': typeof AuthenticatedConnectionsRoute
+  '/conversation-starter': typeof AuthenticatedConversationStarterRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
+  '/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/journal': typeof AuthenticatedJournalRoute
+  '/profile-review': typeof AuthenticatedProfileReviewRoute
+  '/screenshots': typeof AuthenticatedScreenshotsRoute
+  '/welcome': typeof AuthenticatedWelcomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/coach': typeof AuthenticatedCoachRoute
+  '/_authenticated/connections': typeof AuthenticatedConnectionsRoute
+  '/_authenticated/conversation-starter': typeof AuthenticatedConversationStarterRoute
+  '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
+  '/_authenticated/help-me-reply': typeof AuthenticatedHelpMeReplyRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/journal': typeof AuthenticatedJournalRoute
+  '/_authenticated/profile-review': typeof AuthenticatedProfileReviewRoute
+  '/_authenticated/screenshots': typeof AuthenticatedScreenshotsRoute
+  '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/pricing'
+    | '/privacy'
+    | '/reset-password'
+    | '/safety'
+    | '/sitemap.xml'
+    | '/terms'
+    | '/account'
+    | '/coach'
+    | '/connections'
+    | '/conversation-starter'
+    | '/conversations'
+    | '/help-me-reply'
+    | '/home'
+    | '/journal'
+    | '/profile-review'
+    | '/screenshots'
+    | '/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/pricing'
+    | '/privacy'
+    | '/reset-password'
+    | '/safety'
+    | '/sitemap.xml'
+    | '/terms'
+    | '/account'
+    | '/coach'
+    | '/connections'
+    | '/conversation-starter'
+    | '/conversations'
+    | '/help-me-reply'
+    | '/home'
+    | '/journal'
+    | '/profile-review'
+    | '/screenshots'
+    | '/welcome'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/pricing'
+    | '/privacy'
+    | '/reset-password'
+    | '/safety'
+    | '/sitemap.xml'
+    | '/terms'
+    | '/_authenticated/account'
+    | '/_authenticated/coach'
+    | '/_authenticated/connections'
+    | '/_authenticated/conversation-starter'
+    | '/_authenticated/conversations'
+    | '/_authenticated/help-me-reply'
+    | '/_authenticated/home'
+    | '/_authenticated/journal'
+    | '/_authenticated/profile-review'
+    | '/_authenticated/screenshots'
+    | '/_authenticated/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SafetyRoute: typeof SafetyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +345,128 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/welcome': {
+      id: '/_authenticated/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof AuthenticatedWelcomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/screenshots': {
+      id: '/_authenticated/screenshots'
+      path: '/screenshots'
+      fullPath: '/screenshots'
+      preLoaderRoute: typeof AuthenticatedScreenshotsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile-review': {
+      id: '/_authenticated/profile-review'
+      path: '/profile-review'
+      fullPath: '/profile-review'
+      preLoaderRoute: typeof AuthenticatedProfileReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/journal': {
+      id: '/_authenticated/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof AuthenticatedJournalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/help-me-reply': {
+      id: '/_authenticated/help-me-reply'
+      path: '/help-me-reply'
+      fullPath: '/help-me-reply'
+      preLoaderRoute: typeof AuthenticatedHelpMeReplyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conversations': {
+      id: '/_authenticated/conversations'
+      path: '/conversations'
+      fullPath: '/conversations'
+      preLoaderRoute: typeof AuthenticatedConversationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conversation-starter': {
+      id: '/_authenticated/conversation-starter'
+      path: '/conversation-starter'
+      fullPath: '/conversation-starter'
+      preLoaderRoute: typeof AuthenticatedConversationStarterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/connections': {
+      id: '/_authenticated/connections'
+      path: '/connections'
+      fullPath: '/connections'
+      preLoaderRoute: typeof AuthenticatedConnectionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/coach': {
+      id: '/_authenticated/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof AuthenticatedCoachRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedCoachRoute: typeof AuthenticatedCoachRoute
+  AuthenticatedConnectionsRoute: typeof AuthenticatedConnectionsRoute
+  AuthenticatedConversationStarterRoute: typeof AuthenticatedConversationStarterRoute
+  AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
+  AuthenticatedHelpMeReplyRoute: typeof AuthenticatedHelpMeReplyRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
+  AuthenticatedProfileReviewRoute: typeof AuthenticatedProfileReviewRoute
+  AuthenticatedScreenshotsRoute: typeof AuthenticatedScreenshotsRoute
+  AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedCoachRoute: AuthenticatedCoachRoute,
+  AuthenticatedConnectionsRoute: AuthenticatedConnectionsRoute,
+  AuthenticatedConversationStarterRoute: AuthenticatedConversationStarterRoute,
+  AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
+  AuthenticatedHelpMeReplyRoute: AuthenticatedHelpMeReplyRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedJournalRoute: AuthenticatedJournalRoute,
+  AuthenticatedProfileReviewRoute: AuthenticatedProfileReviewRoute,
+  AuthenticatedScreenshotsRoute: AuthenticatedScreenshotsRoute,
+  AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SafetyRoute: SafetyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

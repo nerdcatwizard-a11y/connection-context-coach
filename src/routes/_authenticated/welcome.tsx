@@ -1,0 +1,230 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { DATING_APPS } from "@/lib/dating-apps";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/_authenticated/welcome")({
+  head: () => ({
+    meta: [
+      { title: "Welcome to Cyrano" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  component: Welcome,
+});
+
+const HELP_WITH = [
+  "Reply help on dating apps",
+  "Starting conversations",
+  "Reading between the lines",
+  "Moving toward a date",
+  "Profile feedback",
+  "Communicating boundaries",
+  "Preparing for a date",
+  "Reflecting on patterns",
+];
+
+const TONES = ["Warm", "Playful", "Direct", "Thoughtful", "Confident", "Casual"];
+
+const STEPS = [
+  "help_with",
+  "dating_apps",
+  "relationship_goal",
+  "communication_style",
+  "preferred_tone",
+  "writelikeme",
+] as const;
+
+function Welcome() {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(0);
+  const [helpWith, setHelpWith] = useState<string[]>([]);
+  const [apps, setApps] = useState<string[]>([]);
+  const [goal, setGoal] = useState("");
+  const [commStyle, setCommStyle] = useState("");
+  const [tone, setTone] = useState("");
+  const [writeLike, setWriteLike] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const total = STEPS.length;
+  const key = STEPS[step];
+
+  async function finish(skipped = false) {
+    setBusy(true);
+    try {
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id;
+      if (!uid) throw new Error("Not signed in");
+      await supabase.from("user_preferences").upsert({
+        user_id: uid,
+        help_with: helpWith.length ? helpWith : null,
+        dating_apps: apps.length ? apps : null,
+        relationship_goal: goal || null,
+        communication_style: commStyle || null,
+        preferred_tone: tone || null,
+        writelikeme_enabled: writeLike ?? false,
+        onboarding_skipped: skipped,
+      });
+      await supabase.from("profiles").update({ onboarding_completed: true }).eq("id", uid);
+      navigate({ to: "/home" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const toggle = (arr: string[], v: string, setter: (a: string[]) => void) =>
+    setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+
+  return (
+    <div className="mx-auto max-w-2xl">
+      <div className="soft-card p-6 md:p-8">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>Step {step + 1} of {total}</span>
+          <button onClick={() => finish(true)} className="rounded-full border border-border px-3 py-1 hover:bg-accent">
+            Skip &amp; start using Cyrano
+          </button>
+        </div>
+        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / total) * 100}%` }} />
+        </div>
+
+        <h1 className="mt-6 font-serif text-2xl">Welcome to Cyrano</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          You can answer as much or as little as you'd like. Everything here is optional
+          and you can start using Cyrano right away.
+        </p>
+
+        <div className="mt-6">
+          {key === "help_with" && (
+            <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
+          )}
+          {key === "dating_apps" && (
+            <MultiSelect label="Which dating apps do you use?" options={[...DATING_APPS]} selected={apps} onToggle={(v) => toggle(apps, v, setApps)} />
+          )}
+          {key === "relationship_goal" && (
+            <SingleSelect
+              label="What type of relationship are you seeking?"
+              options={["Something casual", "Dating with intention", "A long-term relationship", "Marriage", "Friendship first", "Not sure yet", "Prefer not to say"]}
+              value={goal}
+              onChange={setGoal}
+            />
+          )}
+          {key === "communication_style" && (
+            <SingleSelect
+              label="What communication style feels most like you?"
+              options={["Direct and to the point", "Warm and expressive", "Playful and light", "Thoughtful and detailed", "Reserved", "It depends"]}
+              value={commStyle}
+              onChange={setCommStyle}
+            />
+          )}
+          {key === "preferred_tone" && (
+            <SingleSelect label="What tone should Cyrano use with you?" options={TONES} value={tone} onChange={setTone} />
+          )}
+          {key === "writelikeme" && (
+            <div>
+              <p className="text-sm font-medium">Would you like Cyrano to learn your texting style?</p>
+              <p className="mt-1 text-xs text-muted-foreground">You can add example messages later in Account settings. Nothing is used without your permission.</p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => setWriteLike(true)}
+                  className={`rounded-full border px-4 py-2 text-sm ${writeLike === true ? "bg-primary text-primary-foreground" : "border-border hover:bg-accent"}`}
+                >
+                  Yes, learn my style
+                </button>
+                <button
+                  onClick={() => setWriteLike(false)}
+                  className={`rounded-full border px-4 py-2 text-sm ${writeLike === false ? "bg-primary text-primary-foreground" : "border-border hover:bg-accent"}`}
+                >
+                  Not now
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8 flex items-center justify-between">
+          <button
+            onClick={() => setStep(Math.max(0, step - 1))}
+            disabled={step === 0}
+            className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-40"
+          >
+            ← Back
+          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => (step < total - 1 ? setStep(step + 1) : finish())}
+              className="rounded-full border border-border px-4 py-2 text-sm hover:bg-accent"
+            >
+              Skip this question
+            </button>
+            <button
+              onClick={() => (step < total - 1 ? setStep(step + 1) : finish())}
+              disabled={busy}
+              className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+            >
+              {step < total - 1 ? "Continue" : "Finish"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p className="mx-auto mt-6 max-w-md text-center text-xs text-muted-foreground">
+        Cyrano provides AI-powered coaching and educational guidance. It is not a
+        licensed therapist, mental-health provider, medical professional, legal
+        professional, crisis service, or emergency service.
+      </p>
+    </div>
+  );
+}
+
+function MultiSelect({ label, options, selected, onToggle }: { label: string; options: string[]; selected: string[]; onToggle: (v: string) => void }) {
+  return (
+    <div>
+      <p className="text-sm font-medium">{label}</p>
+      <p className="mt-1 text-xs text-muted-foreground">Choose any that apply.</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((o) => {
+          const active = selected.includes(o);
+          return (
+            <button
+              key={o}
+              onClick={() => onToggle(o)}
+              className={`rounded-full border px-3 py-1.5 text-sm ${
+                active ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-accent"
+              }`}
+            >
+              {o}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SingleSelect({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <p className="text-sm font-medium">{label}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((o) => {
+          const active = value === o;
+          return (
+            <button
+              key={o}
+              onClick={() => onChange(o)}
+              className={`rounded-full border px-3 py-1.5 text-sm ${
+                active ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-accent"
+              }`}
+            >
+              {o}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
