@@ -32,20 +32,39 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
 
+  async function requestConfirmationEmail(targetEmail: string) {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: targetEmail,
+      options: { emailRedirectTo: window.location.origin },
+    });
+
+    if (error) throw error;
+  }
+
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await supabase.auth.signUp({
+          email: normalizedEmail,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
+
+        const identities = data.user?.identities ?? [];
+        if (identities.length === 0) {
+          toast.info("That email already has an account. Sign in, or use Forgot password if needed.");
+          setMode("signin");
+          return;
+        }
+
         toast.success("Check your email (and spam folder) to confirm your account.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
         if (error) throw error;
         navigate({ to: "/home" });
       }
@@ -57,21 +76,23 @@ function AuthPage() {
   }
 
   async function handleResend() {
-    if (!email) {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
       toast.error("Enter your email above first.");
       return;
     }
     setResending(true);
     try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email,
-        options: { emailRedirectTo: window.location.origin },
-      });
-      if (error) throw error;
+      await requestConfirmationEmail(normalizedEmail);
       toast.success("Confirmation email resent. Check your inbox and spam folder.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't resend email");
+      const message = err instanceof Error ? err.message : "Couldn't resend email";
+      if (message.toLowerCase().includes("already") || message.toLowerCase().includes("confirm")) {
+        toast.info("That email is already confirmed. Please sign in instead.");
+        setMode("signin");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setResending(false);
     }
