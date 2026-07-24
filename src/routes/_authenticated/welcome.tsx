@@ -135,6 +135,37 @@ function Welcome() {
         </p>
 
         <div className="mt-6">
+          {key === "about_you" && (
+            <div className="space-y-6">
+              <div>
+                <p className="text-sm font-medium">A little about you (all optional)</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  These help Cyrano get to know you before you start. Skip any you don't feel like answering.
+                </p>
+              </div>
+              {ABOUT_YOU_GROUPS.map((g) => (
+                <div key={g.key}>
+                  <p className="text-sm font-medium">{g.label}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {g.options.map((o) => {
+                      const active = (aboutYou[g.key] ?? []).includes(o);
+                      return (
+                        <button
+                          key={o}
+                          onClick={() => toggleAbout(g.key, o)}
+                          className={`rounded-full border px-3 py-1.5 text-sm ${
+                            active ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-accent"
+                          }`}
+                        >
+                          {o}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           {key === "help_with" && (
             <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
           )}
