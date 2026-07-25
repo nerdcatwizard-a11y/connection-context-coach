@@ -278,20 +278,22 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
           ? "The user wants an honest review of how this conversation is going: what's working, what isn't, and one grounded next step."
           : "The user wants to understand what's going on in this conversation — tone, likely interpretations (multiple if ambiguous), and one grounded next step. Do not diagnose or label the other person.";
 
+    const textBlock = `${instruction}${data.userContext ? `\n\nUser's own context: ${data.userContext}` : ""}${data.images.length > 0 ? "\n\nRead the screenshots below carefully. Separate observable facts from interpretations." : "\n\nNo screenshots were attached — work only from what the user wrote above."}`;
+
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
       {
         role: "user",
-        content: [
-          {
-            type: "text",
-            text: `${instruction}${data.userContext ? `\n\nUser's own context: ${data.userContext}` : ""}\n\nRead the screenshots below carefully. Separate observable facts from interpretations.`,
-          },
-          ...data.images.map((url) => ({
-            type: "image_url" as const,
-            image_url: { url },
-          })),
-        ],
+        content:
+          data.images.length > 0
+            ? [
+                { type: "text", text: textBlock },
+                ...data.images.map((url) => ({
+                  type: "image_url" as const,
+                  image_url: { url },
+                })),
+              ]
+            : textBlock,
       },
     ];
 
