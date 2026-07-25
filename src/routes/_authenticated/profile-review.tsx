@@ -31,15 +31,17 @@ function ProfileReviewPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function onFiles(files: FileList | null) {
+  const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
-    const arr = Array.from(files).slice(0, 9 - photos.length);
+    const remaining = 9 - photos.length;
+    if (remaining <= 0) return;
+    const arr = Array.from(files).slice(0, remaining);
     const data = await Promise.all(
       arr.map(
         (f) =>
           new Promise<string>((resolve, reject) => {
             if (f.size > 6 * 1024 * 1024) {
-              reject(new Error(`${f.name} is larger than 6MB.`));
+              reject(new Error(`${f.name || "Pasted image"} is larger than 6MB.`));
               return;
             }
             const r = new FileReader();
@@ -53,7 +55,9 @@ function ProfileReviewPage() {
       return [];
     });
     setPhotos((prev) => [...prev, ...data].slice(0, 9));
-  }
+  }, [photos.length]);
+
+  usePasteImages((files) => void addFiles(files));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
