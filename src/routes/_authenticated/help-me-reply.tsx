@@ -254,30 +254,6 @@ function HelpMeReplyPage() {
           )}
         </div>
       )}
-          ) : (
-            <div className="soft-card space-y-2 p-5">
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => copyText(reply, 0)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs hover:bg-accent"
-                >
-                  {copiedIdx === 0 ? (
-                    <>
-                      <Check className="h-3.5 w-3.5" /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
