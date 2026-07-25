@@ -6,6 +6,7 @@ import { conversationStarter } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
+import { FollowUp } from "@/components/FollowUp";
 
 export const Route = createFileRoute("/_authenticated/conversation-starter")({
   head: () => ({
