@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
 
 const searchSchema = z.object({
