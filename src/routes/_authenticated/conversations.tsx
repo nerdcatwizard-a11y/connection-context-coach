@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { useEffect, useState } from "react";
 import { Loader2, MessageCircle, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,6 +46,7 @@ function ConversationsPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Conversation History</h1>
         <p className="text-sm text-muted-foreground">Your past chats with Cyrano.</p>

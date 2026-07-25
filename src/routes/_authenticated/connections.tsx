@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { useEffect, useState } from "react";
 import { Plus, Loader2, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,6 +44,7 @@ function ConnectionsPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl">My Connections</h1>

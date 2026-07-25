@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 
@@ -15,6 +16,7 @@ function Account() {
   }
   return (
     <div className="space-y-6">
+      <BackToDashboard />
       <h1 className="font-serif text-3xl">Account</h1>
       <div className="soft-card p-6">
         <h2 className="font-serif text-lg">Session</h2>

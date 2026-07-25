@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { useEffect, useState } from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +52,7 @@ function JournalPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl">My Journal</h1>

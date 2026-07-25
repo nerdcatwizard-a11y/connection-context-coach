@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { analyzeScreenshots } from "@/lib/ai.functions";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
+import { BackToDashboard } from "@/components/BackToDashboard";
+import { usePasteImages } from "@/hooks/use-paste-images";
 
 export const Route = createFileRoute("/_authenticated/screenshots")({
   head: () => ({
@@ -21,6 +23,32 @@ const REQUEST_LABELS: Record<"understand" | "reply" | "review", string> = {
   review: "Honest review of how this is going",
 };
 
+const MAX = 6;
+
+async function filesToDataUrls(files: File[] | FileList): Promise<{ ok: string[]; error: string | null }> {
+  const arr = Array.from(files);
+  const ok: string[] = [];
+  let error: string | null = null;
+  for (const f of arr) {
+    if (f.size > 6 * 1024 * 1024) {
+      error = `${f.name || "Pasted image"} is larger than 6MB.`;
+      continue;
+    }
+    try {
+      const data = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.onerror = () => reject(new Error("Failed to read file"));
+        r.readAsDataURL(f);
+      });
+      ok.push(data);
+    } catch (e) {
+      error = (e as Error).message;
+    }
+  }
+  return { ok, error };
+}
+
 function ScreenshotsPage() {
   const call = useServerFn(analyzeScreenshots);
   const [images, setImages] = useState<string[]>([]);
@@ -30,33 +58,21 @@ function ScreenshotsPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function onFiles(files: FileList | null) {
+  const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
-    const arr = Array.from(files).slice(0, 6 - images.length);
-    const data = await Promise.all(
-      arr.map(
-        (f) =>
-          new Promise<string>((resolve, reject) => {
-            if (f.size > 6 * 1024 * 1024) {
-              reject(new Error(`${f.name} is larger than 6MB.`));
-              return;
-            }
-            const r = new FileReader();
-            r.onload = () => resolve(r.result as string);
-            r.onerror = () => reject(new Error("Failed to read file"));
-            r.readAsDataURL(f);
-          }),
-      ),
-    ).catch((e) => {
-      setError((e as Error).message);
-      return [];
-    });
-    setImages((prev) => [...prev, ...data].slice(0, 6));
-  }
+    const remaining = MAX - images.length;
+    if (remaining <= 0) return;
+    const slice = Array.from(files).slice(0, remaining);
+    const { ok, error: err } = await filesToDataUrls(slice);
+    if (err) setError(err);
+    if (ok.length) setImages((prev) => [...prev, ...ok].slice(0, MAX));
+  }, [images.length]);
+
+  usePasteImages((files) => void addFiles(files));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (images.length === 0) return;
+    if (images.length === 0 && !userContext.trim()) return;
     setError(null);
     setAnalysis(null);
     setBusy(true);
@@ -72,17 +88,18 @@ function ScreenshotsPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Read a Conversation</h1>
         <p className="text-sm text-muted-foreground">
-          Upload up to 6 screenshots. Blur names or details you want to protect first.
+          Upload up to {MAX} screenshots — or paste one directly (⌘/Ctrl+V). Blur names you want to protect first.
         </p>
       </div>
       <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <div className="space-y-2">
-          <span className="text-sm font-medium">Screenshots ({images.length}/6)</span>
+          <span className="text-sm font-medium">Screenshots ({images.length}/{MAX})</span>
           <div className="flex flex-wrap gap-2">
             {images.map((src, i) => (
               <div key={i} className="relative">
@@ -97,7 +114,7 @@ function ScreenshotsPage() {
                 </button>
               </div>
             ))}
-            {images.length < 6 && (
+            {images.length < MAX && (
               <label className="flex h-28 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
                 <Upload className="h-4 w-4" />
                 Add
@@ -106,11 +123,12 @@ function ScreenshotsPage() {
                   accept="image/*"
                   multiple
                   className="hidden"
-                  onChange={(e) => onFiles(e.target.files)}
+                  onChange={(e) => void addFiles(e.target.files)}
                 />
               </label>
             )}
           </div>
+          <p className="text-xs text-muted-foreground">Tip: copy an image and paste it here with ⌘/Ctrl+V.</p>
         </div>
 
         <label className="block space-y-1.5">
@@ -141,11 +159,11 @@ function ScreenshotsPage() {
 
         <button
           type="submit"
-          disabled={busy || images.length === 0}
+          disabled={busy}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          Read the conversation
+          Submit
         </button>
       </form>
 

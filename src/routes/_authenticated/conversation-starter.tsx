@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { conversationStarter } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
+import { BackToDashboard } from "@/components/BackToDashboard";
+import { usePasteImages } from "@/hooks/use-paste-images";
 
 export const Route = createFileRoute("/_authenticated/conversation-starter")({
   head: () => ({
@@ -16,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/conversation-starter")({
 });
 
 const TONES = ["Warm", "Playful", "Curious", "Direct", "Flirty"];
+const MAX = 6;
 
 function StarterPage() {
   const call = useServerFn(conversationStarter);
@@ -23,17 +26,49 @@ function StarterPage() {
   const [datingApp, setDatingApp] = useState("");
   const [goal, setGoal] = useState("");
   const [tone, setTone] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [reply, setReply] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const addFiles = useCallback(async (files: FileList | File[] | null) => {
+    if (!files) return;
+    const remaining = MAX - images.length;
+    if (remaining <= 0) return;
+    const arr = Array.from(files).slice(0, remaining);
+    const data = await Promise.all(
+      arr.map(
+        (f) =>
+          new Promise<string>((resolve, reject) => {
+            if (f.size > 6 * 1024 * 1024) {
+              reject(new Error(`${f.name || "Pasted image"} is larger than 6MB.`));
+              return;
+            }
+            const r = new FileReader();
+            r.onload = () => resolve(r.result as string);
+            r.onerror = () => reject(new Error("Failed to read file"));
+            r.readAsDataURL(f);
+          }),
+      ),
+    ).catch((e) => {
+      setError((e as Error).message);
+      return [];
+    });
+    setImages((prev) => [...prev, ...data].slice(0, MAX));
+  }, [images.length]);
+
+  usePasteImages((files) => void addFiles(files));
+
+  const canSubmit = profileNotes.trim().length > 0 || images.length > 0;
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!canSubmit) return;
     setError(null);
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { profileNotes, datingApp, goal, tone } });
+      const res = await call({ data: { profileNotes, datingApp, goal, tone, images } });
       setReply(res.reply);
     } catch (err) {
       setError((err as Error).message);
@@ -44,21 +79,70 @@ function StarterPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Help Me Get the Conversation Started</h1>
         <p className="text-sm text-muted-foreground">
-          Tell Cyrano what you noticed about their profile. You'll get openers grounded in something
-          real — no clichés.
+          Tell Cyrano what you noticed about their profile — or upload/paste a screenshot of the bio. You'll get openers grounded in something real.
         </p>
       </div>
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm font-medium">Bio / profile screenshots (optional)</span>
+            <span className="text-xs text-muted-foreground">{images.length}/{MAX}</span>
+          </div>
+          {images.length === 0 ? (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center hover:bg-primary/10">
+              <Upload className="h-6 w-6 text-primary" />
+              <span className="text-sm font-medium">Upload a screenshot of the bio</span>
+              <span className="text-xs text-muted-foreground">or paste with ⌘/Ctrl+V — PNG or JPG up to 6MB</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => void addFiles(e.target.files)}
+              />
+            </label>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {images.map((src, i) => (
+                <div key={i} className="relative">
+                  <img src={src} alt={`Screenshot ${i + 1}`} className="h-24 w-24 rounded-lg border border-border object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
+                    className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-foreground text-background"
+                    aria-label="Remove"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              {images.length < MAX && (
+                <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
+                  <Upload className="h-4 w-4" />
+                  Add
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => void addFiles(e.target.files)}
+                  />
+                </label>
+              )}
+            </div>
+          )}
+        </div>
+
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">
-            What did you notice about their profile? *
+            What did you notice about their profile?
           </span>
           <textarea
-            required
             value={profileNotes}
             onChange={(e) => setProfileNotes(e.target.value)}
             rows={5}
@@ -116,7 +200,7 @@ function StarterPage() {
 
         <button
           type="submit"
-          disabled={busy || !profileNotes.trim()}
+          disabled={busy || !canSubmit}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}

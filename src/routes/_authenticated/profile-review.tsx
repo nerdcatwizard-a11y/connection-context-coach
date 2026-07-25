@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { reviewProfile } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
+import { BackToDashboard } from "@/components/BackToDashboard";
+import { usePasteImages } from "@/hooks/use-paste-images";
 
 export const Route = createFileRoute("/_authenticated/profile-review")({
   head: () => ({
@@ -29,15 +31,17 @@ function ProfileReviewPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function onFiles(files: FileList | null) {
+  const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
-    const arr = Array.from(files).slice(0, 9 - photos.length);
+    const remaining = 9 - photos.length;
+    if (remaining <= 0) return;
+    const arr = Array.from(files).slice(0, remaining);
     const data = await Promise.all(
       arr.map(
         (f) =>
           new Promise<string>((resolve, reject) => {
             if (f.size > 6 * 1024 * 1024) {
-              reject(new Error(`${f.name} is larger than 6MB.`));
+              reject(new Error(`${f.name || "Pasted image"} is larger than 6MB.`));
               return;
             }
             const r = new FileReader();
@@ -51,7 +55,9 @@ function ProfileReviewPage() {
       return [];
     });
     setPhotos((prev) => [...prev, ...data].slice(0, 9));
-  }
+  }, [photos.length]);
+
+  usePasteImages((files) => void addFiles(files));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +87,7 @@ function ProfileReviewPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Review a Profile</h1>
         <p className="text-sm text-muted-foreground">
@@ -95,7 +102,7 @@ function ProfileReviewPage() {
             <span className="text-xs text-muted-foreground">{photos.length}/9</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Add photos of the profile — bio, prompts, pictures. Cyrano will read them.
+            Add photos of the profile — bio, prompts, pictures. You can also paste an image with ⌘/Ctrl+V.
           </p>
           {photos.length === 0 ? (
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-8 text-center hover:bg-primary/10">
@@ -107,7 +114,7 @@ function ProfileReviewPage() {
                 accept="image/*"
                 multiple
                 className="hidden"
-                onChange={(e) => onFiles(e.target.files)}
+                onChange={(e) => addFiles(e.target.files)}
               />
             </label>
           ) : (
@@ -134,7 +141,7 @@ function ProfileReviewPage() {
                     accept="image/*"
                     multiple
                     className="hidden"
-                    onChange={(e) => onFiles(e.target.files)}
+                    onChange={(e) => addFiles(e.target.files)}
                   />
                 </label>
               )}

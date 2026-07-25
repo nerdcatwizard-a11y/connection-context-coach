@@ -190,24 +190,31 @@ export const conversationStarter = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        profileNotes: z.string().min(1).max(4000),
+        profileNotes: z.string().max(4000).optional(),
         datingApp: z.string().max(60).optional(),
         goal: z.string().max(500).optional(),
         tone: z.string().max(60).optional(),
+        images: z
+          .array(z.string().url().or(z.string().startsWith("data:")))
+          .max(9)
+          .optional(),
       })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const prompt = `The user wants to open a conversation on a dating app${data.datingApp ? ` (${data.datingApp})` : ""}.
+    const hasNotes = !!data.profileNotes?.trim();
+    const hasImages = !!data.images?.length;
+    if (!hasNotes && !hasImages) {
+      throw new Error("Add profile notes or a screenshot to work from.");
+    }
 
-What they noticed / know about the person's profile:
-"""
-${data.profileNotes}
-"""
+    const textPart = `The user wants to open a conversation on a dating app${data.datingApp ? ` (${data.datingApp})` : ""}.
+
+${hasNotes ? `What they noticed / know about the person's profile:\n"""\n${data.profileNotes}\n"""` : "They've attached screenshots of the profile — read them carefully."}
 ${data.goal ? `What they want out of the connection: ${data.goal}` : ""}
 ${data.tone ? `Preferred tone: ${data.tone}` : ""}
 
-Return three distinct opener options grounded in something specific from the profile notes. Avoid clichés ("hey, how's your week?"), cheesy pickup lines, canned compliments about looks, and anything that sounds AI-generated. Each opener should invite a real reply. Format:
+Return three distinct opener options grounded in something specific from the profile. Avoid clichés ("hey, how's your week?"), cheesy pickup lines, canned compliments about looks, and anything that sounds AI-generated. Each opener should invite a real reply. Format:
 
 1. [Vibe]
 Opener text
@@ -220,10 +227,23 @@ Opener text
 
 After the three, add one short "Why these work:" line explaining what specifically they anchor on.`;
 
-    const reply = await callGateway([
+    const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
-      { role: "user", content: prompt },
-    ]);
+      {
+        role: "user",
+        content: hasImages
+          ? [
+              { type: "text", text: textPart },
+              ...(data.images ?? []).map((url) => ({
+                type: "image_url" as const,
+                image_url: { url },
+              })),
+            ]
+          : textPart,
+      },
+    ];
+
+    const reply = await callGateway(messages);
     return { reply };
   });
 
@@ -235,9 +255,16 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        images: z.array(z.string().url().or(z.string().startsWith("data:"))).min(1).max(6),
+        images: z
+          .array(z.string().url().or(z.string().startsWith("data:")))
+          .max(6)
+          .optional()
+          .default([]),
         requestType: z.enum(["understand", "reply", "review"]).default("understand"),
         userContext: z.string().max(2000).optional(),
+      })
+      .refine((v) => (v.images?.length ?? 0) > 0 || !!v.userContext?.trim(), {
+        message: "Add a screenshot or write some context.",
       })
       .parse(d),
   )
@@ -251,20 +278,22 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
           ? "The user wants an honest review of how this conversation is going: what's working, what isn't, and one grounded next step."
           : "The user wants to understand what's going on in this conversation — tone, likely interpretations (multiple if ambiguous), and one grounded next step. Do not diagnose or label the other person.";
 
+    const textBlock = `${instruction}${data.userContext ? `\n\nUser's own context: ${data.userContext}` : ""}${data.images.length > 0 ? "\n\nRead the screenshots below carefully. Separate observable facts from interpretations." : "\n\nNo screenshots were attached — work only from what the user wrote above."}`;
+
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
       {
         role: "user",
-        content: [
-          {
-            type: "text",
-            text: `${instruction}${data.userContext ? `\n\nUser's own context: ${data.userContext}` : ""}\n\nRead the screenshots below carefully. Separate observable facts from interpretations.`,
-          },
-          ...data.images.map((url) => ({
-            type: "image_url" as const,
-            image_url: { url },
-          })),
-        ],
+        content:
+          data.images.length > 0
+            ? [
+                { type: "text", text: textBlock },
+                ...data.images.map((url) => ({
+                  type: "image_url" as const,
+                  image_url: { url },
+                })),
+              ]
+            : textBlock,
       },
     ];
 

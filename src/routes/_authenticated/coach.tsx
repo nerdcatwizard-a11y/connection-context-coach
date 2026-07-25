@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
 
 const searchSchema = z.object({
@@ -85,6 +86,7 @@ function CoachPage() {
 
   return (
     <div className="flex h-[calc(100dvh-8rem)] flex-col gap-3">
+      <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <h1 className="font-serif text-2xl md:text-3xl">AI Coach</h1>
       </div>
