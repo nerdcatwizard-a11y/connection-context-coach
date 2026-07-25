@@ -255,9 +255,16 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        images: z.array(z.string().url().or(z.string().startsWith("data:"))).min(1).max(6),
+        images: z
+          .array(z.string().url().or(z.string().startsWith("data:")))
+          .max(6)
+          .optional()
+          .default([]),
         requestType: z.enum(["understand", "reply", "review"]).default("understand"),
         userContext: z.string().max(2000).optional(),
+      })
+      .refine((v) => (v.images?.length ?? 0) > 0 || !!v.userContext?.trim(), {
+        message: "Add a screenshot or write some context.",
       })
       .parse(d),
   )
