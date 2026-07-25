@@ -52,6 +52,7 @@ function JournalPage() {
 
   return (
     <div className="space-y-4">
+      <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl">My Journal</h1>
