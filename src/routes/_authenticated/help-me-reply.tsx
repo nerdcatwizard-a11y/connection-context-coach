@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { helpMeReply } from "@/lib/ai.functions";
+import { FollowUp } from "@/components/FollowUp";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
   head: () => ({
@@ -214,8 +215,15 @@ function HelpMeReplyPage() {
                   {footer}
                 </div>
               )}
+              <FollowUp
+                feature="Help Me Reply"
+                priorLabel="reply suggestions"
+                priorOutput={reply}
+                situationContext={`They received: ${received}${history ? `\nPrior: ${history}` : ""}${goal ? `\nGoal: ${goal}` : ""}${tone ? `\nTone: ${tone}` : ""}`}
+              />
             </div>
           ) : (
+            <>
             <div className="soft-card space-y-2 p-5">
               <div className="flex justify-end">
                 <button
@@ -236,6 +244,13 @@ function HelpMeReplyPage() {
               </div>
               <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
             </div>
+            <FollowUp
+              feature="Help Me Reply"
+              priorLabel="reply suggestions"
+              priorOutput={reply}
+              situationContext={`They received: ${received}`}
+            />
+            </>
           )}
         </div>
       )}

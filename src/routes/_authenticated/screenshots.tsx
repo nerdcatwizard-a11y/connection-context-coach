@@ -6,6 +6,7 @@ import { analyzeScreenshots } from "@/lib/ai.functions";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
+import { FollowUp } from "@/components/FollowUp";
 
 export const Route = createFileRoute("/_authenticated/screenshots")({
   head: () => ({
@@ -170,9 +171,17 @@ function ScreenshotsPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {analysis && (
-        <div className="soft-card space-y-2 p-5">
-          <h2 className="font-serif text-lg">Cyrano's read</h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{analysis}</div>
+        <div className="space-y-3">
+          <div className="soft-card space-y-2 p-5">
+            <h2 className="font-serif text-lg">Cyrano's read</h2>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">{analysis}</div>
+          </div>
+          <FollowUp
+            feature="Read a Conversation"
+            priorLabel="read of the conversation"
+            priorOutput={analysis}
+            situationContext={`Request: ${REQUEST_LABELS[requestType]}${userContext ? `\nUser context: ${userContext}` : ""}${images.length ? `\n(${images.length} screenshot(s) attached)` : ""}`}
+          />
         </div>
       )}
     </div>

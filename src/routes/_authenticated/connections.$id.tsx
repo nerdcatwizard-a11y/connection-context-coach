@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
 import { generateConnectionInsight } from "@/lib/ai.functions";
+import { FollowUp } from "@/components/FollowUp";
 
 type Conn = {
   id: string;
@@ -208,14 +209,22 @@ function ConnectionDetail() {
         ) : (
           <ul className="space-y-2">
             {insights.map((i) => (
-              <li key={i.id} className="soft-card whitespace-pre-wrap p-4 text-sm">
-                <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{new Date(i.created_at).toLocaleString()}</span>
-                  <button onClick={() => dismissInsight(i.id)} className="hover:text-foreground">
-                    Dismiss
-                  </button>
+              <li key={i.id} className="space-y-2">
+                <div className="soft-card whitespace-pre-wrap p-4 text-sm">
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{new Date(i.created_at).toLocaleString()}</span>
+                    <button onClick={() => dismissInsight(i.id)} className="hover:text-foreground">
+                      Dismiss
+                    </button>
+                  </div>
+                  {i.observation}
                 </div>
-                {i.observation}
+                <FollowUp
+                  feature="Connection insight"
+                  priorLabel="pattern read"
+                  priorOutput={i.observation}
+                  situationContext={`Connection: ${name}${conn.user_goal ? `\nGoal: ${conn.user_goal}` : ""}${conn.concerns ? `\nConcerns: ${conn.concerns}` : ""}`}
+                />
               </li>
             ))}
           </ul>

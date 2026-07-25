@@ -432,3 +432,52 @@ Give a short, honest pattern read: 2–4 observations (each 1–2 sentences), ea
 
     return { insight: reply };
   });
+
+// =========================
+// Follow-up questions on any prior Cyrano output
+// =========================
+const FollowUpTurn = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().min(1).max(6000),
+});
+
+export const askFollowUp = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        feature: z.string().max(60),
+        // A short label describing what Cyrano originally produced
+        // (e.g. "Cyrano's read on a conversation", "Openers", "Profile feedback").
+        priorLabel: z.string().max(120).optional(),
+        // The original Cyrano output being discussed.
+        priorOutput: z.string().min(1).max(12000),
+        // Optional extra situational context the feature already had.
+        situationContext: z.string().max(4000).optional(),
+        // Prior follow-up turns in this thread (excluding the new question).
+        history: z.array(FollowUpTurn).max(20).default([]),
+        question: z.string().min(1).max(4000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const framing = `The user is asking a follow-up about your earlier response in the "${data.feature}" feature.
+
+${data.situationContext ? `Situation context they already provided:\n"""\n${data.situationContext}\n"""\n` : ""}
+Your prior ${data.priorLabel ?? "response"}:
+"""
+${data.priorOutput}
+"""
+
+Answer their follow-up directly and briefly. Reference the prior response when useful. Keep it tight and easy to digest — no re-summarizing everything above.`;
+
+    const messages: Array<z.infer<typeof MessageSchema>> = [
+      { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      { role: "user", content: framing },
+      ...data.history.map((t) => ({ role: t.role, content: t.content })),
+      { role: "user", content: data.question },
+    ];
+
+    const reply = await callGateway(messages);
+    return { reply };
+  });
