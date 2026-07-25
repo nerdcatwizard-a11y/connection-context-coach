@@ -113,7 +113,7 @@ function ProfileReviewPage() {
                 accept="image/*"
                 multiple
                 className="hidden"
-                onChange={(e) => onFiles(e.target.files)}
+                onChange={(e) => addFiles(e.target.files)}
               />
             </label>
           ) : (
@@ -140,7 +140,7 @@ function ProfileReviewPage() {
                     accept="image/*"
                     multiple
                     className="hidden"
-                    onChange={(e) => onFiles(e.target.files)}
+                    onChange={(e) => addFiles(e.target.files)}
                   />
                 </label>
               )}
