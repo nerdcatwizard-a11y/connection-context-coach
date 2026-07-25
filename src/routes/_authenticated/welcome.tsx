@@ -20,37 +20,18 @@ const HELP_WITH = [
   "Reading between the lines",
   "Moving toward a date",
   "Profile feedback",
-  "Communicating boundaries",
-  "Preparing for a date",
   "Reflecting on patterns",
 ];
 
 const TONES = ["Warm", "Playful", "Direct", "Thoughtful", "Confident", "Casual"];
 
-const STEPS = [
-  "about_you",
-  "help_with",
-  "relationship_goal",
-  "communication_style",
-  "preferred_tone",
-  "writelikeme",
-] as const;
+const STEPS = ["about_you", "goals", "writelikeme"] as const;
 
-const ABOUT_YOU_GROUPS: { key: string; label: string; hint?: string; options: string[] }[] = [
+const ABOUT_YOU_GROUPS: { key: string; label: string; options: string[] }[] = [
   {
     key: "vibe",
     label: "Which words feel most like you?",
-    options: ["Introverted", "Extroverted", "Ambivert", "Curious", "Analytical", "Creative", "Adventurous", "Homebody", "Empathetic", "Independent"],
-  },
-  {
-    key: "energy",
-    label: "How would friends describe your dating energy?",
-    options: ["Easygoing", "Intentional", "Playful", "Reserved", "Romantic", "Cautious", "Open book", "Slow to open up"],
-  },
-  {
-    key: "loves",
-    label: "What do you love spending time on?",
-    options: ["Travel", "Reading", "Music", "Fitness", "Food & cooking", "Movies & TV", "Outdoors", "Gaming", "Art", "Faith", "Family", "Career"],
+    options: ["Introverted", "Extroverted", "Curious", "Creative", "Adventurous", "Homebody", "Empathetic", "Independent"],
   },
   {
     key: "headspace",
@@ -66,7 +47,6 @@ function Welcome() {
   const [helpWith, setHelpWith] = useState<string[]>([]);
   const [apps, setApps] = useState<string[]>([]);
   const [goal, setGoal] = useState("");
-  const [commStyle, setCommStyle] = useState("");
   const [tone, setTone] = useState("");
   const [writeLike, setWriteLike] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
@@ -89,7 +69,6 @@ function Welcome() {
         help_with: helpWith.length ? helpWith : null,
         dating_apps: apps.length ? apps : null,
         relationship_goal: goal || null,
-        communication_style: commStyle || null,
         preferred_tone: tone || null,
         writelikeme_enabled: writeLike ?? false,
         onboarding_skipped: skipped,
@@ -129,19 +108,12 @@ function Welcome() {
 
         <h1 className="mt-6 font-serif text-2xl">Welcome to Cyrano</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          You can answer as much or as little as you'd like. Everything here is optional
-          and you can start using Cyrano right away.
+          Every question is optional — answer what you'd like and skip the rest.
         </p>
 
         <div className="mt-6">
           {key === "about_you" && (
             <div className="space-y-6">
-              <div>
-                <p className="text-sm font-medium">A little about you (all optional)</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  These help Cyrano get to know you before you start. Skip any you don't feel like answering.
-                </p>
-              </div>
               {ABOUT_YOU_GROUPS.map((g) => (
                 <div key={g.key}>
                   <p className="text-sm font-medium">{g.label}</p>
@@ -165,7 +137,6 @@ function Welcome() {
               ))}
               <div>
                 <p className="text-sm font-medium">Which dating apps are you on?</p>
-                <p className="mt-1 text-xs text-muted-foreground">Choose any that apply.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {DATING_APPS.map((o) => {
                     const active = apps.includes(o);
@@ -185,27 +156,17 @@ function Welcome() {
               </div>
             </div>
           )}
-          {key === "help_with" && (
-            <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
-          )}
-          {key === "relationship_goal" && (
-            <SingleSelect
-              label="What type of relationship are you seeking?"
-              options={["Something casual", "Dating with intention", "A long-term relationship", "Marriage", "Friendship first", "Not sure yet", "Prefer not to say"]}
-              value={goal}
-              onChange={setGoal}
-            />
-          )}
-          {key === "communication_style" && (
-            <SingleSelect
-              label="What communication style feels most like you?"
-              options={["Direct and to the point", "Warm and expressive", "Playful and light", "Thoughtful and detailed", "Reserved", "It depends"]}
-              value={commStyle}
-              onChange={setCommStyle}
-            />
-          )}
-          {key === "preferred_tone" && (
-            <SingleSelect label="What tone should Cyrano use with you?" options={TONES} value={tone} onChange={setTone} />
+          {key === "goals" && (
+            <div className="space-y-6">
+              <MultiSelect label="What would you most like help with?" options={HELP_WITH} selected={helpWith} onToggle={(v) => toggle(helpWith, v, setHelpWith)} />
+              <SingleSelect
+                label="What type of relationship are you seeking?"
+                options={["Something casual", "Dating with intention", "A long-term relationship", "Not sure yet"]}
+                value={goal}
+                onChange={setGoal}
+              />
+              <SingleSelect label="What tone should Cyrano use with you?" options={TONES} value={tone} onChange={setTone} />
+            </div>
           )}
           {key === "writelikeme" && (
             <div>
@@ -242,7 +203,7 @@ function Welcome() {
               onClick={() => (step < total - 1 ? setStep(step + 1) : finish())}
               className="rounded-full border border-border px-4 py-2 text-sm hover:bg-accent"
             >
-              Skip this question
+              Skip
             </button>
             <button
               onClick={() => (step < total - 1 ? setStep(step + 1) : finish())}
