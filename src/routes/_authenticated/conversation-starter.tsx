@@ -211,9 +211,17 @@ function StarterPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {reply && (
-        <div className="soft-card space-y-2 p-5">
-          <h2 className="font-serif text-lg">Openers</h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
+        <div className="space-y-3">
+          <div className="soft-card space-y-2 p-5">
+            <h2 className="font-serif text-lg">Openers</h2>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
+          </div>
+          <FollowUp
+            feature="Conversation Starter"
+            priorLabel="openers"
+            priorOutput={reply}
+            situationContext={`${datingApp ? `App: ${datingApp}\n` : ""}${profileNotes ? `Profile notes: ${profileNotes}` : "(screenshots only)"}${goal ? `\nGoal: ${goal}` : ""}${tone ? `\nTone: ${tone}` : ""}`}
+          />
         </div>
       )}
     </div>
