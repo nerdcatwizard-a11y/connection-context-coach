@@ -254,9 +254,17 @@ function ProfileReviewPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {feedback && (
-        <div className="soft-card space-y-2 p-5">
-          <h2 className="font-serif text-lg">Cyrano's feedback</h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{feedback}</div>
+        <div className="space-y-3">
+          <div className="soft-card space-y-2 p-5">
+            <h2 className="font-serif text-lg">Cyrano's feedback</h2>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">{feedback}</div>
+          </div>
+          <FollowUp
+            feature="Review a Profile"
+            priorLabel="profile feedback"
+            priorOutput={feedback}
+            situationContext={`Whose: ${whose === "me" ? "user's own" : "someone they're interested in"}${datingApp ? `\nApp: ${datingApp}` : ""}${goal ? `\nGoal: ${goal}` : ""}${audience ? `\nAudience: ${audience}` : ""}${whatIsntWorking ? `\nWhat isn't working: ${whatIsntWorking}` : ""}${bio ? `\nBio: ${bio}` : ""}${prompts ? `\nPrompts: ${prompts}` : ""}`}
+          />
         </div>
       )}
     </div>
