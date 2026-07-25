@@ -6,6 +6,7 @@ import { analyzeScreenshots } from "@/lib/ai.functions";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
+import { FollowUp } from "@/components/FollowUp";
 
 export const Route = createFileRoute("/_authenticated/screenshots")({
   head: () => ({
