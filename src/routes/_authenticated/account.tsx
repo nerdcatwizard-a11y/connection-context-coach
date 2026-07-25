@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 

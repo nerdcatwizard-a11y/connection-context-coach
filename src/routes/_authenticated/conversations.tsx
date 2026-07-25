@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { useEffect, useState } from "react";
 import { Loader2, MessageCircle, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
