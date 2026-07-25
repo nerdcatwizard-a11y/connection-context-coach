@@ -84,12 +84,64 @@ function ProfileReviewPage() {
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Review a Profile</h1>
         <p className="text-sm text-muted-foreground">
-          Upload your own profile or one from a person you're connected with for honest, practical
-          feedback.
+          Upload screenshots of your own dating profile — or one of someone you're interested in — for honest, practical feedback.
         </p>
       </div>
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm font-semibold">Upload profile screenshots</span>
+            <span className="text-xs text-muted-foreground">{photos.length}/9</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Add photos of the profile — bio, prompts, pictures. Cyrano will read them.
+          </p>
+          {photos.length === 0 ? (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-8 text-center hover:bg-primary/10">
+              <Upload className="h-8 w-8 text-primary" />
+              <span className="text-sm font-medium text-foreground">Tap to upload screenshots</span>
+              <span className="text-xs text-muted-foreground">PNG or JPG, up to 6MB each</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => onFiles(e.target.files)}
+              />
+            </label>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {photos.map((src, i) => (
+                <div key={i} className="relative">
+                  <img src={src} alt={`Screenshot ${i + 1}`} className="h-24 w-24 rounded-lg border border-border object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}
+                    className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-foreground text-background"
+                    aria-label="Remove"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              {photos.length < 9 && (
+                <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
+                  <Upload className="h-4 w-4" />
+                  Add
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => onFiles(e.target.files)}
+                  />
+                </label>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="space-y-1.5">
           <span className="text-sm font-medium">Whose profile is this?</span>
           <div className="flex gap-2">
@@ -105,7 +157,7 @@ function ProfileReviewPage() {
                     : "border-border bg-background hover:bg-accent")
                 }
               >
-                {w === "me" ? "Mine" : "Someone I'm connected with"}
+                {w === "me" ? "Mine" : "Someone I'm interested in"}
               </button>
             ))}
           </div>
@@ -128,11 +180,11 @@ function ProfileReviewPage() {
         </label>
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium">Bio</span>
+          <span className="text-sm font-medium">Bio (optional if screenshots include it)</span>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            rows={4}
+            rows={3}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             placeholder="Paste the bio here"
           />
@@ -143,43 +195,12 @@ function ProfileReviewPage() {
           <textarea
             value={prompts}
             onChange={(e) => setPrompts(e.target.value)}
-            rows={4}
+            rows={3}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             placeholder="Prompt: answer&#10;Prompt: answer"
           />
         </label>
 
-        <div className="space-y-2">
-          <span className="text-sm font-medium">Photos ({photos.length}/9)</span>
-          <div className="flex flex-wrap gap-2">
-            {photos.map((src, i) => (
-              <div key={i} className="relative">
-                <img src={src} alt={`Photo ${i + 1}`} className="h-24 w-24 rounded-lg border border-border object-cover" />
-                <button
-                  type="button"
-                  onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}
-                  className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-foreground text-background"
-                  aria-label="Remove"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
-            {photos.length < 9 && (
-              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
-                <Upload className="h-4 w-4" />
-                Add
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => onFiles(e.target.files)}
-                />
-              </label>
-            )}
-          </div>
-        </div>
 
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Relationship goal (optional)</span>
