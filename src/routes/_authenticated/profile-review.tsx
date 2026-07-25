@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { reviewProfile } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
+import { BackToDashboard } from "@/components/BackToDashboard";
+import { usePasteImages } from "@/hooks/use-paste-images";
 
 export const Route = createFileRoute("/_authenticated/profile-review")({
   head: () => ({
