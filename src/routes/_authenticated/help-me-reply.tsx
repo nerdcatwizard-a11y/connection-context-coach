@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { helpMeReply } from "@/lib/ai.functions";
+import { FollowUp } from "@/components/FollowUp";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
   head: () => ({
