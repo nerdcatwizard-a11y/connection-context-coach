@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
 import { generateConnectionInsight } from "@/lib/ai.functions";
+import { FollowUp } from "@/components/FollowUp";
 
 type Conn = {
   id: string;
