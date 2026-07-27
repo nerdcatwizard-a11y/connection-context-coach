@@ -51,31 +51,13 @@ export function FollowUp({
     }
   }
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm hover:bg-accent"
-      >
-        <MessageCircle className="h-4 w-4" />
-        Ask a follow-up question
-      </button>
-    );
-  }
-
   return (
     <div className="soft-card space-y-3 p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <MessageCircle className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
-          Close
-        </button>
       </div>
+
 
       {turns.length > 0 && (
         <div className="space-y-2">
