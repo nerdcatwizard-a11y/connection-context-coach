@@ -7,6 +7,8 @@ import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
+import { ConnectionField } from "@/components/ConnectionField";
+import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/conversation-starter")({
   head: () => ({
@@ -31,6 +33,7 @@ function StarterPage() {
   const [reply, setReply] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [connectionId, setConnectionId] = useState("");
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
@@ -71,6 +74,9 @@ function StarterPage() {
     try {
       const res = await call({ data: { profileNotes, datingApp, goal, tone, images } });
       setReply(res.reply);
+      if (connectionId) {
+        void logToConnection({ connectionId, title: "Cyrano: Conversation starters", body: res.reply });
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -138,6 +144,8 @@ function StarterPage() {
             </div>
           )}
         </div>
+
+        <ConnectionField value={connectionId} onChange={setConnectionId} />
 
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">

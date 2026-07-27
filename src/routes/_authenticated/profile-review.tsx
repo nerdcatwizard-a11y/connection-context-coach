@@ -7,6 +7,8 @@ import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
+import { ConnectionField } from "@/components/ConnectionField";
+import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/profile-review")({
   head: () => ({
@@ -31,6 +33,7 @@ function ProfileReviewPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [connectionId, setConnectionId] = useState("");
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
@@ -79,6 +82,9 @@ function ProfileReviewPage() {
         },
       });
       setFeedback(res.feedback);
+      if (connectionId) {
+        void logToConnection({ connectionId, title: "Cyrano: Profile review", body: res.feedback });
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {

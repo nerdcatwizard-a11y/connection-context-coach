@@ -7,6 +7,8 @@ import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
+import { ConnectionField } from "@/components/ConnectionField";
+import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/screenshots")({
   head: () => ({
@@ -58,6 +60,7 @@ function ScreenshotsPage() {
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [connectionId, setConnectionId] = useState("");
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
@@ -80,6 +83,9 @@ function ScreenshotsPage() {
     try {
       const res = await call({ data: { images, requestType, userContext } });
       setAnalysis(res.analysis);
+      if (connectionId) {
+        void logToConnection({ connectionId, title: "Cyrano: Read a Conversation", body: res.analysis });
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -148,6 +154,8 @@ function ScreenshotsPage() {
             </div>
           )}
         </div>
+
+        <ConnectionField value={connectionId} onChange={setConnectionId} />
 
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">What do you want from Cyrano?</span>
