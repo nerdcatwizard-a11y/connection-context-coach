@@ -67,9 +67,16 @@ function AuthPage() {
         toast.success("Check your email (and spam folder) to confirm your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-        if (error) throw error;
+        if (error) {
+          if (error.message.toLowerCase().includes("invalid login credentials")) {
+            throw new Error(
+              "Email or password didn't match. If your browser autofilled a suggested password, retype it — or use Forgot password.",
+            );
+          }
+          throw error;
+        }
         navigate({ to: "/home" });
-      }
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
