@@ -17,7 +17,6 @@ export function FollowUp({
   situationContext?: string;
 }) {
   const call = useServerFn(askFollowUp);
-  const [open, setOpen] = useState(false);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
