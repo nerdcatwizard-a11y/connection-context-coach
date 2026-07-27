@@ -100,36 +100,53 @@ function ScreenshotsPage() {
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <div className="space-y-2">
-          <span className="text-sm font-medium">Screenshots ({images.length}/{MAX})</span>
-          <div className="flex flex-wrap gap-2">
-            {images.map((src, i) => (
-              <div key={i} className="relative">
-                <img src={src} alt={`Screenshot ${i + 1}`} className="h-28 w-20 rounded-lg border border-border object-cover" />
-                <button
-                  type="button"
-                  onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
-                  className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-foreground text-background"
-                  aria-label="Remove"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
-            {images.length < MAX && (
-              <label className="flex h-28 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
-                <Upload className="h-4 w-4" />
-                Add
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => void addFiles(e.target.files)}
-                />
-              </label>
-            )}
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm font-medium">Conversation screenshots</span>
+            <span className="text-xs text-muted-foreground">{images.length}/{MAX}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Tip: copy an image and paste it here with ⌘/Ctrl+V.</p>
+          {images.length === 0 ? (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center hover:bg-primary/10">
+              <Upload className="h-6 w-6 text-primary" />
+              <span className="text-sm font-medium">Upload a screenshot of the conversation</span>
+              <span className="text-xs text-muted-foreground">or paste with ⌘/Ctrl+V — PNG or JPG up to 6MB</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => void addFiles(e.target.files)}
+              />
+            </label>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {images.map((src, i) => (
+                <div key={i} className="relative">
+                  <img src={src} alt={`Screenshot ${i + 1}`} className="h-24 w-24 rounded-lg border border-border object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
+                    className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-foreground text-background"
+                    aria-label="Remove"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              {images.length < MAX && (
+                <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:bg-accent">
+                  <Upload className="h-4 w-4" />
+                  Add
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => void addFiles(e.target.files)}
+                  />
+                </label>
+              )}
+            </div>
+          )}
         </div>
 
         <label className="block space-y-1.5">
