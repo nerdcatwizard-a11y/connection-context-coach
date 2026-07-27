@@ -14,7 +14,7 @@ type Connection = {
   updated_at: string;
 };
 
-export const Route = createFileRoute("/_authenticated/connections")({
+export const Route = createFileRoute("/_authenticated/connections/")({
   head: () => ({
     meta: [
       { title: "Connections — Cyrano - Dating Coach" },
