@@ -78,6 +78,8 @@ function HelpMeReplyPage() {
   const [error, setError] = useState<string | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [connectionId, setConnectionId] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const resultRef = useScrollToResult(reply);
 
   const { options, footer } = useMemo(
     () => (reply ? parseOptions(reply) : { options: [], footer: null }),
@@ -90,7 +92,7 @@ function HelpMeReplyPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { received, goal, tone, history } });
+      const res = await call({ data: { received, goal, tone, history, images } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });
