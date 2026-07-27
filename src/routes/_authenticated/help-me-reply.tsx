@@ -188,7 +188,7 @@ function HelpMeReplyPage() {
         </Field>
         <button
           type="submit"
-          disabled={busy || !received.trim()}
+          disabled={busy || (!received.trim() && images.length === 0)}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -199,7 +199,7 @@ function HelpMeReplyPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {reply && (
-        <div className="space-y-3">
+        <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <h2 className="font-serif text-lg">Your options</h2>
           {options.length > 0 ? (
             <div className="space-y-3">
