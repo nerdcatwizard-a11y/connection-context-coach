@@ -5,6 +5,8 @@ import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
+import { ScreenshotUploader } from "@/components/ScreenshotUploader";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
