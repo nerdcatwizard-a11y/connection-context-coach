@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
+import { ConnectionField } from "@/components/ConnectionField";
+import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
   head: () => ({
@@ -73,6 +75,7 @@ function HelpMeReplyPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [connectionId, setConnectionId] = useState("");
 
   const { options, footer } = useMemo(
     () => (reply ? parseOptions(reply) : { options: [], footer: null }),
@@ -87,6 +90,9 @@ function HelpMeReplyPage() {
     try {
       const res = await call({ data: { received, goal, tone, history } });
       setReply(res.reply);
+      if (connectionId) {
+        void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -122,6 +128,8 @@ function HelpMeReplyPage() {
       </div>
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <ConnectionField value={connectionId} onChange={setConnectionId} />
+
         <Field label="What did they send you? *">
           <textarea
             required
