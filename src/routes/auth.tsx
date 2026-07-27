@@ -29,6 +29,8 @@ function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -65,9 +67,18 @@ function AuthPage() {
         toast.success("Check your email (and spam folder) to confirm your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-        if (error) throw error;
+        if (error) {
+          if (error.message.toLowerCase().includes("invalid login credentials")) {
+            throw new Error(
+              "Email or password didn't match. If your browser autofilled a suggested password, retype it — or use Forgot password.",
+            );
+          }
+          throw error;
+        }
         navigate({ to: "/home" });
       }
+
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -162,20 +173,33 @@ function AuthPage() {
             <input
               type="email"
               required
+              name="email"
+              autoComplete="username"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
-            <input
-              type="password"
-              required
-              minLength={8}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                minLength={8}
+                name="password"
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-input bg-background px-4 py-2.5 pr-16 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute inset-y-0 right-3 my-auto h-fit text-xs text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
             <button
               type="submit"
               disabled={busy}
@@ -184,6 +208,7 @@ function AuthPage() {
               {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
             </button>
           </form>
+
 
           <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
             <button type="button" onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="hover:text-foreground">
