@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
@@ -196,6 +197,7 @@ function ScreenshotsPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {analysis && (
+        <div ref={resultRef} className="scroll-mt-4">
         <div className="space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Cyrano's read</h2>

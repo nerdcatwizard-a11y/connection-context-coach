@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
