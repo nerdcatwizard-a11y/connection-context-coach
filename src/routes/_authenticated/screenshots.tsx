@@ -62,6 +62,7 @@ function ScreenshotsPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState("");
+  const resultRef = useScrollToResult(analysis);
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
@@ -197,8 +198,7 @@ function ScreenshotsPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {analysis && (
-        <div ref={resultRef} className="scroll-mt-4">
-        <div className="space-y-3">
+        <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Cyrano's read</h2>
             <div className="whitespace-pre-wrap text-sm leading-relaxed">{analysis}</div>

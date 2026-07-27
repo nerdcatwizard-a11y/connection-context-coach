@@ -32,6 +32,7 @@ function ProfileReviewPage() {
   const [whatIsntWorking, setWhatIsntWorking] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const resultRef = useScrollToResult(feedback);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState("");
@@ -264,7 +265,7 @@ function ProfileReviewPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {feedback && (
-        <div className="space-y-3">
+        <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Cyrano's feedback</h2>
             <div className="whitespace-pre-wrap text-sm leading-relaxed">{feedback}</div>

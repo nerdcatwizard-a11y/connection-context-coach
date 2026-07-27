@@ -32,6 +32,7 @@ function StarterPage() {
   const [tone, setTone] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [reply, setReply] = useState<string | null>(null);
+  const resultRef = useScrollToResult(reply);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState("");
@@ -221,7 +222,7 @@ function StarterPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {reply && (
-        <div className="space-y-3">
+        <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Openers</h2>
             <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
