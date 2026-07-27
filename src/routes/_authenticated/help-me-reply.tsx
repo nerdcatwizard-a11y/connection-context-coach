@@ -5,6 +5,8 @@ import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
+import { ScreenshotUploader } from "@/components/ScreenshotUploader";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
@@ -76,6 +78,8 @@ function HelpMeReplyPage() {
   const [error, setError] = useState<string | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [connectionId, setConnectionId] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const resultRef = useScrollToResult(reply);
 
   const { options, footer } = useMemo(
     () => (reply ? parseOptions(reply) : { options: [], footer: null }),
@@ -88,7 +92,7 @@ function HelpMeReplyPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { received, goal, tone, history } });
+      const res = await call({ data: { received, goal, tone, history, images } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });
@@ -128,16 +132,22 @@ function HelpMeReplyPage() {
       </div>
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <ScreenshotUploader
+          images={images}
+          onChange={setImages}
+          title="Screenshot of the conversation (optional)"
+          label="Upload a screenshot of the conversation"
+        />
+
         <ConnectionField value={connectionId} onChange={setConnectionId} />
 
-        <Field label="What did they send you? *">
+        <Field label="What did they send you?">
           <textarea
-            required
             value={received}
             onChange={(e) => setReceived(e.target.value)}
             rows={4}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Paste their message here…"
+            placeholder="Paste their message here — or just upload a screenshot above"
           />
         </Field>
         <Field label="Any prior conversation for context? (optional)">
@@ -178,7 +188,7 @@ function HelpMeReplyPage() {
         </Field>
         <button
           type="submit"
-          disabled={busy || !received.trim()}
+          disabled={busy || (!received.trim() && images.length === 0)}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -189,7 +199,7 @@ function HelpMeReplyPage() {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {reply && (
-        <div className="space-y-3">
+        <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <h2 className="font-serif text-lg">Your options</h2>
           {options.length > 0 ? (
             <div className="space-y-3">

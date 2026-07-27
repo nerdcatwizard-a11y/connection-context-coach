@@ -146,21 +146,31 @@ export const helpMeReply = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
       .object({
-        received: z.string().min(1).max(4000),
+        received: z.string().max(4000).optional(),
         goal: z.string().max(1000).optional(),
         tone: z.string().max(60).optional(),
         history: z.string().max(4000).optional(),
+        images: z
+          .array(z.string().url().or(z.string().startsWith("data:")))
+          .max(6)
+          .optional(),
+      })
+      .refine((v) => !!v.received?.trim() || (v.images?.length ?? 0) > 0, {
+        message: "Paste their message or upload a screenshot.",
       })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const prompt = `The user received this message:
-"""
-${data.received}
-"""
+    const images = data.images ?? [];
+    const prompt = `${
+      data.received?.trim()
+        ? `The user received this message:\n"""\n${data.received}\n"""`
+        : "The user attached screenshot(s) of the conversation instead of pasting text."
+    }
 ${data.history ? `Prior conversation for context:\n"""\n${data.history}\n"""\n` : ""}
 ${data.goal ? `What they want to happen next: ${data.goal}` : ""}
 ${data.tone ? `Preferred tone: ${data.tone}` : ""}
+${images.length > 0 ? "\nRead the attached screenshot(s) to understand the latest message and the conversation so far." : ""}
 
 Return exactly three distinct reply options that sound like a real person — natural, warm, respectful, and honest. Avoid clichés, cheesy lines, or over-clever wordplay. For each option, briefly note the vibe in one line (e.g. "Playful and light", "Direct and warm", "Curious and grounded") and then the message on the next line. Format:
 
@@ -177,7 +187,16 @@ After the three options, add one short line labeled "Read on what's going on:" g
 
     const reply = await callGateway([
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
-      { role: "user", content: prompt },
+      {
+        role: "user",
+        content:
+          images.length > 0
+            ? [
+                { type: "text" as const, text: prompt },
+                ...images.map((url) => ({ type: "image_url" as const, image_url: { url } })),
+              ]
+            : prompt,
+      },
     ]);
     return { reply };
   });

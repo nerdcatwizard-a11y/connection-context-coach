@@ -17,7 +17,6 @@ export function FollowUp({
   situationContext?: string;
 }) {
   const call = useServerFn(askFollowUp);
-  const [open, setOpen] = useState(false);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
@@ -52,31 +51,13 @@ export function FollowUp({
     }
   }
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm hover:bg-accent"
-      >
-        <MessageCircle className="h-4 w-4" />
-        Ask a follow-up question
-      </button>
-    );
-  }
-
   return (
     <div className="soft-card space-y-3 p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <MessageCircle className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
-          Close
-        </button>
       </div>
+
 
       {turns.length > 0 && (
         <div className="space-y-2">
@@ -119,10 +100,10 @@ export function FollowUp({
         <button
           type="submit"
           disabled={busy || !q.trim()}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-50"
-          aria-label="Send follow-up"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          Ask Cyrano
         </button>
       </form>
     </div>
