@@ -76,6 +76,8 @@ function AuthPage() {
           throw error;
         }
         navigate({ to: "/home" });
+      }
+
 
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
