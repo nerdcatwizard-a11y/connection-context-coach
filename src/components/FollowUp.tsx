@@ -100,10 +100,10 @@ export function FollowUp({
         <button
           type="submit"
           disabled={busy || !q.trim()}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-50"
-          aria-label="Send follow-up"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          Ask Cyrano
         </button>
       </form>
     </div>
