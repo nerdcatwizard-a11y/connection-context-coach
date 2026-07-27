@@ -156,7 +156,10 @@ function ProfileReviewPage() {
           )}
         </div>
 
+        <ConnectionField value={connectionId} onChange={setConnectionId} />
+
         <div className="space-y-1.5">
+
           <span className="text-sm font-medium">Whose profile is this?</span>
           <div className="flex gap-2">
             {(["me", "connection"] as const).map((w) => (
