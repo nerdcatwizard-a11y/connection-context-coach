@@ -132,16 +132,22 @@ function HelpMeReplyPage() {
       </div>
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <ScreenshotUploader
+          images={images}
+          onChange={setImages}
+          title="Screenshot of the conversation (optional)"
+          label="Upload a screenshot of the conversation"
+        />
+
         <ConnectionField value={connectionId} onChange={setConnectionId} />
 
-        <Field label="What did they send you? *">
+        <Field label="What did they send you?">
           <textarea
-            required
             value={received}
             onChange={(e) => setReceived(e.target.value)}
             rows={4}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Paste their message here…"
+            placeholder="Paste their message here — or just upload a screenshot above"
           />
         </Field>
         <Field label="Any prior conversation for context? (optional)">
