@@ -9,6 +9,7 @@ import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/profile-review")({
@@ -103,6 +104,7 @@ function ProfileReviewPage() {
           Upload screenshots of your own dating profile — or one of someone you're interested in — for honest, practical feedback.
         </p>
       </div>
+      <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <div className="space-y-2">

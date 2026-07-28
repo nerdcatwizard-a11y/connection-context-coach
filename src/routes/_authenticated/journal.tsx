@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { useEffect, useState } from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,6 +61,8 @@ function JournalPage() {
             A private place to reflect on how dating feels. Yours only.
           </p>
         </div>
+      </div>
+      <CyranoDisclaimer />
         <button
           onClick={() => setShowNew(true)}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"

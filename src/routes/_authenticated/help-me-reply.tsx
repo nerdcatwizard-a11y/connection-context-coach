@@ -6,6 +6,7 @@ import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
 import { ScreenshotUploader } from "@/components/ScreenshotUploader";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { logToConnection } from "@/lib/connection-log";
 
@@ -130,6 +131,7 @@ function HelpMeReplyPage() {
           Paste what you received. Cyrano will offer three natural, respectful options.
         </p>
       </div>
+      <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <ScreenshotUploader

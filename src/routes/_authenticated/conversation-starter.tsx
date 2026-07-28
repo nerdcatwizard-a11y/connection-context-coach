@@ -9,6 +9,7 @@ import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { logToConnection } from "@/lib/connection-log";
 
 export const Route = createFileRoute("/_authenticated/conversation-starter")({
@@ -95,6 +96,7 @@ function StarterPage() {
           Tell Cyrano what you noticed about their profile — or upload/paste a screenshot of the bio. You'll get openers grounded in something real.
         </p>
       </div>
+      <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <div className="space-y-2">
