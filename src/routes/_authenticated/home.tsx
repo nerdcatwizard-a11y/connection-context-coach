@@ -79,6 +79,9 @@ function Home() {
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           {greeting()}{name ? `, ${name}` : ""}
         </p>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">
+          Cyrano — your dating site assistant
+        </p>
         <h1 className="mt-2 font-serif text-3xl md:text-4xl">What can I help you with?</h1>
         <form onSubmit={ask} className="mt-5 flex flex-col gap-2 sm:flex-row">
           <input
