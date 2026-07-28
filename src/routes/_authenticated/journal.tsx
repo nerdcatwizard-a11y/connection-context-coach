@@ -61,8 +61,6 @@ function JournalPage() {
             A private place to reflect on how dating feels. Yours only.
           </p>
         </div>
-      </div>
-      <CyranoDisclaimer />
         <button
           onClick={() => setShowNew(true)}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
@@ -70,6 +68,7 @@ function JournalPage() {
           <Plus className="h-4 w-4" /> New
         </button>
       </div>
+      <CyranoDisclaimer />
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       {entries === null && (
