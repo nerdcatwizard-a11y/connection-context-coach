@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { useEffect, useState } from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,6 +68,7 @@ function JournalPage() {
           <Plus className="h-4 w-4" /> New
         </button>
       </div>
+      <CyranoDisclaimer />
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       {entries === null && (

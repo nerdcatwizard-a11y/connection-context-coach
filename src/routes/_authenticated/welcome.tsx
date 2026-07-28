@@ -106,7 +106,10 @@ function Welcome() {
           <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / total) * 100}%` }} />
         </div>
 
-        <h1 className="mt-6 font-serif text-2xl">Welcome to Cyrano</h1>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">
+          Cyrano — your dating site assistant
+        </p>
+        <h1 className="mt-2 font-serif text-2xl">Welcome to Cyrano</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Every question is optional — answer what you'd like and skip the rest.
         </p>
@@ -217,9 +220,11 @@ function Welcome() {
       </div>
 
       <p className="mx-auto mt-6 max-w-md text-center text-xs text-muted-foreground">
-        Cyrano provides AI-powered coaching and educational guidance. It is not a
-        licensed therapist, mental-health provider, medical professional, legal
-        professional, crisis service, or emergency service.
+        I'm Cyrano, your dating site assistant and AI dating and relationship coach. I
+        can offer educational guidance and help you think through dating site
+        situations, but I'm not a licensed therapist or mental-health professional. If
+        something feels urgent, please reach out to local emergency services or a trusted
+        person.
       </p>
     </div>
   );
