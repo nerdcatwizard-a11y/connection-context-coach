@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Cyrano" },
-      { name: "description", content: "Sign in to Cyrano, your dating site assistant and AI dating coach." },
+      { name: "description", content: "Sign in to Cyrano, your dating app assistant and AI dating coach." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -135,7 +135,7 @@ function AuthPage() {
 
         <div className="mt-8 w-full soft-card p-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            Cyrano — your dating site assistant
+            Cyrano — your dating app assistant
           </p>
           <h1 className="mt-2 font-serif text-2xl">
             {mode === "signup" ? "Create your account" : "Welcome back"}
@@ -235,7 +235,7 @@ function AuthPage() {
         </div>
 
         <p className="mt-6 max-w-sm text-center text-xs text-muted-foreground">
-          I'm Cyrano, your dating site assistant and AI dating and relationship coach. I
+          I'm Cyrano, your dating app assistant and AI dating and relationship coach. I
           can offer educational guidance and help you think through dating site
           situations, but I'm not a licensed therapist or mental-health professional. If
           something feels urgent, please reach out to local emergency services or a trusted
