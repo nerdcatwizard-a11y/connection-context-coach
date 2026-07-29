@@ -71,10 +71,10 @@ function Landing() {
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground">
               <Sparkle className="h-3.5 w-3.5 text-primary" />
-              Your dating site assistant — thoughtful, private, always available
+              Your dating app assistant — thoughtful, private, always available
             </span>
             <h1 className="mt-6 font-serif text-4xl leading-tight md:text-6xl">
-              Your dating site assistant,<br className="hidden md:block" /> whenever you need one.
+              Your dating app assistant,<br className="hidden md:block" /> whenever you need one.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
               Thoughtful, personalized help with dating-app conversations, profiles,
@@ -167,9 +167,9 @@ function Landing() {
             </p>
           </div>
           <div className="soft-card p-6">
-            <p className="text-sm font-medium">Cyrano is your dating site assistant, not therapy.</p>
+            <p className="text-sm font-medium">Cyrano is your dating app assistant, not therapy.</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              I'm Cyrano, your dating site assistant and AI dating and relationship coach.
+              I'm Cyrano, your dating app assistant and AI dating and relationship coach.
               I provide AI-powered coaching and educational guidance. I am not a licensed
               therapist, mental-health provider, medical professional, legal professional,
               crisis service, or emergency service.
