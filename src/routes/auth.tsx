@@ -222,6 +222,7 @@ function AuthPage() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouchedPassword(true)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 pr-16 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
               <button
@@ -232,13 +233,60 @@ function AuthPage() {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+
+            {mode === "signup" && (
+              <>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Repeat password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                />
+
+                <ul className="space-y-1 rounded-xl bg-muted/50 p-3 text-xs">
+                  {[
+                    { label: "At least 8 characters", ok: password.length >= 8 },
+                    { label: "One uppercase letter", ok: /[A-Z]/.test(password) },
+                    { label: "One lowercase letter", ok: /[a-z]/.test(password) },
+                    { label: "One number", ok: /[0-9]/.test(password) },
+                    {
+                      label: "One special character (e.g. ! ? @ #)",
+                      ok: /[^A-Za-z0-9]/.test(password),
+                    },
+                    {
+                      label: "Both passwords match",
+                      ok: passwordsMatch,
+                    },
+                  ].map((rule) => (
+                    <li
+                      key={rule.label}
+                      className={
+                        rule.ok
+                          ? "text-foreground"
+                          : touchedPassword || password.length > 0
+                            ? "text-destructive"
+                            : "text-muted-foreground"
+                      }
+                    >
+                      {rule.ok ? "✓" : "•"} {rule.label}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
             <button
               type="submit"
-              disabled={busy}
+              disabled={busy || !signupReady}
               className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
             </button>
+
           </form>
 
 
