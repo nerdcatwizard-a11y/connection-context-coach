@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
+
 import { ArrowLeft, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
@@ -70,6 +72,8 @@ function ConnectionDetail() {
   const [editing, setEditing] = useState(false);
   const [genBusy, setGenBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const insightsRef = useScrollToResult<HTMLElement>(insights.length > 0 && !genBusy);
+
 
   async function load() {
     setLoading(true);
@@ -192,7 +196,8 @@ function ConnectionDetail() {
       </section>
 
       {/* Insights */}
-      <section className="space-y-2">
+      <section ref={insightsRef} className="scroll-mt-4 space-y-2">
+
         <div className="flex items-baseline justify-between">
           <h2 className="font-serif text-lg">Pattern insights</h2>
           <button

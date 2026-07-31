@@ -1,5 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Sparkle, MessageCircle, Users, Image as ImageIcon, UserCheck, BookOpen, ShieldCheck, Feather, ArrowRight } from "lucide-react";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,7 +33,35 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const navigate = useNavigate();
+  const [redirecting, setRedirecting] = useState(false);
+
+  // Signed-in users land on the dashboard, not the marketing page.
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!active || !data.user) return;
+      setRedirecting(true);
+      navigate({ to: "/home", replace: true });
+    });
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  if (redirecting) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <span className="grid h-10 w-10 animate-pulse place-items-center rounded-xl bg-primary text-primary-foreground">
+          <Sparkle className="h-5 w-5" />
+        </span>
+      </div>
+    );
+  }
+
+
   return (
+
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
       <header className="border-b border-border/60">
