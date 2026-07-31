@@ -192,7 +192,8 @@ function ConnectionDetail() {
       </section>
 
       {/* Insights */}
-      <section className="space-y-2">
+      <section ref={insightsRef} className="scroll-mt-4 space-y-2">
+
         <div className="flex items-baseline justify-between">
           <h2 className="font-serif text-lg">Pattern insights</h2>
           <button
