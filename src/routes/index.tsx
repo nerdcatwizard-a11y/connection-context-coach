@@ -33,7 +33,37 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
+
+  // Signed-in users land on the dashboard, not the marketing page.
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!active) return;
+      if (data.user) {
+        navigate({ to: "/home", replace: true });
+      } else {
+        setChecking(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  if (checking) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <span className="grid h-10 w-10 animate-pulse place-items-center rounded-xl bg-primary text-primary-foreground">
+          <Sparkle className="h-5 w-5" />
+        </span>
+      </div>
+    );
+  }
+
   return (
+
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
       <header className="border-b border-border/60">
