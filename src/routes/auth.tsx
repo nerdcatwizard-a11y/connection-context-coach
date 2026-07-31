@@ -64,9 +64,21 @@ function AuthPage() {
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = email.trim().toLowerCase();
+    if (mode === "signup") {
+      setTouchedPassword(true);
+      if (problems.length > 0) {
+        toast.error("Please fix your password: " + problems.join(", ").toLowerCase());
+        return;
+      }
+      if (!passwordsMatch) {
+        toast.error("Passwords don't match.");
+        return;
+      }
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
+
         const { data, error } = await supabase.auth.signUp({
           email: normalizedEmail,
           password,
