@@ -23,16 +23,32 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+function passwordProblems(pw: string): string[] {
+  const problems: string[] = [];
+  if (pw.length < 8) problems.push("At least 8 characters");
+  if (!/[A-Z]/.test(pw)) problems.push("One uppercase letter");
+  if (!/[a-z]/.test(pw)) problems.push("One lowercase letter");
+  if (!/[0-9]/.test(pw)) problems.push("One number");
+  if (!/[^A-Za-z0-9]/.test(pw)) problems.push("One special character (e.g. ! ? @ #)");
+  return problems;
+}
+
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [touchedPassword, setTouchedPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
+
+  const problems = passwordProblems(password);
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+  const signupReady = mode === "signin" || (problems.length === 0 && passwordsMatch);
 
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
@@ -43,6 +59,7 @@ function AuthPage() {
 
     if (error) throw error;
   }
+
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
