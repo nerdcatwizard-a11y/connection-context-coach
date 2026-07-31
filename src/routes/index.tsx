@@ -1,5 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Sparkle, MessageCircle, Users, Image as ImageIcon, UserCheck, BookOpen, ShieldCheck, Feather, ArrowRight } from "lucide-react";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
