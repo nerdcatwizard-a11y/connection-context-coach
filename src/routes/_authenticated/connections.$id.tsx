@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
+
 import { ArrowLeft, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
