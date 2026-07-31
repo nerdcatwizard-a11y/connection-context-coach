@@ -70,6 +70,8 @@ function ConnectionDetail() {
   const [editing, setEditing] = useState(false);
   const [genBusy, setGenBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const insightsRef = useScrollToResult<HTMLElement>(insights.length > 0 && !genBusy);
+
 
   async function load() {
     setLoading(true);
