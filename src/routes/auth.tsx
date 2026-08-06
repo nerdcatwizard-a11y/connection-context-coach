@@ -119,13 +119,32 @@ function AuthPage() {
 
         setSignedUpEmail(normalizedEmail);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        let { error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
           password: submittedPassword,
         });
+        const trimmedPassword = submittedPassword.trim();
+        if (
+          error?.message.toLowerCase().includes("invalid login credentials") &&
+          trimmedPassword !== submittedPassword
+        ) {
+          ({ error } = await supabase.auth.signInWithPassword({
+            email: normalizedEmail,
+            password: trimmedPassword,
+          }));
+        }
         if (error) {
           if (error.message.toLowerCase().includes("invalid login credentials")) {
-            throw new Error("That email and password combination wasn't accepted. Please check both and try again.");
+            const { error: linkError } = await supabase.auth.signInWithOtp({
+              email: normalizedEmail,
+              options: {
+                emailRedirectTo: `${window.location.origin}/auth`,
+                shouldCreateUser: false,
+              },
+            });
+            if (linkError) throw linkError;
+            toast.success("That password wasn't accepted, so we emailed you a secure sign-in link instead.");
+            return;
           }
           throw error;
         }
