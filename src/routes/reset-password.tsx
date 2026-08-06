@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { Sparkle } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    set: search['set'] ? 1 : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Reset password — Cyrano" },
@@ -15,7 +18,8 @@ export const Route = createFileRoute("/reset-password")({
 });
 
 function ResetPassword() {
-  const [mode, setMode] = useState<"request" | "update">("request");
+  const { set } = Route.useSearch();
+  const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -24,13 +28,16 @@ function ResetPassword() {
     if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
       setMode("update");
     }
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email) setEmail(data.user.email);
+    });
   }, []);
 
   async function requestReset(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
         redirectTo: window.location.origin + "/reset-password",
       });
       if (error) throw error;
@@ -42,14 +49,15 @@ function ResetPassword() {
     }
   }
 
-  async function updatePassword(e: React.FormEvent) {
+  async function updatePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const submitted = String(new FormData(e.currentTarget).get("password") ?? "");
     setBusy(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
-      toast.success("Password updated. You can sign in now.");
-      window.location.href = "/auth";
+      toast.success("Password saved. Let your phone save it too — sign-in will just work now.");
+      window.location.href = "/home";
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
@@ -68,16 +76,27 @@ function ResetPassword() {
         </Link>
         <div className="mt-8 w-full soft-card p-6">
           <h1 className="font-serif text-2xl">
-            {mode === "update" ? "Set a new password" : "Reset your password"}
+            {mode === "update" ? "Set your password" : "Reset your password"}
           </h1>
+          {mode === "update" && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Choose the password you want to use from now on. When your phone offers to save or
+              update it, tap yes — then autofill will sign you in every time.
+            </p>
+          )}
           {mode === "request" ? (
             <form onSubmit={requestReset} className="mt-4 space-y-3">
               <input
                 type="email"
+                name="email"
                 required
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onInput={(e) => setEmail(e.currentTarget.value)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
               />
               <button
@@ -88,21 +107,35 @@ function ResetPassword() {
               </button>
             </form>
           ) : (
-            <form onSubmit={updatePassword} className="mt-4 space-y-3">
+            <form onSubmit={updatePassword} className="mt-4 space-y-3" method="post" action="#">
+              {/* Hidden username field: iOS/Android password managers need it to
+                  update the saved credential for this account instead of creating a new one. */}
+              <input
+                type="email"
+                name="email"
+                autoComplete="username"
+                value={email}
+                readOnly
+                tabIndex={-1}
+                aria-hidden="true"
+                className="sr-only"
+              />
               <input
                 type="password"
+                name="password"
                 required
                 minLength={8}
+                autoComplete="new-password"
                 placeholder="New password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onInput={(e) => setPassword(e.currentTarget.value)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
               />
               <button
                 disabled={busy}
                 className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-60"
               >
-                {busy ? "Updating..." : "Update password"}
+                {busy ? "Saving..." : "Save password"}
               </button>
             </form>
           )}
