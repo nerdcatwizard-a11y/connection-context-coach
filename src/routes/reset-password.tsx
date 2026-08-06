@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/reset-password")({
 
 function ResetPassword() {
   const { set } = Route.useSearch();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,8 +57,12 @@ function ResetPassword() {
     try {
       const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
+      // Make sure the session is live before navigating, otherwise the
+      // protected route gate can bounce back to the sign-in screen.
+      const { data: verified } = await supabase.auth.getUser();
+      if (!verified.user) throw new Error("Password saved, but the session expired. Please sign in.");
       toast.success("Password saved. Let your phone save it too — sign-in will just work now.");
-      window.location.href = "/home";
+      navigate({ to: "/home", replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
