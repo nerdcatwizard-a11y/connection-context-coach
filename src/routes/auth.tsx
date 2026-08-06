@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +50,18 @@ function AuthPage() {
   const problems = passwordProblems(password);
   const passwordsMatch = password.length > 0 && password === confirmPassword;
   const signupReady = mode === "signin" || (problems.length === 0 && passwordsMatch);
+
+  useEffect(() => {
+    let active = true;
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (active && data.user) navigate({ to: "/home", replace: true });
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
 
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
@@ -116,7 +128,11 @@ function AuthPage() {
           }
           throw error;
         }
-        navigate({ to: "/home" });
+        const { data: verified, error: verificationError } = await supabase.auth.getUser();
+        if (verificationError || !verified.user) {
+          throw new Error("You signed in, but the session could not be verified. Please try again.");
+        }
+        navigate({ to: "/home", replace: true });
       }
 
 
@@ -279,7 +295,7 @@ function AuthPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                minLength={8}
+                minLength={mode === "signup" ? 8 : undefined}
                 name="password"
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 autoCapitalize="none"
