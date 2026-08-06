@@ -19,6 +19,7 @@ export const Route = createFileRoute("/reset-password")({
 
 function ResetPassword() {
   const { set } = Route.useSearch();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
