@@ -61,23 +61,14 @@ function Landing() {
   return (
     <div className="flex h-dvh flex-col justify-between bg-background text-foreground overflow-hidden">
       {/* Brand */}
-      <div className="flex flex-col items-center px-5 pt-10 md:pt-14">
-        <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground">
-          <Sparkle className="h-5 w-5" />
-        </span>
-        <h1 className="mt-3 font-serif text-2xl md:text-3xl">Cyrano</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Your Dating App Assistant</p>
-      </div>
-
-      {/* Hero */}
       <div className="flex flex-1 flex-col items-center justify-center px-5">
-        <h2 className="text-center font-serif text-2xl leading-tight sm:text-3xl md:text-5xl">
-          Your dating app assistant,<br className="hidden md:block" /> whenever you need one.
-        </h2>
-        <p className="mt-4 max-w-xl text-center text-base text-muted-foreground md:text-lg">
-          Thoughtful, personalized help with dating-app conversations, profiles, dates, and relationships — based on the full context, not just one message.
-        </p>
-        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
+        <span className="grid h-20 w-20 place-items-center rounded-3xl bg-primary text-primary-foreground md:h-24 md:w-24">
+          <Sparkle className="h-10 w-10 md:h-12 md:w-12" />
+        </span>
+        <h1 className="mt-5 font-serif text-5xl md:text-6xl">Cyrano</h1>
+        <p className="mt-2 text-lg text-muted-foreground md:text-xl">Your Dating App Assistant</p>
+
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
           <Link
             to="/auth"
             search={{ mode: "signup" }}
@@ -87,10 +78,10 @@ function Landing() {
           </Link>
           <Link
             to="/auth"
-            search={{ mode: "signup" }}
+            search={{ mode: "signin" }}
             className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent"
           >
-            See how it works
+            Sign in
           </Link>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
