@@ -67,7 +67,7 @@ function Landing() {
         </span>
         <h1 className="mt-5 font-serif text-5xl md:text-6xl">Cyrano</h1>
         <p className="mt-2 text-lg text-muted-foreground md:text-xl">Your Dating App Assistant</p>
-        <p className="mt-4 max-w-xl text-center text-base text-muted-foreground md:text-lg">
+        <p className="mt-4 max-w-xl text-center text-sm text-muted-foreground md:text-base">
           Thoughtful, personalized help with dating-app conversations, profiles, dates, and relationships — based on the full context, not just one message.
         </p>
 
