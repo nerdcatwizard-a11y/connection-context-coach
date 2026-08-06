@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { toast } from "sonner";
@@ -50,6 +50,10 @@ function Welcome() {
   const [tone, setTone] = useState("");
   const [writeLike, setWriteLike] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
 
   const total = STEPS.length;
   const key = STEPS[step];
