@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +51,18 @@ function AuthPage() {
   const passwordsMatch = password.length > 0 && password === confirmPassword;
   const signupReady = mode === "signin" || (problems.length === 0 && passwordsMatch);
 
+  useEffect(() => {
+    let active = true;
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (active && data.user) navigate({ to: "/home", replace: true });
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
       type: "signup",
@@ -62,16 +74,26 @@ function AuthPage() {
   }
 
 
-  async function handleEmail(e: React.FormEvent) {
+  async function handleEmail(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const normalizedEmail = email.trim().toLowerCase();
+    const formData = new FormData(e.currentTarget);
+    const submittedEmail = String(formData.get("email") ?? "");
+    const submittedPassword = String(formData.get("password") ?? "");
+    const submittedConfirmation = String(formData.get("confirmPassword") ?? "");
+    const normalizedEmail = submittedEmail.trim().toLowerCase();
+    const submittedProblems = passwordProblems(submittedPassword);
+
+    setEmail(normalizedEmail);
+    setPassword(submittedPassword);
+    if (mode === "signup") setConfirmPassword(submittedConfirmation);
+
     if (mode === "signup") {
       setTouchedPassword(true);
-      if (problems.length > 0) {
-        toast.error("Please fix your password: " + problems.join(", ").toLowerCase());
+      if (submittedProblems.length > 0) {
+        toast.error("Please fix your password: " + submittedProblems.join(", ").toLowerCase());
         return;
       }
-      if (!passwordsMatch) {
+      if (submittedPassword !== submittedConfirmation) {
         toast.error("Passwords don't match.");
         return;
       }
@@ -82,7 +104,7 @@ function AuthPage() {
 
         const { data, error } = await supabase.auth.signUp({
           email: normalizedEmail,
-          password,
+          password: submittedPassword,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
@@ -96,16 +118,21 @@ function AuthPage() {
 
         setSignedUpEmail(normalizedEmail);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password: submittedPassword,
+        });
         if (error) {
           if (error.message.toLowerCase().includes("invalid login credentials")) {
-            throw new Error(
-              "Email or password didn't match. If your browser autofilled a suggested password, retype it — or use Forgot password.",
-            );
+            throw new Error("That email and password combination wasn't accepted. Please check both and try again.");
           }
           throw error;
         }
-        navigate({ to: "/home" });
+        const { data: verified, error: verificationError } = await supabase.auth.getUser();
+        if (verificationError || !verified.user) {
+          throw new Error("You signed in, but the session could not be verified. Please try again.");
+        }
+        navigate({ to: "/home", replace: true });
       }
 
 
@@ -256,6 +283,9 @@ function AuthPage() {
               required
               name="email"
               autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -265,9 +295,12 @@ function AuthPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                minLength={8}
+                minLength={mode === "signup" ? 8 : undefined}
                 name="password"
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -290,6 +323,9 @@ function AuthPage() {
                   required
                   name="confirmPassword"
                   autoComplete="new-password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
