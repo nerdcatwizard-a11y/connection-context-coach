@@ -55,14 +55,25 @@ function AuthPage() {
   useEffect(() => {
     let active = true;
 
+    // Arriving from an emailed sign-in link: send the user to set a password so
+    // the phone's saved password matches the account from now on.
+    const cameFromEmailLink =
+      typeof window !== "undefined" && window.location.hash.includes("access_token");
+
     supabase.auth.getUser().then(({ data }) => {
-      if (active && data.user) navigate({ to: "/home", replace: true });
+      if (!active || !data.user) return;
+      if (cameFromEmailLink) {
+        navigate({ to: "/reset-password", search: { set: 1 }, replace: true });
+      } else {
+        navigate({ to: "/home", replace: true });
+      }
     });
 
     return () => {
       active = false;
     };
   }, [navigate]);
+
 
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
