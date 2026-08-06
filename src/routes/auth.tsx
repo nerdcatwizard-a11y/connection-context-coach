@@ -12,6 +12,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
@@ -55,18 +56,9 @@ function AuthPage() {
   useEffect(() => {
     let active = true;
 
-    // Arriving from an emailed sign-in link: send the user to set a password so
-    // the phone's saved password matches the account from now on.
-    const cameFromEmailLink =
-      typeof window !== "undefined" && window.location.hash.includes("access_token");
-
     supabase.auth.getUser().then(({ data }) => {
       if (!active || !data.user) return;
-      if (cameFromEmailLink) {
-        navigate({ to: "/reset-password", search: { set: 1 }, replace: true });
-      } else {
-        navigate({ to: "/home", replace: true });
-      }
+      navigate({ to: "/home", replace: true });
     });
 
     return () => {
@@ -144,21 +136,7 @@ function AuthPage() {
             password: trimmedPassword,
           }));
         }
-        if (error) {
-          if (error.message.toLowerCase().includes("invalid login credentials")) {
-            const { error: linkError } = await supabase.auth.signInWithOtp({
-              email: normalizedEmail,
-              options: {
-                emailRedirectTo: `${window.location.origin}/auth`,
-                shouldCreateUser: false,
-              },
-            });
-            if (linkError) throw linkError;
-            toast.success("That password wasn't accepted, so we emailed you a secure sign-in link instead.");
-            return;
-          }
-          throw error;
-        }
+        if (error) throw error;
         const { data: verified, error: verificationError } = await supabase.auth.getUser();
         if (verificationError || !verified.user) {
           throw new Error("You signed in, but the session could not be verified. Please try again.");
@@ -209,7 +187,7 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email: normalizedEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
+          emailRedirectTo: `${window.location.origin}/reset-password?set=1`,
           shouldCreateUser: false,
         },
       });
@@ -333,8 +311,10 @@ function AuthPage() {
             </span>
           </div>
 
-          <form onSubmit={handleEmail} className="space-y-3">
+          <form onSubmit={handleEmail} className="space-y-3" method="post" action="/auth">
+            <label htmlFor="signin-email" className="sr-only">Email address</label>
             <input
+              id="signin-email"
               type="email"
               required
               name="email"
@@ -347,7 +327,9 @@ function AuthPage() {
               className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
             <div className="relative">
+              <label htmlFor="signin-password" className="sr-only">Password</label>
               <input
+                id="signin-password"
                 type={showPassword ? "text" : "password"}
                 required
                 minLength={mode === "signup" ? 8 : undefined}
@@ -432,7 +414,7 @@ function AuthPage() {
                 disabled={busy || linkBusy}
                 className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
-                {linkBusy ? "Sending link..." : "Email me a sign-in link"}
+                {linkBusy ? "Sending link..." : "Can't sign in? Email me a secure link"}
               </button>
             )}
 
