@@ -56,8 +56,12 @@ function ResetPassword() {
     try {
       const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
+      // Make sure the session is live before navigating, otherwise the
+      // protected route gate can bounce back to the sign-in screen.
+      const { data: verified } = await supabase.auth.getUser();
+      if (!verified.user) throw new Error("Password saved, but the session expired. Please sign in.");
       toast.success("Password saved. Let your phone save it too — sign-in will just work now.");
-      window.location.href = "/home";
+      navigate({ to: "/home", replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
