@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Sparkle } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
+  ssr: false,
   validateSearch: (search: Record<string, unknown>) => ({
     set: search['set'] ? 1 : undefined,
   }),
