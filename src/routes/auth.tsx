@@ -44,6 +44,7 @@ function AuthPage() {
   const [touchedPassword, setTouchedPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
+  const [linkBusy, setLinkBusy] = useState(false);
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
 
@@ -163,6 +164,31 @@ function AuthPage() {
       }
     } finally {
       setResending(false);
+    }
+  }
+
+  async function handleEmailLinkSignIn() {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      toast.error("Enter your email address first.");
+      return;
+    }
+
+    setLinkBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: normalizedEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`,
+          shouldCreateUser: false,
+        },
+      });
+      if (error) throw error;
+      toast.success("Sign-in link sent. Open it from your email to sign in.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't send the sign-in link");
+    } finally {
+      setLinkBusy(false);
     }
   }
 
@@ -363,11 +389,22 @@ function AuthPage() {
 
             <button
               type="submit"
-              disabled={busy || !signupReady}
+              disabled={busy || linkBusy || !signupReady}
               className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
             </button>
+
+            {mode === "signin" && (
+              <button
+                type="button"
+                onClick={handleEmailLinkSignIn}
+                disabled={busy || linkBusy}
+                className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
+              >
+                {linkBusy ? "Sending link..." : "Email me a sign-in link"}
+              </button>
+            )}
 
           </form>
 
