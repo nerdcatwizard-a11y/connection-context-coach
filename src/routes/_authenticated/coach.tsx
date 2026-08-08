@@ -92,7 +92,7 @@ function CoachPage() {
       </div>
       <CyranoDisclaimer />
 
-      <div className="soft-card flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
         {messages.length === 0 && !busy && (
           <p className="text-sm text-muted-foreground">
             Start by describing what's going on — a message you got, a situation, or a feeling
@@ -139,13 +139,14 @@ function CoachPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message Cyrano…"
-          className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+          autoFocus
+          className="flex-1 rounded-xl border border-input bg-background px-4 py-4 text-base outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           disabled={busy}
         />
         <button
           type="submit"
           disabled={busy || !input.trim()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           Send <ArrowRight className="h-4 w-4" />
         </button>
