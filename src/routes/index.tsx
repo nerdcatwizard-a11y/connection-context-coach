@@ -75,9 +75,13 @@ function Landing() {
           <Link
             to="/auth"
             search={{ mode: "signup" }}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-lift hover:opacity-95"
+            className="inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-lift hover:opacity-95"
           >
-            Ask Cyrano <ArrowRight className="h-4 w-4" />
+            <span className="flex flex-col items-center leading-tight">
+              <span>Ask Cyrano</span>
+              <span className="text-[10px] font-normal opacity-90">Free to Try</span>
+            </span>
+            <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/auth"
