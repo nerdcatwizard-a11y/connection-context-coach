@@ -73,3 +73,23 @@ When the app provides structured connection context, journal excerpts, or Write-
 
 export const CYRANO_NEW_CHAT_NOTICE =
   "I'm Cyrano, your dating app assistant and AI dating and relationship coach. I can offer educational guidance and help you think through dating app situations, but I'm not a licensed therapist or mental-health professional. If something feels urgent, please reach out to local emergency services or a trusted person.";
+
+// Response mode: by default Cyrano gives recommendations only. The user can
+// turn on "Show analysis" per-feature to get the fuller breakdown.
+export const CYRANO_RECOMMENDATIONS_ONLY = `RESPONSE MODE: RECOMMENDATIONS ONLY (default).
+Give only the recommendation — the suggested message(s) or the concrete action(s) to take. Skip analysis, interpretation, reasoning, pattern reads, "what's going on", "why these work", caveats and observations unless they are safety-relevant.
+- Lead with the answer. No preamble, no restating the situation, no closing summary.
+- Keep it under about 120 words total.
+- If the feature asks for message options, return just the labeled options and their text.
+- If context is genuinely missing, ask one short question instead of guessing.
+- Safety escalation rules always override this mode.`;
+
+export const CYRANO_WITH_ANALYSIS = `RESPONSE MODE: ANALYSIS ON.
+The user has turned on analysis. Along with the recommendation, include your fair, honest read: separate facts from interpretations, note alternative readings when ambiguous, and explain briefly why you're suggesting what you're suggesting. Stay within the normal length guidance.`;
+
+export function cyranoModeMessage(analysis?: boolean) {
+  return {
+    role: "system" as const,
+    content: analysis ? CYRANO_WITH_ANALYSIS : CYRANO_RECOMMENDATIONS_ONLY,
+  };
+}
