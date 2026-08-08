@@ -23,7 +23,7 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-2 py-1.5 text-left text-[11px] leading-none text-muted-foreground"
+          className="flex w-full items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-2 py-1.5 text-left text-[10px] leading-none text-muted-foreground sm:text-xs"
         >
           <Info className="h-3 w-3 shrink-0 text-primary" />
           <span className="min-w-0 flex-1 whitespace-nowrap">
