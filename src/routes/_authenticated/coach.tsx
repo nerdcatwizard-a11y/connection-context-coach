@@ -139,7 +139,8 @@ function CoachPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message Cyrano…"
-          className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+          autoFocus
+          className="flex-1 rounded-xl border border-input bg-background px-4 py-4 text-base outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           disabled={busy}
         />
         <button
