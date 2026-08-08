@@ -2,6 +2,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Loader2, MessageCircle, Send } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
+import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { askFollowUp } from "@/lib/ai.functions";
 
 type Turn = { role: "user" | "assistant"; content: string };
@@ -22,6 +24,8 @@ export function FollowUp({
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastIsAssistant = turns.length > 0 && turns[turns.length - 1].role === "assistant";
+  const replyRef = useScrollToResult<HTMLDivElement>(lastIsAssistant ? turns.length : 0);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -65,10 +69,11 @@ export function FollowUp({
           {turns.map((t, i) => (
             <div
               key={i}
+              ref={i === turns.length - 1 && t.role === "assistant" ? replyRef : undefined}
               className={
                 t.role === "user"
                   ? "ml-6 rounded-2xl bg-primary/10 px-3 py-2 text-sm"
-                  : "mr-6 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
+                  : "mr-6 scroll-mt-4 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
               }
             >
               {t.role === "user" ? t.content : <CyranoText>{t.content}</CyranoText>}
@@ -85,7 +90,7 @@ export function FollowUp({
       {error && <p className="text-xs text-destructive">{error}</p>}
 
       <form onSubmit={send} className="flex items-end gap-2">
-        <textarea
+        <AutoGrowTextarea
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => {
@@ -94,9 +99,9 @@ export function FollowUp({
               void send(e as unknown as React.FormEvent);
             }
           }}
-          rows={2}
+          maxRows={10}
           placeholder="Ask anything about the response above…"
-          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
+import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
@@ -36,6 +37,8 @@ function CoachPage() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const seededRef = useRef(false);
 
@@ -57,7 +60,17 @@ function CoachPage() {
   }, [chat, load]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const last = messages[messages.length - 1];
+    const container = scrollRef.current;
+    if (!container) return;
+    if (last?.role === "assistant" && lastAssistantRef.current) {
+      // Land at the TOP of Cyrano's answer, not the bottom.
+      const top =
+        lastAssistantRef.current.offsetTop - container.offsetTop - 8;
+      container.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -93,7 +106,7 @@ function CoachPage() {
       </div>
       <CyranoDisclaimer />
 
-      <div className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
         {messages.length === 0 && !busy && (
           <p className="text-sm text-muted-foreground">
             Start by describing what's going on — a message you got, a situation, or a feeling
@@ -104,6 +117,7 @@ function CoachPage() {
           {messages.map((m, i) => (
             <div
               key={m.id ?? i}
+              ref={i === messages.length - 1 && m.role === "assistant" ? lastAssistantRef : undefined}
               className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
             >
               <div
@@ -134,14 +148,21 @@ function CoachPage() {
           e.preventDefault();
           void submit(input);
         }}
-        className="flex gap-2"
+        className="flex items-end gap-2"
       >
-        <input
+        <AutoGrowTextarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void submit(input);
+            }
+          }}
+          maxRows={8}
           placeholder="Message Cyrano…"
           autoFocus
-          className="flex-1 rounded-xl border border-input bg-background px-4 py-4 text-base outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className="flex-1 rounded-xl border border-input bg-background px-4 py-4 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           disabled={busy}
         />
         <button
