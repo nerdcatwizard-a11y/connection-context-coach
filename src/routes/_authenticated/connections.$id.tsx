@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
 import { generateConnectionInsight } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
+import { CyranoText } from "@/components/CyranoText";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 
 type Conn = {
@@ -217,14 +218,14 @@ function ConnectionDetail() {
           <ul className="space-y-2">
             {insights.map((i) => (
               <li key={i.id} className="space-y-2">
-                <div className="soft-card whitespace-pre-wrap p-4 text-sm">
+                <div className="soft-card p-4 text-sm">
                   <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                     <span>{new Date(i.created_at).toLocaleString()}</span>
                     <button onClick={() => dismissInsight(i.id)} className="hover:text-foreground">
                       Dismiss
                     </button>
                   </div>
-                  {i.observation}
+                  <CyranoText>{i.observation}</CyranoText>
                 </div>
                 <FollowUp
                   feature="Connection insight"

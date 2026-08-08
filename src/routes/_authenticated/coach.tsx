@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { CyranoText } from "@/components/CyranoText";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
@@ -106,15 +107,15 @@ function CoachPage() {
               className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
             >
               <div
-                className={
-                  "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed " +
-                  (m.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-foreground")
-                }
-              >
-                {m.content}
-              </div>
+              className={
+                "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed " +
+                (m.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-foreground")
+              }
+            >
+              {m.role === "user" ? m.content : <CyranoText>{m.content}</CyranoText>}
+            </div>
             </div>
           ))}
           {busy && (

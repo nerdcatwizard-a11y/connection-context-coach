@@ -1,6 +1,7 @@
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Loader2, MessageCircle, Send } from "lucide-react";
+import { CyranoText } from "@/components/CyranoText";
 import { askFollowUp } from "@/lib/ai.functions";
 
 type Turn = { role: "user" | "assistant"; content: string };
@@ -70,7 +71,7 @@ export function FollowUp({
                   : "mr-6 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
               }
             >
-              {t.content}
+              {t.role === "user" ? t.content : <CyranoText>{t.content}</CyranoText>}
             </div>
           ))}
           {busy && (
