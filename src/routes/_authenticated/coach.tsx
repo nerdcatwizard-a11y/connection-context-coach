@@ -36,6 +36,8 @@ function CoachPage() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const seededRef = useRef(false);
 
@@ -57,7 +59,17 @@ function CoachPage() {
   }, [chat, load]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const last = messages[messages.length - 1];
+    const container = scrollRef.current;
+    if (!container) return;
+    if (last?.role === "assistant" && lastAssistantRef.current) {
+      // Land at the TOP of Cyrano's answer, not the bottom.
+      const top =
+        lastAssistantRef.current.offsetTop - container.offsetTop - 8;
+      container.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   useEffect(() => {
