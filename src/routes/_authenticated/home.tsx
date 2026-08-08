@@ -87,8 +87,8 @@ function Home() {
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="What's your dating question?"
-            className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Ask Cyrano anything…"
+            className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none placeholder:text-xs sm:placeholder:text-sm focus:ring-2 focus:ring-ring"
           />
           <button
             type="submit"
