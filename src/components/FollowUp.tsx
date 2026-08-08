@@ -69,10 +69,11 @@ export function FollowUp({
           {turns.map((t, i) => (
             <div
               key={i}
+              ref={i === turns.length - 1 && t.role === "assistant" ? replyRef : undefined}
               className={
                 t.role === "user"
                   ? "ml-6 rounded-2xl bg-primary/10 px-3 py-2 text-sm"
-                  : "mr-6 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
+                  : "mr-6 scroll-mt-4 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
               }
             >
               {t.role === "user" ? t.content : <CyranoText>{t.content}</CyranoText>}
