@@ -85,7 +85,7 @@ export function FollowUp({
       {error && <p className="text-xs text-destructive">{error}</p>}
 
       <form onSubmit={send} className="flex items-end gap-2">
-        <textarea
+        <AutoGrowTextarea
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => {
@@ -94,9 +94,9 @@ export function FollowUp({
               void send(e as unknown as React.FormEvent);
             }
           }}
-          rows={2}
+          maxRows={10}
           placeholder="Ask anything about the response above…"
-          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
