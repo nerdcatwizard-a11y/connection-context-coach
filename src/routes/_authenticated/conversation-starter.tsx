@@ -6,6 +6,8 @@ import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { conversationStarter } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
@@ -28,6 +30,7 @@ const MAX = 6;
 
 function StarterPage() {
   const call = useServerFn(conversationStarter);
+  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [profileNotes, setProfileNotes] = useState("");
   const [datingApp, setDatingApp] = useState("");
   const [goal, setGoal] = useState("");
@@ -212,6 +215,7 @@ function StarterPage() {
           </div>
         </div>
 
+        <AnalysisToggle analysis={analysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
           disabled={busy || !canSubmit}
