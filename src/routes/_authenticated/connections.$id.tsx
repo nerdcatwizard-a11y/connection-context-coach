@@ -9,6 +9,7 @@ import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
 import { generateConnectionInsight } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
 import { CyranoText } from "@/components/CyranoText";
+import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 
 type Conn = {
   id: string;
