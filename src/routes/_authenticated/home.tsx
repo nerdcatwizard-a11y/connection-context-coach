@@ -76,7 +76,14 @@ function Home() {
 
   return (
     <div className="space-y-8">
-      <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col justify-center p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
+    <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
+      <div className="flex items-center justify-center gap-2">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
+          <Sparkle className="h-4 w-4" />
+        </span>
+        <span className="font-serif text-xl">Cyrano</span>
+      </div>
+      <div className="flex flex-1 flex-col justify-center">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           {greeting()}{name ? `, ${name}` : ""}
         </p>
@@ -85,10 +92,12 @@ function Home() {
         </p>
         <h1 className="mt-2 font-serif text-3xl md:text-4xl">What can I help you with?</h1>
         <form onSubmit={ask} className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <input
+          <AutoGrowTextarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Ask Cyrano anything…"
+            rows={2}
+            maxRows={4}
             className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none placeholder:text-xs sm:placeholder:text-sm focus:ring-2 focus:ring-ring"
           />
           <button
@@ -101,7 +110,8 @@ function Home() {
         <p className="mt-3 text-xs text-muted-foreground">
           Free plan: 10 AI messages per day. <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
         </p>
-      </section>
+      </div>
+    </section>
 
       <section>
         <div className="grid gap-4 sm:grid-cols-2">
