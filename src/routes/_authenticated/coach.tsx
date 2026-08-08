@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
+import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
