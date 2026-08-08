@@ -75,7 +75,7 @@ function Home() {
 
   return (
     <div className="space-y-8">
-      <section className="soft-card p-6 md:p-8">
+      <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col justify-center p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           {greeting()}{name ? `, ${name}` : ""}
         </p>
