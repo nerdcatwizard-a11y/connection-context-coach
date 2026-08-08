@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
 import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
@@ -71,6 +73,7 @@ function parseOptions(reply: string): { options: Option[]; footer: string | null
 
 function HelpMeReplyPage() {
   const call = useServerFn(helpMeReply);
+  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [received, setReceived] = useState("");
   const [history, setHistory] = useState("");
   const [goal, setGoal] = useState("");
@@ -94,7 +97,7 @@ function HelpMeReplyPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { received, goal, tone, history, images } });
+      const res = await call({ data: { received, goal, tone, history, images, analysis } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });
@@ -189,6 +192,7 @@ function HelpMeReplyPage() {
             ))}
           </div>
         </Field>
+        <AnalysisToggle analysis={analysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
           disabled={busy || (!received.trim() && images.length === 0)}

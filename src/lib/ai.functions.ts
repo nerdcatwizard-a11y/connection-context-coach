@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { CYRANO_SYSTEM_PROMPT } from "./cyrano-prompt.server";
+import { CYRANO_SYSTEM_PROMPT, cyranoModeMessage } from "./cyrano-prompt.server";
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant", "system"]),
@@ -23,6 +23,7 @@ const ChatInput = z.object({
   chatId: z.string().uuid().nullable().optional(),
   connectionId: z.string().uuid().nullable().optional(),
   message: z.string().min(1).max(8000),
+  analysis: z.boolean().optional().default(false),
 });
 
 async function callGateway(
@@ -88,6 +89,7 @@ export const sendCoachMessage = createServerFn({ method: "POST" })
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       ...(history ?? []).map((m) => ({
         role: m.role as "user" | "assistant" | "system",
         content: m.content,
@@ -150,6 +152,7 @@ export const helpMeReply = createServerFn({ method: "POST" })
         goal: z.string().max(1000).optional(),
         tone: z.string().max(60).optional(),
         history: z.string().max(4000).optional(),
+        analysis: z.boolean().optional().default(false),
         images: z
           .array(z.string().url().or(z.string().startsWith("data:")))
           .max(6)
@@ -183,10 +186,11 @@ Message text
 3. [Vibe]
 Message text
 
-After the three options, add one short line labeled "Read on what's going on:" giving a fair, honest observation about the message and one thing to consider.`;
+${data.analysis ? `After the three options, add one short line labeled "Read on what's going on:" giving a fair, honest observation about the message and one thing to consider.` : "Return only the three options. Do not add any analysis, commentary, or explanation after them."}`;
 
     const reply = await callGateway([
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       {
         role: "user",
         content:
@@ -217,6 +221,7 @@ export const conversationStarter = createServerFn({ method: "POST" })
           .array(z.string().url().or(z.string().startsWith("data:")))
           .max(9)
           .optional(),
+        analysis: z.boolean().optional().default(false),
       })
       .parse(d),
   )
@@ -244,10 +249,11 @@ Opener text
 3. [Vibe]
 Opener text
 
-After the three, add one short "Why these work:" line explaining what specifically they anchor on.`;
+${data.analysis ? `After the three, add one short "Why these work:" line explaining what specifically they anchor on.` : "Return only the three openers. Do not add any analysis, commentary, or explanation after them."}`;
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       {
         role: "user",
         content: hasImages
@@ -281,6 +287,7 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
           .default([]),
         requestType: z.enum(["understand", "reply", "review"]).default("understand"),
         userContext: z.string().max(2000).optional(),
+        analysis: z.boolean().optional().default(false),
       })
       .refine((v) => (v.images?.length ?? 0) > 0 || !!v.userContext?.trim(), {
         message: "Add a screenshot or write some context.",
@@ -301,6 +308,7 @@ export const analyzeScreenshots = createServerFn({ method: "POST" })
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       {
         role: "user",
         content:
@@ -344,6 +352,7 @@ export const reviewProfile = createServerFn({ method: "POST" })
         audience: z.string().max(500).optional(),
         whatIsntWorking: z.string().max(1000).optional(),
         photoUrls: z.array(z.string()).max(9).optional(),
+        analysis: z.boolean().optional().default(false),
       })
       .parse(d),
   )
@@ -364,6 +373,7 @@ Give practical, honest feedback: what's working, what's flat or generic, and spe
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       {
         role: "user",
         content: data.photoUrls?.length
@@ -398,7 +408,14 @@ Give practical, honest feedback: what's working, what's flat or generic, and spe
 // =========================
 export const generateConnectionInsight = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ connectionId: z.string().uuid() }).parse(d))
+  .inputValidator((d) =>
+    z
+      .object({
+        connectionId: z.string().uuid(),
+        analysis: z.boolean().optional().default(false),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
@@ -440,6 +457,7 @@ Give a short, honest pattern read: 2–4 observations (each 1–2 sentences), ea
 
     const reply = await callGateway([
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       { role: "user", content: summary },
     ]);
 
@@ -476,6 +494,7 @@ export const askFollowUp = createServerFn({ method: "POST" })
         // Prior follow-up turns in this thread (excluding the new question).
         history: z.array(FollowUpTurn).max(20).default([]),
         question: z.string().min(1).max(4000),
+        analysis: z.boolean().optional().default(false),
       })
       .parse(d),
   )
@@ -492,6 +511,7 @@ Answer their follow-up directly and briefly. Reference the prior response when u
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
+      cyranoModeMessage(data.analysis),
       { role: "user", content: framing },
       ...data.history.map((t) => ({ role: t.role, content: t.content })),
       { role: "user", content: data.question },

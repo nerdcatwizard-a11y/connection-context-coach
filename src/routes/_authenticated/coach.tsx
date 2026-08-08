@@ -5,6 +5,8 @@ import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai.functions";
@@ -31,6 +33,7 @@ function CoachPage() {
   const { q, chat } = useSearch({ from: "/_authenticated/coach" });
   const send = useServerFn(sendCoachMessage);
   const load = useServerFn(getChat);
+  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
 
   const [chatId, setChatId] = useState<string | null>(chat ?? null);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -88,7 +91,7 @@ function CoachPage() {
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setInput("");
     try {
-      const res = await send({ data: { chatId, message: text } });
+      const res = await send({ data: { chatId, message: text, analysis } });
       setChatId(res.chatId);
       setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
     } catch (e) {
@@ -105,6 +108,11 @@ function CoachPage() {
         <h1 className="font-serif text-2xl md:text-3xl">AI Coach</h1>
       </div>
       <CyranoDisclaimer />
+      <AnalysisToggle
+        analysis={analysis}
+        onToggle={toggleAnalysis}
+        className="rounded-xl bg-muted/40 px-3 py-2"
+      />
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
         {messages.length === 0 && !busy && (

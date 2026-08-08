@@ -8,6 +8,8 @@ import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
 import { ConnectionField } from "@/components/ConnectionField";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/profile-review")({
 
 function ProfileReviewPage() {
   const call = useServerFn(reviewProfile);
+  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [whose, setWhose] = useState<"me" | "connection">("me");
   const [datingApp, setDatingApp] = useState("");
   const [bio, setBio] = useState("");
@@ -83,6 +86,7 @@ function ProfileReviewPage() {
           audience,
           whatIsntWorking,
           photoUrls: photos,
+          analysis,
         },
       });
       setFeedback(res.feedback);
@@ -255,6 +259,7 @@ function ProfileReviewPage() {
           />
         </label>
 
+        <AnalysisToggle analysis={analysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
           disabled={busy || (!bio.trim() && photos.length === 0 && !prompts.trim())}

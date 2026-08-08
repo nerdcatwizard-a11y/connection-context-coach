@@ -5,6 +5,8 @@ import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { analyzeScreenshots } from "@/lib/ai.functions";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
@@ -56,6 +58,7 @@ async function filesToDataUrls(files: File[] | FileList): Promise<{ ok: string[]
 
 function ScreenshotsPage() {
   const call = useServerFn(analyzeScreenshots);
+  const { analysis: showAnalysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [images, setImages] = useState<string[]>([]);
   const [requestType, setRequestType] = useState<"understand" | "reply" | "review">("understand");
   const [userContext, setUserContext] = useState("");
@@ -84,7 +87,7 @@ function ScreenshotsPage() {
     setAnalysis(null);
     setBusy(true);
     try {
-      const res = await call({ data: { images, requestType, userContext } });
+      const res = await call({ data: { images, requestType, userContext, analysis: showAnalysis } });
       setAnalysis(res.analysis);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Read a Conversation", body: res.analysis });
@@ -186,6 +189,7 @@ function ScreenshotsPage() {
           />
         </label>
 
+        <AnalysisToggle analysis={showAnalysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
           disabled={busy}
