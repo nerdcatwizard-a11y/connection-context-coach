@@ -92,7 +92,7 @@ function CoachPage() {
       </div>
       <CyranoDisclaimer />
 
-      <div className="soft-card flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
         {messages.length === 0 && !busy && (
           <p className="text-sm text-muted-foreground">
             Start by describing what's going on — a message you got, a situation, or a feeling
