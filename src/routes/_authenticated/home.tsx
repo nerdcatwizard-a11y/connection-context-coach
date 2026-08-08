@@ -77,11 +77,11 @@ function Home() {
   return (
     <div className="space-y-8">
     <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
-      <div className="flex items-center justify-center gap-2">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-          <Sparkle className="h-4 w-4" />
+      <div className="flex flex-col items-center gap-1">
+        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
+          <Sparkle className="h-5 w-5" />
         </span>
-        <span className="font-serif text-xl">Cyrano</span>
+        <span className="font-serif text-2xl">Cyrano</span>
       </div>
       <div className="flex flex-1 flex-col justify-center">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
