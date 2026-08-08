@@ -9,7 +9,7 @@ type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
  * Textarea that grows vertically as the user types instead of scrolling
  * horizontally, up to `maxRows` lines, then scrolls internally.
  */
-export function AutoGrowTextarea({ className, maxRows = 8, value, ...props }: Props) {
+export function AutoGrowTextarea({ className, maxRows = 8, rows = 1, value, ...props }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -25,13 +25,13 @@ export function AutoGrowTextarea({ className, maxRows = 8, value, ...props }: Pr
     const next = Math.min(el.scrollHeight + border, max);
     el.style.height = `${next}px`;
     el.style.overflowY = el.scrollHeight + border > max ? "auto" : "hidden";
-  }, [value, maxRows]);
+  }, [value, maxRows, rows]);
 
   return (
     <textarea
       ref={ref}
       value={value}
-      rows={1}
+      rows={rows}
       className={cn("resize-none", className)}
       {...props}
     />
