@@ -77,11 +77,12 @@ function Home() {
   return (
     <div className="gradient-hero -mx-4 -mt-6 space-y-8 px-4 pt-6 md:-mx-8 md:-mt-10 md:px-8 md:pt-10 pb-8">
     <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
-      <div className="flex flex-col items-center gap-1">
-        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-          <Sparkle className="h-5 w-5" />
+      <div className="flex flex-col items-center gap-3">
+        <span className="grid h-20 w-20 place-items-center rounded-3xl bg-primary text-primary-foreground md:h-24 md:w-24">
+          <Sparkle className="h-10 w-10 md:h-12 md:w-12" />
         </span>
-        <span className="font-serif text-2xl">Cyrano</span>
+        <span className="font-serif text-4xl md:text-5xl">Cyrano</span>
+        <p className="text-sm text-muted-foreground">Your Dating App Assistant</p>
       </div>
       <div className="flex flex-1 flex-col justify-center">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
