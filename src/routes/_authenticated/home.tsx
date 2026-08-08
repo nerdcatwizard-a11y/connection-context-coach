@@ -4,6 +4,7 @@ import {
   MessageCircle, Feather, Image as ImageIcon, UserCheck, BookOpen, Users, ArrowRight, Sparkle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
