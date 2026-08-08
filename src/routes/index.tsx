@@ -92,7 +92,7 @@ function Landing() {
           </Link>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Free to start. No dating profile required.
+          Free to start. No dating profile or credit card required.
         </p>
       </div>
 
