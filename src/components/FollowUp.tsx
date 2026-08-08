@@ -24,6 +24,8 @@ export function FollowUp({
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastIsAssistant = turns.length > 0 && turns[turns.length - 1].role === "assistant";
+  const replyRef = useScrollToResult<HTMLDivElement>(lastIsAssistant ? turns.length : 0);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
