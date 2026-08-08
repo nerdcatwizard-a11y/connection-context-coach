@@ -45,7 +45,6 @@ function AuthPage() {
   const [touchedPassword, setTouchedPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
-  const [linkBusy, setLinkBusy] = useState(false);
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
 
@@ -70,7 +69,6 @@ function AuthPage() {
     function handlePageShow(event: PageTransitionEvent) {
       if (!event.persisted) return;
       setBusy(false);
-      setLinkBusy(false);
       toast.dismiss();
     }
 
@@ -179,31 +177,6 @@ function AuthPage() {
       }
     } finally {
       setResending(false);
-    }
-  }
-
-  async function handleEmailLinkSignIn() {
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail) {
-      toast.error("Enter your email address first.");
-      return;
-    }
-
-    setLinkBusy(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: normalizedEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
-          shouldCreateUser: false,
-        },
-      });
-      if (error) throw error;
-      toast.success("Sign-in link sent. This signs you in without changing your password.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't send the sign-in link");
-    } finally {
-      setLinkBusy(false);
     }
   }
 
@@ -408,7 +381,7 @@ function AuthPage() {
 
             <button
               type="submit"
-              disabled={busy || linkBusy || !signupReady}
+              disabled={busy || !signupReady}
               className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
@@ -418,7 +391,7 @@ function AuthPage() {
               <button
                 type="button"
                 onClick={() => navigate({ to: "/reset-password", search: { email: email.trim().toLowerCase() || undefined } })}
-                disabled={busy || linkBusy}
+                disabled={busy}
                 className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
                 Reset and verify my password
