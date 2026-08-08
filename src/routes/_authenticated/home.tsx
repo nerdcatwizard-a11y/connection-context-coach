@@ -75,7 +75,7 @@ function Home() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="gradient-hero -mx-4 -mt-6 space-y-8 px-4 pt-6 md:-mx-8 md:-mt-10 md:px-8 md:pt-10 pb-8">
     <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
       <div className="flex flex-col items-center gap-1">
         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
