@@ -68,10 +68,10 @@ export function FollowUp({
               className={
                 t.role === "user"
                   ? "ml-6 rounded-2xl bg-primary/10 px-3 py-2 text-sm"
-                  : "mr-6 rounded-2xl bg-muted/60 px-3 py-2 text-sm leading-relaxed"
+                  : "mr-6 rounded-2xl bg-muted/60 px-3 py-2 text-sm whitespace-pre-wrap leading-relaxed"
               }
             >
-              <CyranoText>{t.content}</CyranoText>
+              {t.role === "user" ? t.content : <CyranoText>{t.content}</CyranoText>}
             </div>
           ))}
           {busy && (

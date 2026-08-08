@@ -108,13 +108,13 @@ function CoachPage() {
             >
               <div
               className={
-                "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed " +
+                "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed " +
                 (m.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-foreground")
               }
             >
-              <CyranoText>{m.content}</CyranoText>
+              {m.role === "user" ? m.content : <CyranoText>{m.content}</CyranoText>}
             </div>
             </div>
           ))}
