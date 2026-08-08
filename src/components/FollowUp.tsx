@@ -5,6 +5,7 @@ import { CyranoText } from "@/components/CyranoText";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { askFollowUp } from "@/lib/ai.functions";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -20,6 +21,7 @@ export function FollowUp({
   situationContext?: string;
 }) {
   const call = useServerFn(askFollowUp);
+  const { analysis } = useAnalysisMode();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
@@ -45,6 +47,7 @@ export function FollowUp({
           situationContext,
           history: turns,
           question,
+          analysis,
         },
       });
       setTurns([...nextHistory, { role: "assistant", content: res.reply }]);

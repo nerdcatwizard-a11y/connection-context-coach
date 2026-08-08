@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
 import { generateConnectionInsight } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
+import { AnalysisToggle } from "@/components/AnalysisToggle";
+import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 
@@ -64,6 +66,7 @@ function ConnectionDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const insightFn = useServerFn(generateConnectionInsight);
+  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
 
   const [conn, setConn] = useState<Conn | null>(null);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
@@ -210,6 +213,11 @@ function ConnectionDetail() {
             Generate
           </button>
         </div>
+        <AnalysisToggle
+          analysis={analysis}
+          onToggle={toggleAnalysis}
+          className="rounded-xl bg-muted/40 px-3 py-2"
+        />
         {insights.length === 0 ? (
           <p className="text-xs text-muted-foreground">
             Ask Cyrano to read the timeline and share honest patterns.
