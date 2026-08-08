@@ -94,7 +94,7 @@ function HelpMeReplyPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { received, goal, tone, history, images } });
+      const res = await call({ data: { received, goal, tone, history, images, analysis } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });

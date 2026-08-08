@@ -76,7 +76,7 @@ function StarterPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { profileNotes, datingApp, goal, tone, images } });
+      const res = await call({ data: { profileNotes, datingApp, goal, tone, images, analysis } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Conversation starters", body: res.reply });

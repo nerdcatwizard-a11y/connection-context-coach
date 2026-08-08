@@ -84,7 +84,7 @@ function ScreenshotsPage() {
     setAnalysis(null);
     setBusy(true);
     try {
-      const res = await call({ data: { images, requestType, userContext } });
+      const res = await call({ data: { images, requestType, userContext, analysis } });
       setAnalysis(res.analysis);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Read a Conversation", body: res.analysis });

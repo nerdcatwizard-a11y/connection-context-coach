@@ -115,7 +115,7 @@ function ConnectionDetail() {
     setGenBusy(true);
     setError(null);
     try {
-      await insightFn({ data: { connectionId: id } });
+      await insightFn({ data: { connectionId: id, analysis } });
       await load();
     } catch (e) {
       setError((e as Error).message);
