@@ -186,11 +186,10 @@ Message text
 3. [Vibe]
 Message text
 
-After the three options, add one short line labeled "Read on what's going on:" giving a fair, honest observation about the message and one thing to consider.`;
+${data.analysis ? `After the three options, add one short line labeled "Read on what's going on:" giving a fair, honest observation about the message and one thing to consider.` : "Return only the three options. Do not add any analysis, commentary, or explanation after them."}`;
 
     const reply = await callGateway([
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
-      cyranoModeMessage(data.analysis),
       cyranoModeMessage(data.analysis),
       {
         role: "user",
@@ -250,7 +249,7 @@ Opener text
 3. [Vibe]
 Opener text
 
-After the three, add one short "Why these work:" line explaining what specifically they anchor on.`;
+${data.analysis ? `After the three, add one short "Why these work:" line explaining what specifically they anchor on.` : "Return only the three openers. Do not add any analysis, commentary, or explanation after them."}`;
 
     const messages: Array<z.infer<typeof MessageSchema>> = [
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
@@ -458,7 +457,6 @@ Give a short, honest pattern read: 2–4 observations (each 1–2 sentences), ea
 
     const reply = await callGateway([
       { role: "system", content: CYRANO_SYSTEM_PROMPT },
-      cyranoModeMessage(data.analysis),
       cyranoModeMessage(data.analysis),
       { role: "user", content: summary },
     ]);
