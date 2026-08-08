@@ -23,14 +23,14 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-left text-xs text-muted-foreground"
+          className="flex w-full items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-2 py-1.5 text-left text-[11px] leading-none text-muted-foreground"
         >
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-          <span className="min-w-0 flex-1 leading-relaxed">
+          <Info className="h-3 w-3 shrink-0 text-primary" />
+          <span className="min-w-0 flex-1 whitespace-nowrap">
             Cyrano is your dating app assistant — not a therapist.
           </span>
           <ChevronDown
-            className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`h-3 w-3 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           />
         </button>
         {open && (
@@ -39,6 +39,7 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
           </p>
         )}
       </div>
+
 
       {/* Desktop: full box */}
       <div className="hidden gap-3 rounded-2xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground md:flex">
