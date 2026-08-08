@@ -140,7 +140,7 @@ function AuthPage() {
         });
         if (error) {
           if (error.message.toLowerCase().includes("invalid login credentials")) {
-            throw new Error("That email and password do not match. Use Forgot password once to replace and verify the password saved on this phone.");
+            throw new Error("The backend did not accept this password. Reset it below to create and verify a new password, then update the one saved on your phone.");
           }
           throw error;
         }
@@ -194,12 +194,12 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email: normalizedEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/reset-password?set=1`,
+          emailRedirectTo: `${window.location.origin}/auth`,
           shouldCreateUser: false,
         },
       });
       if (error) throw error;
-      toast.success("Sign-in link sent. Open it from your email to sign in.");
+      toast.success("Sign-in link sent. This signs you in without changing your password.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't send the sign-in link");
     } finally {
@@ -417,11 +417,11 @@ function AuthPage() {
             {mode === "signin" && (
               <button
                 type="button"
-                onClick={handleEmailLinkSignIn}
+                onClick={() => navigate({ to: "/reset-password", search: { email: email.trim().toLowerCase() || undefined } })}
                 disabled={busy || linkBusy}
                 className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
-                {linkBusy ? "Sending link..." : "Can't sign in? Email me a secure link"}
+                Reset and verify my password
               </button>
             )}
 

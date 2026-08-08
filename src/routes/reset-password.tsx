@@ -4,9 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkle } from "lucide-react";
 
+type ResetSearch = {
+  email?: string;
+  set?: number;
+};
+
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): ResetSearch => ({
+    email: typeof search['email'] === "string" ? search['email'] : undefined,
     set: search['set'] ? 1 : undefined,
   }),
   head: () => ({
@@ -19,21 +25,29 @@ export const Route = createFileRoute("/reset-password")({
 });
 
 function ResetPassword() {
-  const { set } = Route.useSearch();
+  const { email: initialEmail, set } = Route.useSearch();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event !== "PASSWORD_RECOVERY") return;
+      setMode("update");
+      if (session?.user.email) setEmail(session.user.email);
+    });
+
+    if (window.location.hash.includes("type=recovery")) {
       setMode("update");
     }
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
+
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
   async function requestReset(e: React.FormEvent) {
@@ -41,10 +55,10 @@ function ResetPassword() {
     setBusy(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-        redirectTo: window.location.origin + "/reset-password",
+        redirectTo: window.location.origin + "/reset-password?set=1",
       });
       if (error) throw error;
-      toast.success("Check your email for a reset link.");
+      toast.success("Check your email for the password-reset link. Keep this page open until it says the password was saved and verified.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not send reset email");
     } finally {
@@ -86,8 +100,8 @@ function ResetPassword() {
         throw new Error("The password was saved but could not be verified. Please request a new reset link.");
       }
 
-      toast.success("Password saved and verified. Let your phone update the saved password.");
-      navigate({ to: "/home", replace: true });
+      toast.success("Password saved and verified. Normal sign-in is now ready.");
+      setTimeout(() => navigate({ to: "/home", replace: true }), 900);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
