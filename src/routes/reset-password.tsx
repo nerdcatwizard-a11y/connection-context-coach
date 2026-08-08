@@ -24,6 +24,7 @@ function ResetPassword() {
   const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -53,16 +54,39 @@ function ResetPassword() {
 
   async function updatePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const submitted = String(new FormData(e.currentTarget).get("password") ?? "");
+    const formData = new FormData(e.currentTarget);
+    const submitted = String(formData.get("password") ?? "");
+    const confirmation = String(formData.get("confirmPassword") ?? "");
+    if (submitted !== confirmation) {
+      toast.error("Passwords don't match.");
+      return;
+    }
+    if (!email) {
+      toast.error("Your account email is still loading. Please try again.");
+      return;
+    }
     setBusy(true);
     try {
+      const { data: currentUser, error: userError } = await supabase.auth.getUser();
+      const currentEmail = currentUser.user?.email?.trim().toLowerCase();
+      if (userError || !currentEmail || currentEmail !== email.trim().toLowerCase()) {
+        throw new Error("This reset link does not match the signed-in account. Please request a new one.");
+      }
+
       const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
-      // Make sure the session is live before navigating, otherwise the
-      // protected route gate can bounce back to the sign-in screen.
-      const { data: verified } = await supabase.auth.getUser();
-      if (!verified.user) throw new Error("Password saved, but the session expired. Please sign in.");
-      toast.success("Password saved. Let your phone save it too — sign-in will just work now.");
+
+      // Prove that the auth service accepts this exact email/password pair
+      // before claiming the reset succeeded. This also leaves a fresh session.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: submitted,
+      });
+      if (signInError) {
+        throw new Error("The password was saved but could not be verified. Please request a new reset link.");
+      }
+
+      toast.success("Password saved and verified. Let your phone update the saved password.");
       navigate({ to: "/home", replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
@@ -135,6 +159,17 @@ function ResetPassword() {
                 placeholder="New password"
                 value={password}
                 onInput={(e) => setPassword(e.currentTarget.value)}
+                className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
+              />
+              <input
+                type="password"
+                name="confirmPassword"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                placeholder="Repeat new password"
+                value={confirmPassword}
+                onInput={(e) => setConfirmPassword(e.currentTarget.value)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
               />
               <button

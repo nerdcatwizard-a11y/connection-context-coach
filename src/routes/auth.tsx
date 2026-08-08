@@ -66,6 +66,18 @@ function AuthPage() {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (!event.persisted) return;
+      setBusy(false);
+      setLinkBusy(false);
+      toast.dismiss();
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
 
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
@@ -122,21 +134,16 @@ function AuthPage() {
 
         setSignedUpEmail(normalizedEmail);
       } else {
-        let { error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
           password: submittedPassword,
         });
-        const trimmedPassword = submittedPassword.trim();
-        if (
-          error?.message.toLowerCase().includes("invalid login credentials") &&
-          trimmedPassword !== submittedPassword
-        ) {
-          ({ error } = await supabase.auth.signInWithPassword({
-            email: normalizedEmail,
-            password: trimmedPassword,
-          }));
+        if (error) {
+          if (error.message.toLowerCase().includes("invalid login credentials")) {
+            throw new Error("That email and password do not match. Use Forgot password once to replace and verify the password saved on this phone.");
+          }
+          throw error;
         }
-        if (error) throw error;
         const { data: verified, error: verificationError } = await supabase.auth.getUser();
         if (verificationError || !verified.user) {
           throw new Error("You signed in, but the session could not be verified. Please try again.");
@@ -311,7 +318,7 @@ function AuthPage() {
             </span>
           </div>
 
-          <form onSubmit={handleEmail} className="space-y-3" method="post" action="/auth">
+          <form onSubmit={handleEmail} className="space-y-3">
             <label htmlFor="signin-email" className="sr-only">Email address</label>
             <input
               id="signin-email"
