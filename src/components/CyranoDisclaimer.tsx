@@ -23,10 +23,10 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-left text-xs text-muted-foreground"
+          className="flex w-full items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-left text-xs text-muted-foreground"
         >
-          <Info className="h-3.5 w-3.5 shrink-0 text-primary" />
-          <span className="min-w-0 flex-1 truncate">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+          <span className="min-w-0 flex-1 leading-relaxed">
             Cyrano is your dating app assistant — not a therapist.
           </span>
           <ChevronDown

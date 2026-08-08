@@ -87,7 +87,7 @@ function Home() {
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask Cyrano anything — a message, a situation, a next step…"
+            placeholder="What's your dating question?"
             className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <button
