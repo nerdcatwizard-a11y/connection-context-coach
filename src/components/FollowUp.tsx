@@ -2,6 +2,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Loader2, MessageCircle, Send } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
+import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
+import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { askFollowUp } from "@/lib/ai.functions";
 
 type Turn = { role: "user" | "assistant"; content: string };
