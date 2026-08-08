@@ -66,6 +66,18 @@ function AuthPage() {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (!event.persisted) return;
+      setBusy(false);
+      setLinkBusy(false);
+      toast.dismiss();
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
 
   async function requestConfirmationEmail(targetEmail: string) {
     const { error } = await supabase.auth.resend({
@@ -306,7 +318,7 @@ function AuthPage() {
             </span>
           </div>
 
-          <form onSubmit={handleEmail} className="space-y-3" method="post" action="/auth">
+          <form onSubmit={handleEmail} className="space-y-3">
             <label htmlFor="signin-email" className="sr-only">Email address</label>
             <input
               id="signin-email"

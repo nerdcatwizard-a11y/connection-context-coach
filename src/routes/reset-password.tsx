@@ -67,6 +67,12 @@ function ResetPassword() {
     }
     setBusy(true);
     try {
+      const { data: currentUser, error: userError } = await supabase.auth.getUser();
+      const currentEmail = currentUser.user?.email?.trim().toLowerCase();
+      if (userError || !currentEmail || currentEmail !== email.trim().toLowerCase()) {
+        throw new Error("This reset link does not match the signed-in account. Please request a new one.");
+      }
+
       const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
 
