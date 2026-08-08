@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { analyzeScreenshots } from "@/lib/ai.functions";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
+import { CyranoText } from "@/components/CyranoText";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
@@ -201,7 +202,9 @@ function ScreenshotsPage() {
         <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Cyrano's read</h2>
-            <div className="whitespace-pre-wrap text-sm leading-relaxed">{analysis}</div>
+            <div className="text-sm leading-relaxed">
+              <CyranoText>{analysis}</CyranoText>
+            </div>
           </div>
           <FollowUp
             feature="Read a Conversation"

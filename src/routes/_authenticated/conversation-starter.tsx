@@ -6,6 +6,7 @@ import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { conversationStarter } from "@/lib/ai.functions";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { CyranoText } from "@/components/CyranoText";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
@@ -227,7 +228,9 @@ function StarterPage() {
         <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Openers</h2>
-            <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
+            <div className="text-sm leading-relaxed">
+              <CyranoText>{reply}</CyranoText>
+            </div>
           </div>
           <FollowUp
             feature="Conversation Starter"

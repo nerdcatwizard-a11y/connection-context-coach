@@ -8,6 +8,7 @@ import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
 import { FollowUp } from "@/components/FollowUp";
+import { CyranoText } from "@/components/CyranoText";
 import { ConnectionField } from "@/components/ConnectionField";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { logToConnection } from "@/lib/connection-log";
@@ -270,7 +271,9 @@ function ProfileReviewPage() {
         <div ref={resultRef} className="scroll-mt-4 space-y-3">
           <div className="soft-card space-y-2 p-5">
             <h2 className="font-serif text-lg">Cyrano's feedback</h2>
-            <div className="whitespace-pre-wrap text-sm leading-relaxed">{feedback}</div>
+            <div className="text-sm leading-relaxed">
+              <CyranoText>{feedback}</CyranoText>
+            </div>
           </div>
           <FollowUp
             feature="Review a Profile"

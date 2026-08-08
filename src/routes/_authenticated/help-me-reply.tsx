@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
+import { CyranoText } from "@/components/CyranoText";
 import { helpMeReply } from "@/lib/ai.functions";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
@@ -227,12 +228,14 @@ function HelpMeReplyPage() {
                       )}
                     </button>
                   </div>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{opt.message}</p>
+                  <p className="text-sm leading-relaxed">
+                    <CyranoText>{opt.message}</CyranoText>
+                  </p>
                 </div>
               ))}
               {footer && (
-                <div className="soft-card p-4 text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
-                  {footer}
+                <div className="soft-card p-4 text-sm leading-relaxed text-muted-foreground">
+                  <CyranoText>{footer}</CyranoText>
                 </div>
               )}
               <FollowUp
@@ -262,7 +265,9 @@ function HelpMeReplyPage() {
                   )}
                 </button>
               </div>
-              <div className="whitespace-pre-wrap text-sm leading-relaxed">{reply}</div>
+              <div className="text-sm leading-relaxed">
+                <CyranoText>{reply}</CyranoText>
+              </div>
             </div>
             <FollowUp
               feature="Help Me Reply"
