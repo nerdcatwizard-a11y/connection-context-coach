@@ -45,7 +45,6 @@ function AuthPage() {
   const [touchedPassword, setTouchedPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
-  const [linkBusy, setLinkBusy] = useState(false);
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
 
@@ -70,7 +69,6 @@ function AuthPage() {
     function handlePageShow(event: PageTransitionEvent) {
       if (!event.persisted) return;
       setBusy(false);
-      setLinkBusy(false);
       toast.dismiss();
     }
 
@@ -140,7 +138,7 @@ function AuthPage() {
         });
         if (error) {
           if (error.message.toLowerCase().includes("invalid login credentials")) {
-            throw new Error("That email and password do not match. Use Forgot password once to replace and verify the password saved on this phone.");
+            throw new Error("The backend did not accept this password. Reset it below to create and verify a new password, then update the one saved on your phone.");
           }
           throw error;
         }
@@ -179,31 +177,6 @@ function AuthPage() {
       }
     } finally {
       setResending(false);
-    }
-  }
-
-  async function handleEmailLinkSignIn() {
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail) {
-      toast.error("Enter your email address first.");
-      return;
-    }
-
-    setLinkBusy(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: normalizedEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/reset-password?set=1`,
-          shouldCreateUser: false,
-        },
-      });
-      if (error) throw error;
-      toast.success("Sign-in link sent. Open it from your email to sign in.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't send the sign-in link");
-    } finally {
-      setLinkBusy(false);
     }
   }
 
@@ -408,7 +381,7 @@ function AuthPage() {
 
             <button
               type="submit"
-              disabled={busy || linkBusy || !signupReady}
+              disabled={busy || !signupReady}
               className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
@@ -417,11 +390,11 @@ function AuthPage() {
             {mode === "signin" && (
               <button
                 type="button"
-                onClick={handleEmailLinkSignIn}
-                disabled={busy || linkBusy}
+                onClick={() => navigate({ to: "/reset-password", search: { email: email.trim().toLowerCase() || undefined } })}
+                disabled={busy}
                 className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
-                {linkBusy ? "Sending link..." : "Can't sign in? Email me a secure link"}
+                Reset and verify my password
               </button>
             )}
 

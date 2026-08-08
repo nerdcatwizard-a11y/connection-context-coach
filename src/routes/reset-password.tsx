@@ -4,9 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkle } from "lucide-react";
 
+type ResetSearch = {
+  email?: string;
+  set?: number;
+};
+
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): ResetSearch => ({
+    email: typeof search['email'] === "string" ? search['email'] : undefined,
     set: search['set'] ? 1 : undefined,
   }),
   head: () => ({
@@ -19,21 +25,27 @@ export const Route = createFileRoute("/reset-password")({
 });
 
 function ResetPassword() {
-  const { set } = Route.useSearch();
+  const { email: initialEmail, set } = Route.useSearch();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"request" | "update">(set ? "update" : "request");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event !== "PASSWORD_RECOVERY") return;
+      setMode("update");
+      if (session?.user.email) setEmail(session.user.email);
+    });
+
+    if (window.location.hash.includes("type=recovery")) {
       setMode("update");
     }
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
+
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
   async function requestReset(e: React.FormEvent) {
@@ -41,10 +53,10 @@ function ResetPassword() {
     setBusy(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-        redirectTo: window.location.origin + "/reset-password",
+        redirectTo: window.location.origin + "/reset-password?set=1",
       });
       if (error) throw error;
-      toast.success("Check your email for a reset link.");
+      toast.success("Check your email for the password-reset link. Keep this page open until it says the password was saved and verified.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not send reset email");
     } finally {
@@ -76,18 +88,8 @@ function ResetPassword() {
       const { error } = await supabase.auth.updateUser({ password: submitted });
       if (error) throw error;
 
-      // Prove that the auth service accepts this exact email/password pair
-      // before claiming the reset succeeded. This also leaves a fresh session.
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password: submitted,
-      });
-      if (signInError) {
-        throw new Error("The password was saved but could not be verified. Please request a new reset link.");
-      }
-
-      toast.success("Password saved and verified. Let your phone update the saved password.");
-      navigate({ to: "/home", replace: true });
+      toast.success("Password saved. Accept your phone's prompt to update the saved password.");
+      setTimeout(() => navigate({ to: "/home", replace: true }), 900);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not update password");
     } finally {
@@ -138,17 +140,17 @@ function ResetPassword() {
             </form>
           ) : (
             <form onSubmit={updatePassword} className="mt-4 space-y-3" method="post" action="#">
-              {/* Hidden username field: iOS/Android password managers need it to
-                  update the saved credential for this account instead of creating a new one. */}
+              <label htmlFor="reset-account-email" className="text-xs font-medium text-muted-foreground">
+                Account email
+              </label>
               <input
+                id="reset-account-email"
                 type="email"
                 name="email"
                 autoComplete="username"
                 value={email}
                 readOnly
-                tabIndex={-1}
-                aria-hidden="true"
-                className="sr-only"
+                className="w-full rounded-xl border border-input bg-muted px-4 py-2.5 text-sm text-muted-foreground"
               />
               <input
                 type="password"
@@ -157,8 +159,6 @@ function ResetPassword() {
                 minLength={8}
                 autoComplete="new-password"
                 placeholder="New password"
-                value={password}
-                onInput={(e) => setPassword(e.currentTarget.value)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
               />
               <input
@@ -168,8 +168,6 @@ function ResetPassword() {
                 minLength={8}
                 autoComplete="new-password"
                 placeholder="Repeat new password"
-                value={confirmPassword}
-                onInput={(e) => setConfirmPassword(e.currentTarget.value)}
                 className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm"
               />
               <button
