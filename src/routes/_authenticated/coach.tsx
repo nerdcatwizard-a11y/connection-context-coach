@@ -146,7 +146,7 @@ function CoachPage() {
         <button
           type="submit"
           disabled={busy || !input.trim()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           Send <ArrowRight className="h-4 w-4" />
         </button>
