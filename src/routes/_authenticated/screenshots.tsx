@@ -58,7 +58,7 @@ async function filesToDataUrls(files: File[] | FileList): Promise<{ ok: string[]
 
 function ScreenshotsPage() {
   const call = useServerFn(analyzeScreenshots);
-  const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { analysis: showAnalysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [images, setImages] = useState<string[]>([]);
   const [requestType, setRequestType] = useState<"understand" | "reply" | "review">("understand");
   const [userContext, setUserContext] = useState("");
@@ -87,7 +87,7 @@ function ScreenshotsPage() {
     setAnalysis(null);
     setBusy(true);
     try {
-      const res = await call({ data: { images, requestType, userContext, analysis } });
+      const res = await call({ data: { images, requestType, userContext, analysis: showAnalysis } });
       setAnalysis(res.analysis);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Read a Conversation", body: res.analysis });
@@ -189,7 +189,7 @@ function ScreenshotsPage() {
           />
         </label>
 
-        <AnalysisToggle analysis={analysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
+        <AnalysisToggle analysis={showAnalysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
           disabled={busy}
