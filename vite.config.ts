@@ -13,14 +13,3 @@ export default defineConfig({
     server: { entry: "server" },
   },
 });
-// Hi this is stupid Brandon. The below line of code should switch this damm app to SPA. If it breaks delete everything below this comment
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-
-export default defineConfig({
-  tanstackStart: {
-    server: { entry: "server" },
-    spa: {
-      enabled: true,
-    },
-  },
-});
