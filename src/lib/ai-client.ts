@@ -1,7 +1,7 @@
 // Client-side wrappers around the /api/ai/* routes.
-// These replace the previous createServerFn RPCs so the app works from a
-// Capacitor webview (capacitor://localhost), which does not share an origin
-// or cookies with the deployed site.
+// These are used from the browser and from the Capacitor webview
+// (capacitor://localhost), which does not share an origin or cookies with the
+// deployed site. VITE_API_BASE_URL sets the deployed origin for Capacitor builds.
 import { supabase } from "@/integrations/supabase/client";
 
 // Set VITE_API_BASE_URL to your deployed origin (e.g. https://cyrano.lovable.app)
