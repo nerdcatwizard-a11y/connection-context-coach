@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
-import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
-import { analyzeScreenshots } from "@/lib/ai.functions";
+import { analyzeScreenshots } from "@/lib/ai-client";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
@@ -57,7 +56,7 @@ async function filesToDataUrls(files: File[] | FileList): Promise<{ ok: string[]
 }
 
 function ScreenshotsPage() {
-  const call = useServerFn(analyzeScreenshots);
+  const call = analyzeScreenshots;
   const { analysis: showAnalysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [images, setImages] = useState<string[]>([]);
   const [requestType, setRequestType] = useState<"understand" | "reply" | "review">("understand");

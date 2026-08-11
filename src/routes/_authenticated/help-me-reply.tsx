@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoText } from "@/components/CyranoText";
-import { helpMeReply } from "@/lib/ai.functions";
+import { helpMeReply } from "@/lib/ai-client";
 import { FollowUp } from "@/components/FollowUp";
 import { ConnectionField } from "@/components/ConnectionField";
 import { ScreenshotUploader } from "@/components/ScreenshotUploader";
@@ -72,7 +71,7 @@ function parseOptions(reply: string): { options: Option[]; footer: string | null
 }
 
 function HelpMeReplyPage() {
-  const call = useServerFn(helpMeReply);
+  const call = helpMeReply;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [received, setReceived] = useState("");
   const [history, setHistory] = useState("");

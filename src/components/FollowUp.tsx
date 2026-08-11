@@ -1,10 +1,9 @@
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Loader2, MessageCircle, Send } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
-import { askFollowUp } from "@/lib/ai.functions";
+import { askFollowUp } from "@/lib/ai-client";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 
 type Turn = { role: "user" | "assistant"; content: string };
@@ -20,7 +19,7 @@ export function FollowUp({
   priorOutput: string;
   situationContext?: string;
 }) {
-  const call = useServerFn(askFollowUp);
+  const call = askFollowUp;
   const { analysis } = useAnalysisMode();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");

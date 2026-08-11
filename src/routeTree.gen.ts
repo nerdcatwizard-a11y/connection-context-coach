@@ -29,6 +29,7 @@ import { Route as AuthenticatedConversationStarterRouteImport } from './routes/_
 import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedConnectionsIndexRouteImport } from './routes/_authenticated/connections.index'
+import { Route as ApiAiActionRouteImport } from './routes/api/ai/$action'
 import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections.$id'
 
 const TermsRoute = TermsRouteImport.update({
@@ -136,6 +137,11 @@ const AuthenticatedConnectionsIndexRoute =
     path: '/connections/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiAiActionRoute = ApiAiActionRouteImport.update({
+  id: '/api/ai/$action',
+  path: '/api/ai/$action',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedConnectionsIdRoute =
   AuthenticatedConnectionsIdRouteImport.update({
     id: '/connections/$id',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/ai/$action': typeof ApiAiActionRoute
   '/connections/': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/ai/$action': typeof ApiAiActionRoute
   '/connections': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRoutesById {
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/_authenticated/screenshots': typeof AuthenticatedScreenshotsRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/ai/$action': typeof ApiAiActionRoute
   '/_authenticated/connections/': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/screenshots'
     | '/welcome'
     | '/connections/$id'
+    | '/api/ai/$action'
     | '/connections/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/screenshots'
     | '/welcome'
     | '/connections/$id'
+    | '/api/ai/$action'
     | '/connections'
   id:
     | '__root__'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/_authenticated/screenshots'
     | '/_authenticated/welcome'
     | '/_authenticated/connections/$id'
+    | '/api/ai/$action'
     | '/_authenticated/connections/'
   fileRoutesById: FileRoutesById
 }
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApiAiActionRoute: typeof ApiAiActionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -435,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConnectionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/ai/$action': {
+      id: '/api/ai/$action'
+      path: '/api/ai/$action'
+      fullPath: '/api/ai/$action'
+      preLoaderRoute: typeof ApiAiActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/connections/$id': {
       id: '/_authenticated/connections/$id'
       path: '/connections/$id'
@@ -488,17 +508,8 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApiAiActionRoute: ApiAiActionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

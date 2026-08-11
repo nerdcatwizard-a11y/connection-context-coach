@@ -1,5 +1,4 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -9,7 +8,7 @@ import { AnalysisToggle } from "@/components/AnalysisToggle";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
-import { sendCoachMessage, getChat } from "@/lib/ai.functions";
+import { sendCoachMessage, getChat } from "@/lib/ai-client";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -31,8 +30,8 @@ type Msg = { role: "user" | "assistant" | "system"; content: string; id?: string
 
 function CoachPage() {
   const { q, chat } = useSearch({ from: "/_authenticated/coach" });
-  const send = useServerFn(sendCoachMessage);
-  const load = useServerFn(getChat);
+  const send = sendCoachMessage;
+  const load = getChat;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
 
   const [chatId, setChatId] = useState<string | null>(chat ?? null);

@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
-import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
-import { reviewProfile } from "@/lib/ai.functions";
+import { reviewProfile } from "@/lib/ai-client";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { usePasteImages } from "@/hooks/use-paste-images";
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/profile-review")({
 });
 
 function ProfileReviewPage() {
-  const call = useServerFn(reviewProfile);
+  const call = reviewProfile;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [whose, setWhose] = useState<"me" | "connection">("me");
   const [datingApp, setDatingApp] = useState("");
