@@ -20,6 +20,13 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
     // Static, client-rendered shell for the Capacitor (iOS/Android) build.
-    spa: { enabled: isCapacitorBuild },
+    spa: {
+      enabled: isCapacitorBuild,
+      // Write the shell as index.html instead of the default _shell.html,
+      // since Capacitor requires the entry file to be literally named index.html.
+      prerender: {
+        outputPath: "/index.html",
+      },
+    },
   },
 });
