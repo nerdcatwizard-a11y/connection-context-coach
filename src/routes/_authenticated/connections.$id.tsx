@@ -1,12 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 
 import { ArrowLeft, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONNECTION_STAGES, DATING_APPS } from "@/lib/dating-apps";
-import { generateConnectionInsight } from "@/lib/ai.functions";
+import { generateConnectionInsight } from "@/lib/ai-client";
 import { FollowUp } from "@/components/FollowUp";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
@@ -65,7 +64,7 @@ export const Route = createFileRoute("/_authenticated/connections/$id")({
 function ConnectionDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const insightFn = useServerFn(generateConnectionInsight);
+  const insightFn = generateConnectionInsight;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
 
   const [conn, setConn] = useState<Conn | null>(null);

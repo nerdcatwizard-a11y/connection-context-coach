@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
-import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
-import { conversationStarter } from "@/lib/ai.functions";
+import { conversationStarter } from "@/lib/ai-client";
 import { DATING_APPS } from "@/lib/dating-apps";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
@@ -29,7 +28,7 @@ const TONES = ["Warm", "Playful", "Curious", "Direct", "Flirty"];
 const MAX = 6;
 
 function StarterPage() {
-  const call = useServerFn(conversationStarter);
+  const call = conversationStarter;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [profileNotes, setProfileNotes] = useState("");
   const [datingApp, setDatingApp] = useState("");
