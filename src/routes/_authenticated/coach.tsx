@@ -116,8 +116,8 @@ function CoachPage() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto rounded-xl p-4 md:p-6">
         {messages.length === 0 && !busy && (
           <p className="text-sm text-muted-foreground">
-            Start by describing what's going on — a message you got, a situation, or a feeling
-            you're sitting with.
+            Start by describing what's going on — a message you got, a dating situation, or a
+            feeling you're sitting with.
           </p>
         )}
         <div className="space-y-4">

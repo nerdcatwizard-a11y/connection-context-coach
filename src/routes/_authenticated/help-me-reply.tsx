@@ -140,7 +140,7 @@ function HelpMeReplyPage() {
         <ScreenshotUploader
           images={images}
           onChange={setImages}
-          title="Screenshot of the conversation (optional)"
+          title="Screenshot of your text conversation (optional)"
           label="Upload a screenshot of the conversation"
         />
 

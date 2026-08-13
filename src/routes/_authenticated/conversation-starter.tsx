@@ -96,12 +96,25 @@ function StarterPage() {
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Help Me Get the Conversation Started</h1>
         <p className="text-sm text-muted-foreground">
-          Tell Cyrano what you noticed about their profile — or upload/paste a screenshot of the bio. You'll get openers grounded in something real.
+          Tell Cyrano a little about the situation, person you are approaching, or what you noticed about their profile — or upload/paste a screenshot of the bio. You'll get openers grounded in something real.
         </p>
       </div>
       <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
+        <label className="block space-y-1.5">
+          <span className="text-sm font-medium">
+            Tell Cyrano about the situation or person
+          </span>
+          <textarea
+            value={profileNotes}
+            onChange={(e) => setProfileNotes(e.target.value)}
+            rows={5}
+            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Where you met or matched, what they're like, photos, prompts, bio details — whatever caught your attention"
+          />
+        </label>
+
         <div className="space-y-2">
           <div className="flex items-baseline justify-between">
             <span className="text-sm font-medium">Bio / profile screenshots (optional)</span>
@@ -154,18 +167,6 @@ function StarterPage() {
 
         <ConnectionField value={connectionId} onChange={setConnectionId} />
 
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium">
-            What did you notice about their profile?
-          </span>
-          <textarea
-            value={profileNotes}
-            onChange={(e) => setProfileNotes(e.target.value)}
-            rows={5}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Photos, prompts, bio details — whatever caught your attention"
-          />
-        </label>
 
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Which platform? (optional)</span>
