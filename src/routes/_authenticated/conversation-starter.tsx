@@ -168,7 +168,7 @@ function StarterPage() {
         </label>
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium">Which app? (optional)</span>
+          <span className="text-sm font-medium">Which platform? (optional)</span>
           <select
             value={datingApp}
             onChange={(e) => setDatingApp(e.target.value)}
