@@ -17,7 +17,7 @@ export const DATING_APPS = [
   "Plenty of Fish",
   "Other",
   "Prefer not to say",
-  "I'm not using a dating app yet",
+  "I'm not using a dating platform yet",
 ] as const;
 
 export type DatingApp = (typeof DATING_APPS)[number];

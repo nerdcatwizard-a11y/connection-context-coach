@@ -316,7 +316,7 @@ async function conversationStarter(raw: unknown) {
     throw new HttpError(400, "Add profile notes or a screenshot to work from.");
   }
 
-  const textPart = `The user wants to open a conversation on a dating app${data.datingApp ? ` (${data.datingApp})` : ""}.
+  const textPart = `The user wants to open a conversation on a dating platform${data.datingApp ? ` (${data.datingApp})` : ""}.
 
 ${hasNotes ? `What they noticed / know about the person's profile:\n"""\n${data.profileNotes}\n"""` : "They've attached screenshots of the profile — read them carefully."}
 ${data.goal ? `What they want out of the connection: ${data.goal}` : ""}

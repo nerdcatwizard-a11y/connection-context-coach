@@ -5,7 +5,7 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Cyrano" },
-      { name: "description", content: "Simple pricing for Cyrano, your dating app assistant and AI dating coach. Start free, upgrade when you need more." },
+      { name: "description", content: "Simple pricing for Cyrano, your dating assistant and AI dating coach. Start free, upgrade when you need more." },
       { property: "og:title", content: "Pricing — Cyrano" },
       { property: "og:description", content: "Start free, upgrade when you need more." },
       { property: "og:type", content: "website" },

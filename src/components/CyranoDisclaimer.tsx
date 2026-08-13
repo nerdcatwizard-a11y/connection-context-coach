@@ -7,7 +7,7 @@ interface Props {
 }
 
 const TEXT =
-  "I'm Cyrano, your dating app assistant and AI dating and relationship coach. I can offer educational guidance and help you think through dating app situations, but I'm not a licensed therapist or mental-health professional. If something feels urgent, please reach out to local emergency services or a trusted person.";
+  "I'm Cyrano, your dating assistant and AI dating and relationship coach. I can offer educational guidance and help you think through dating situations, but I'm not a licensed therapist or mental-health professional. If something feels urgent, please reach out to local emergency services or a trusted person.";
 
 export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         >
           <Info className="h-3 w-3 shrink-0 text-primary" />
           <span className="min-w-0 flex-1 whitespace-nowrap">
-            Cyrano is your dating app assistant — not a therapist.
+            Cyrano is your dating assistant — not a therapist.
           </span>
           <ChevronDown
             className={`h-3 w-3 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
@@ -47,7 +47,7 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         <p>
           <span className="font-medium text-foreground">I'm Cyrano</span>, your dating
           app assistant and AI dating and relationship coach. I can offer educational
-          guidance and help you think through dating app situations, but I'm not a
+          guidance and help you think through dating situations, but I'm not a
           licensed therapist or mental-health professional. If something feels urgent,
           please reach out to local emergency services or a trusted person.
         </p>

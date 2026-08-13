@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/welcome")({
 });
 
 const HELP_WITH = [
-  "Reply help on dating apps",
+  "Reply help on dating platforms",
   "Starting conversations",
   "Reading between the lines",
   "Moving toward a date",
@@ -111,7 +111,7 @@ function Welcome() {
         </div>
 
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Cyrano — your dating app assistant
+          Cyrano — your dating assistant
         </p>
         <h1 className="mt-2 font-serif text-2xl">Welcome to Cyrano</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -143,7 +143,7 @@ function Welcome() {
                 </div>
               ))}
               <div>
-                <p className="text-sm font-medium">Which dating apps are you on?</p>
+                <p className="text-sm font-medium">Which dating platforms are you on?</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {DATING_APPS.map((o) => {
                     const active = apps.includes(o);
@@ -224,7 +224,7 @@ function Welcome() {
       </div>
 
       <p className="mx-auto mt-6 max-w-md text-center text-xs text-muted-foreground">
-        I'm Cyrano, your dating app assistant and AI dating and relationship coach. I
+        I'm Cyrano, your dating assistant and AI dating and relationship coach. I
         can offer educational guidance and help you think through dating app
         situations, but I'm not a licensed therapist or mental-health professional. If
         something feels urgent, please reach out to local emergency services or a trusted

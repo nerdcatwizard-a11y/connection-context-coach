@@ -28,7 +28,7 @@ const features = [
     to: "/conversation-starter",
     icon: Feather,
     title: "Help Me Get the Conversation Started",
-    body: "Start a dating-app conversation using something specific from their profile without sounding generic, cheesy, or overly clever.",
+    body: "Start a dating conversation using something specific from their profile without sounding generic, cheesy, or overly clever.",
   },
   {
     to: "/screenshots",
@@ -82,14 +82,14 @@ function Home() {
           <Sparkle className="h-10 w-10 md:h-12 md:w-12" />
         </span>
         <span className="font-serif text-4xl md:text-5xl">Cyrano</span>
-        <p className="text-sm text-muted-foreground">Your Dating App Assistant</p>
+        <p className="text-sm text-muted-foreground">Your Dating Assistant</p>
       </div>
       <div className="flex flex-1 flex-col justify-center">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           {greeting()}{name ? `, ${name}` : ""}
         </p>
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Cyrano — your dating app assistant
+          Cyrano — your dating assistant
         </p>
         <h1 className="mt-2 font-serif text-3xl md:text-4xl">What can I help you with?</h1>
         <form onSubmit={ask} className="mt-5 flex flex-col gap-2 sm:flex-row">

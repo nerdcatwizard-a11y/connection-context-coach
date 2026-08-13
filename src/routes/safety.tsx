@@ -31,7 +31,7 @@ function Safety() {
         </div>
         <div className="prose prose-neutral mt-6 max-w-none text-sm text-foreground">
           <p className="text-muted-foreground">
-            Cyrano is your dating app assistant and AI dating and relationship coach. It
+            Cyrano is your dating assistant and AI dating and relationship coach. It
             provides AI-powered coaching and educational guidance only. It is not a
             substitute for licensed mental-health care, medical advice, legal advice,
             crisis services, or emergency services.
