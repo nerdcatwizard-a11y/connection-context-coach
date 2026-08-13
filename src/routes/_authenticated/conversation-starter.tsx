@@ -154,18 +154,6 @@ function StarterPage() {
 
         <ConnectionField value={connectionId} onChange={setConnectionId} />
 
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium">
-            What did you notice about their profile?
-          </span>
-          <textarea
-            value={profileNotes}
-            onChange={(e) => setProfileNotes(e.target.value)}
-            rows={5}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Photos, prompts, bio details — whatever caught your attention"
-          />
-        </label>
 
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Which platform? (optional)</span>
