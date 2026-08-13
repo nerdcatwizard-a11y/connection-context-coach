@@ -225,7 +225,7 @@ function Welcome() {
 
       <p className="mx-auto mt-6 max-w-md text-center text-xs text-muted-foreground">
         I'm Cyrano, your dating assistant and AI dating and relationship coach. I
-        can offer educational guidance and help you think through dating app
+        can offer educational guidance and help you think through dating
         situations, but I'm not a licensed therapist or mental-health professional. If
         something feels urgent, please reach out to local emergency services or a trusted
         person.
