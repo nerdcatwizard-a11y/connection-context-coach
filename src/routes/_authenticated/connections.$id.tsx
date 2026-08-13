@@ -471,7 +471,7 @@ function EditConnectionDialog({
 
         <TextField label="Name / nickname" value={f.nickname} onChange={(v) => setF({ ...f, nickname: v })} />
         <SelectField
-          label="Dating app"
+          label="Dating platform"
           value={f.dating_app}
           onChange={(v) => setF({ ...f, dating_app: v })}
           options={[{ value: "", label: "—" }, ...DATING_APPS.map((a) => ({ value: a, label: a }))]}
