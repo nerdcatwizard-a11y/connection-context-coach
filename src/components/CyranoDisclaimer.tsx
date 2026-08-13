@@ -46,7 +46,7 @@ export function CyranoDisclaimer({ variant = "inline", className = "" }: Props) 
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
         <p>
           <span className="font-medium text-foreground">I'm Cyrano</span>, your dating
-          app assistant and AI dating and relationship coach. I can offer educational
+          assistant and AI dating and relationship coach. I can offer educational
           guidance and help you think through dating situations, but I'm not a
           licensed therapist or mental-health professional. If something feels urgent,
           please reach out to local emergency services or a trusted person.
