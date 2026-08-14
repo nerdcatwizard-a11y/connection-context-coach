@@ -837,7 +837,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_ai_message: {
+        Args: { _limit: number }
+        Returns: {
+          allowed: boolean
+          limit: number
+          used: number
+        }[]
+      }
+      get_ai_usage: {
+        Args: never
+        Returns: {
+          used: number
+        }[]
+      }
     }
     Enums: {
       chat_role: "user" | "assistant" | "system"
