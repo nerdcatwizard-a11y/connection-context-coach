@@ -207,53 +207,6 @@ function AuthPage() {
     }
   }
 
-  if (signedUpEmail) {
-    return (
-      <div className="min-h-screen gradient-hero">
-        <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-5 py-10">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <Sparkle className="h-4 w-4" />
-            </span>
-            <span className="font-serif text-xl">Cyrano</span>
-          </Link>
-
-          <div className="mt-8 w-full soft-card p-6 text-center">
-            <h1 className="font-serif text-2xl">Thank You!</h1>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Please check your email to confirm your account.
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              We sent a confirmation link to <span className="text-foreground">{signedUpEmail}</span>.
-              Check your spam folder if you don't see it. After confirming, come back here and sign in.
-            </p>
-
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={resending}
-              className="mt-5 w-full rounded-xl border border-dashed border-border px-4 py-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60"
-            >
-              {resending ? "Resending..." : "Didn't get the email? Resend confirmation"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setSignedUpEmail(null);
-                setMode("signin");
-                setPassword("");
-                setConfirmPassword("");
-              }}
-              className="mt-3 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95"
-            >
-              Back to sign in
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen gradient-hero">
