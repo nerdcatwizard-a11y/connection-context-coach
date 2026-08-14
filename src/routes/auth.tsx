@@ -162,28 +162,6 @@ function AuthPage() {
     }
   }
 
-  async function handleResend() {
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail) {
-      toast.error("Enter your email above first.");
-      return;
-    }
-    setResending(true);
-    try {
-      await requestConfirmationEmail(normalizedEmail);
-      toast.success("Confirmation email resent. Check your inbox and spam folder.");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Couldn't resend email";
-      if (message.toLowerCase().includes("already") || message.toLowerCase().includes("confirm")) {
-        toast.info("That email is already confirmed. Please sign in instead.");
-        setMode("signin");
-      } else {
-        toast.error(message);
-      }
-    } finally {
-      setResending(false);
-    }
-  }
 
   async function handleOAuth(provider: "google" | "apple") {
     setBusy(true);
