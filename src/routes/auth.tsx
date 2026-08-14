@@ -121,7 +121,21 @@ function AuthPage() {
           return;
         }
 
-        setSignedUpEmail(normalizedEmail);
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: normalizedEmail,
+            password: submittedPassword,
+          });
+          if (signInError) throw signInError;
+        }
+
+        const { data: created, error: createdError } = await supabase.auth.getUser();
+        if (createdError || !created.user) {
+          throw new Error("Account created, but we couldn't start your session. Please sign in.");
+        }
+
+        toast.success("Welcome to Cyrano!");
+        navigate({ to: "/home", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
