@@ -92,3 +92,6 @@ export const askFollowUp = (a: Args<{
   question: string;
   analysis?: boolean;
 }>) => post<{ reply: string }>("ask-follow-up", a.data);
+
+export const getUsage = () =>
+  post<{ used: number; limit: number; remaining: number; unlimited: boolean }>("get-usage", {});
