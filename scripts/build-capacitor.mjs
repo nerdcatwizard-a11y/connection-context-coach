@@ -7,13 +7,40 @@
 //   - runs `vite build`
 //   - copies dist/client/_shell.html -> dist/client/index.html when present,
 //     otherwise requires dist/client/index.html to already exist
+//   - verifies the compiled bundle does not contain an unexpanded URL placeholder
+//   - runs `cap sync` so Android/iOS receive the freshly built web assets
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 
 const DEFAULT_API_BASE = "https://connection-context-coach.lovable.app";
 
-const apiBase = (process.env["VITE_API_BASE_URL"] || "").trim() || DEFAULT_API_BASE;
+function validApiBase(value) {
+  const candidate = (value || "").trim().replace(/\/$/, "");
+  if (!candidate || candidate.includes("${") || candidate.includes("%")) return "";
+  try {
+    const url = new URL(candidate);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.origin : "";
+  } catch {
+    return "";
+  }
+}
+
+function filesBelow(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const location = path.join(directory, entry.name);
+    return entry.isDirectory() ? filesBelow(location) : [location];
+  });
+}
+
+const suppliedApiBase = process.env["VITE_API_BASE_URL"];
+const apiBase = validApiBase(suppliedApiBase) || DEFAULT_API_BASE;
+if (suppliedApiBase && !validApiBase(suppliedApiBase)) {
+  console.warn("[build:capacitor] ignored invalid VITE_API_BASE_URL and used the published URL");
+}
+
+const clientDir = path.join(process.cwd(), "dist", "client");
+rmSync(clientDir, { recursive: true, force: true });
 
 const result = spawnSync("vite", ["build"], {
   stdio: "inherit",
@@ -25,7 +52,6 @@ if (result.status !== 0) {
   process.exit(result.status ?? 1);
 }
 
-const clientDir = path.join(process.cwd(), "dist", "client");
 const shell = path.join(clientDir, "_shell.html");
 const index = path.join(clientDir, "index.html");
 
@@ -39,4 +65,19 @@ if (existsSync(shell)) {
   process.exit(1);
 }
 
-console.log(`[build:capacitor] done. VITE_API_BASE_URL=${apiBase}`);
+const textAssets = filesBelow(clientDir).filter((file) => /\.(?:html|js|css|json)$/i.test(file));
+const badAsset = textAssets.find((file) => readFileSync(file, "utf8").includes("${VITE_API_BASE_URL"));
+if (badAsset) {
+  console.error(`[build:capacitor] unexpanded VITE_API_BASE_URL found in ${badAsset}`);
+  process.exit(1);
+}
+
+const sync = spawnSync("cap", ["sync"], {
+  stdio: "inherit",
+  shell: true,
+});
+if (sync.status !== 0) {
+  process.exit(sync.status ?? 1);
+}
+
+console.log(`[build:capacitor] built and synced. VITE_API_BASE_URL=${apiBase}`);
