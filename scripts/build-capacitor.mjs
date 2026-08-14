@@ -40,11 +40,19 @@ if (suppliedApiBase && !validApiBase(suppliedApiBase)) {
 }
 
 const clientDir = path.join(process.cwd(), "dist", "client");
+const viteCli = path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js");
+const capacitorCli = path.join(process.cwd(), "node_modules", "@capacitor", "cli", "bin", "capacitor");
+
+if (!existsSync(viteCli) || !existsSync(capacitorCli)) {
+  console.error("[build:capacitor] dependencies are missing. Run `bun install` in the project folder, then try again.");
+  process.exit(1);
+}
+
 rmSync(clientDir, { recursive: true, force: true });
 
-const result = spawnSync("vite", ["build"], {
+const result = spawnSync(process.execPath, [viteCli, "build"], {
   stdio: "inherit",
-  shell: true, // resolves the local .bin shim on Windows (vite.cmd) too
+  shell: false,
   env: { ...process.env, CAPACITOR: "1", VITE_API_BASE_URL: apiBase },
 });
 
@@ -72,9 +80,9 @@ if (badAsset) {
   process.exit(1);
 }
 
-const sync = spawnSync("cap", ["sync"], {
+const sync = spawnSync(process.execPath, [capacitorCli, "sync"], {
   stdio: "inherit",
-  shell: true,
+  shell: false,
 });
 if (sync.status !== 0) {
   process.exit(sync.status ?? 1);
