@@ -183,6 +183,14 @@ function AuthPage() {
   async function handleOAuth(provider: "google" | "apple") {
     setBusy(true);
     try {
+      if (isNative()) {
+        // Native: open the provider in the system browser and let the
+        // appUrlOpen deep-link listener finish the sign in.
+        await signInWithOAuthNative(provider);
+        setBusy(false);
+        return;
+      }
+
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
