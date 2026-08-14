@@ -47,8 +47,6 @@ function AuthPage() {
   const [touchedPassword, setTouchedPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
-  const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
-  const [resending, setResending] = useState(false);
 
   const problems = passwordProblems(password);
   const passwordsMatch = password.length > 0 && password === confirmPassword;
