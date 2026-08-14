@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
+import { getUsage } from "@/lib/ai-client";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -59,13 +60,16 @@ const features = [
 function Home() {
   const [name, setName] = useState<string>("");
   const [question, setQuestion] = useState("");
+  const [usage, setUsage] = useState<{ remaining: number; limit: number; unlimited: boolean } | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const meta = data.user?.user_metadata as { name?: string; full_name?: string } | undefined;
       setName(meta?.name || meta?.full_name || data.user?.email?.split("@")[0] || "");
     });
+    getUsage().then(setUsage).catch(() => {});
   }, []);
+
 
   function ask(e: React.FormEvent) {
     e.preventDefault();
@@ -109,7 +113,16 @@ function Home() {
           </button>
         </form>
         <p className="mt-3 text-xs text-muted-foreground">
-          Free plan: 10 AI messages per day. <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+          {usage?.unlimited ? (
+            "Unlimited AI messages."
+          ) : (
+            <>
+              {usage
+                ? `${usage.remaining} of ${usage.limit} messages left today.`
+                : "Free plan: 10 AI messages per day."}{" "}
+              <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+            </>
+          )}
         </p>
       </div>
     </section>
