@@ -4,6 +4,8 @@ import { z } from "zod";
 import { Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { isNative } from "@/lib/native";
+import { signInWithOAuthNative } from "@/lib/native-auth";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
