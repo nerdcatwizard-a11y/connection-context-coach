@@ -3,30 +3,61 @@
 // (capacitor://localhost), which does not share an origin or cookies with the
 // deployed site. VITE_API_BASE_URL sets the deployed origin for Capacitor builds.
 import { supabase } from "@/integrations/supabase/client";
+import { isNative } from "@/lib/native";
 
-// Set VITE_API_BASE_URL to your deployed origin (e.g. https://cyrano.lovable.app)
-// when building the Capacitor bundle. In the browser it stays relative.
-const API_BASE = (import.meta.env["VITE_API_BASE_URL"] as string | undefined)?.replace(/\/$/, "") ?? "";
+// Deployed origin used by the native (Capacitor) shell, where the app files are
+// served from capacitor://localhost and relative /api/* URLs would hit the local
+// static shell instead of the server.
+const PUBLISHED_ORIGIN = "https://connection-context-coach.lovable.app";
+
+function resolveApiBase(): string {
+  const configured = (import.meta.env["VITE_API_BASE_URL"] as string | undefined)?.replace(/\/$/, "");
+  if (configured) return configured;
+  if (typeof window === "undefined") return "";
+  const protocol = window.location.protocol;
+  if (isNative() || (protocol !== "http:" && protocol !== "https:")) return PUBLISHED_ORIGIN;
+  return "";
+}
 
 async function post<T>(action: string, payload: unknown): Promise<T> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
 
-  const res = await fetch(`${API_BASE}/api/ai/${action}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(payload ?? {}),
-  });
+  const url = `${resolveApiBase()}/api/ai/${action}`;
 
-  const json = (await res.json().catch(() => null)) as { error?: string } | null;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload ?? {}),
+    });
+  } catch {
+    throw new Error("Couldn't reach Cyrano's server. Check your connection and try again.");
+  }
+
+  const text = await res.text();
+  let json: (Record<string, unknown> & { error?: string }) | null = null;
+  try {
+    json = text ? (JSON.parse(text) as Record<string, unknown> & { error?: string }) : null;
+  } catch {
+    json = null;
+  }
+
   if (!res.ok) {
     throw new Error(json?.error || `Request failed (${res.status})`);
   }
+  if (!json) {
+    throw new Error(
+      `Unexpected response from the server (HTTP ${res.status}) — the app may be pointed at the wrong API URL (${url}). ${text.slice(0, 120)}`,
+    );
+  }
   return json as T;
 }
+
 
 type Args<T> = { data: T };
 
