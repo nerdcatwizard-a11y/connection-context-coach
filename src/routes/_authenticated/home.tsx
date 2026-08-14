@@ -113,7 +113,16 @@ function Home() {
           </button>
         </form>
         <p className="mt-3 text-xs text-muted-foreground">
-          Free plan: 10 AI messages per day. <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+          {usage?.unlimited ? (
+            "Unlimited AI messages."
+          ) : (
+            <>
+              {usage
+                ? `${usage.remaining} of ${usage.limit} messages left today.`
+                : "Free plan: 10 AI messages per day."}{" "}
+              <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+            </>
+          )}
         </p>
       </div>
     </section>
