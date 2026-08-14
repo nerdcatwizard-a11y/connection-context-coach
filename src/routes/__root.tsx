@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { NativeDeepLinkHandler } from "../components/NativeDeepLinkHandler";
 
 function NotFoundComponent() {
   return (
@@ -121,6 +122,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <NativeDeepLinkHandler />
       <Outlet />
       <Toaster position="bottom-center" richColors />
     </QueryClientProvider>

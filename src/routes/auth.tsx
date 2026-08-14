@@ -4,6 +4,8 @@ import { z } from "zod";
 import { Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { isNative } from "@/lib/native";
+import { signInWithOAuthNative } from "@/lib/native-auth";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
@@ -183,6 +185,14 @@ function AuthPage() {
   async function handleOAuth(provider: "google" | "apple") {
     setBusy(true);
     try {
+      if (isNative()) {
+        // Native: open the provider in the system browser and let the
+        // appUrlOpen deep-link listener finish the sign in.
+        await signInWithOAuthNative(provider);
+        setBusy(false);
+        return;
+      }
+
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
