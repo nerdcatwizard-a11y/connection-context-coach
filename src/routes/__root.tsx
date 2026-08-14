@@ -122,6 +122,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <NativeDeepLinkHandler />
       <Outlet />
       <Toaster position="bottom-center" richColors />
     </QueryClientProvider>
