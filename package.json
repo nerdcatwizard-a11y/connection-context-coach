@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:capacitor": "node scripts/build-capacitor.mjs"
+    "build:capacitor": "node scripts/build-capacitor.mjs",
+    "cap": "node node_modules/@capacitor/cli/bin/capacitor",
+    "cap:sync": "node node_modules/@capacitor/cli/bin/capacitor sync",
+    "open:android": "node node_modules/@capacitor/cli/bin/capacitor open android",
+    "open:ios": "node node_modules/@capacitor/cli/bin/capacitor open ios"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
