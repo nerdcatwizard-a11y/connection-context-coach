@@ -23,6 +23,6 @@ So: no, the limit is not enforced today. A free user can send unlimited messages
 - New read-only action `get-usage` returning `{ used, limit, unlimited }` for the home indicator.
 - Daily limit kept as a single constant so it's easy to change.
 
-## Open question
+## Reset window
 
-Confirm the reset window: midnight UTC (simplest) vs. the user's local midnight vs. a rolling 24 hours.
+Counts reset at midnight UTC: `period` is `day` and `period_start` is the current UTC date. The user-facing message says "Resets at midnight UTC."
