@@ -10,14 +10,32 @@ import { isNative } from "@/lib/native";
 // static shell instead of the server.
 const PUBLISHED_ORIGIN = "https://connection-context-coach.lovable.app";
 
+function sanitizeBase(value: unknown): string {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim().replace(/\/$/, "");
+  // Guard against an unexpanded shell placeholder being baked in on Windows,
+  // e.g. "${VITE_API_BASE_URL:-https://...}".
+  if (!trimmed || trimmed.includes("${") || trimmed.includes("%")) return "";
+  if (!/^https?:\/\//i.test(trimmed)) return "";
+  return trimmed;
+}
+
 function resolveApiBase(): string {
-  const configured = (import.meta.env["VITE_API_BASE_URL"] as string | undefined)?.replace(/\/$/, "");
+  const configured = sanitizeBase(import.meta.env["VITE_API_BASE_URL"]);
   if (configured) return configured;
   if (typeof window === "undefined") return "";
   const protocol = window.location.protocol;
   if (isNative() || (protocol !== "http:" && protocol !== "https:")) return PUBLISHED_ORIGIN;
+  // Android Capacitor serves from http://localhost (or https://localhost) — an
+  // http(s) origin that is still the local static shell, not the server.
+  const host = window.location.hostname;
+  if (isNative() || host === "localhost" || host === "10.0.2.2") {
+    // Only treat bare localhost (no dev-server port) as the native shell.
+    if (!window.location.port) return PUBLISHED_ORIGIN;
+  }
   return "";
 }
+
 
 async function post<T>(action: string, payload: unknown): Promise<T> {
   const { data } = await supabase.auth.getSession();
