@@ -77,15 +77,6 @@ function AuthPage() {
   }, []);
 
 
-  async function requestConfirmationEmail(targetEmail: string) {
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: targetEmail,
-      options: { emailRedirectTo: window.location.origin },
-    });
-
-    if (error) throw error;
-  }
 
 
   async function handleEmail(e: React.FormEvent<HTMLFormElement>) {
