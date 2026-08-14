@@ -1,44 +1,40 @@
-# Making "Continue with Google/Apple" work in the iOS/Android build
+# Native Google & Apple Sign-In (bundled app, deep-link callback)
 
-## Yes — there is a much cheaper way
+Understood — the app stays a real native build with bundled assets calling the API cross-origin. No webview-pointed-at-the-website shortcut. That means the sign-in buttons need a proper native OAuth round trip.
 
-The deep-link approach (custom scheme + `appUrlOpen` listener + browser plugin + Info.plist/Manifest edits + backend allow-list) works, but it is the most moving parts. There is a lighter option that removes almost all of it.
+## Answer to your original question
 
-**Option A — point the native webview at the published site (recommended first).**
-Set `server.url` in `capacitor.config.ts` to `https://connection-context-coach.lovable.app`. The webview then runs on a real https origin instead of `capacitor://localhost`, so Google and Apple sign-in behave exactly as they do on the phone's browser today: same managed Lovable OAuth call, same `window.location.origin` redirect, no deep links, no new plugins, no native config, no allow-list changes. Zero auth code changes.
+The structure you described is correct — detect native, use a different redirect, listen for the deep link, set the session. Two details have to change or it will not work on device:
 
-Trade-offs, honestly:
-- Needs a network connection to launch (already true — every AI feature calls the API).
-- Native plugins (camera, clipboard, push) still work normally.
-- App Store review can reject apps that are only a website wrapper. Cyrano ships native camera/clipboard/photo features, which usually satisfies that bar, but it is a real risk.
+- **`capacitor://localhost/` is the wrong redirect target.** It is the internal origin the iOS webview serves files from, not a URL scheme registered with the OS, so a provider redirect to it is not reliably delivered to `appUrlOpen`.
+- **Sign-in cannot run inside the app's webview.** Google rejects embedded webviews with `disallowed_useragent`. It must open in the system browser (SFSafariViewController on iOS, Chrome Custom Tabs on Android).
 
-**Option B — bundled assets + deep links (fallback if review pushes back).**
-Only needed if you must ship the web assets inside the binary. This is the full build described below.
+Fix those two and the rest of your list is exactly right.
 
-## Option A: what gets changed
+## What gets built
 
-1. `capacitor.config.ts` — add a `server` block pointing at the published URL (kept overridable so `bun run dev` still works against local).
-2. Nothing in the auth code. `src/routes/auth.tsx` and the managed Lovable OAuth client stay as they are.
-3. Confirm Google and Apple providers are enabled on the backend for the published domain.
+1. **Native detection helper** — small module reporting `Capacitor.isNativePlatform()`. Every sign-in path branches on it; web behaviour is untouched.
 
-Effort: one file. Web behaviour: untouched.
+2. **Native OAuth path for Google and Apple** — on native, `src/routes/auth.tsx` calls `supabase.auth.signInWithOAuth({ provider, options: { redirectTo: 'com.nerdcatwizard.cyrano://auth-callback', skipBrowserRedirect: true } })`, then opens the returned URL with `@capacitor/browser` so it lands in the system browser. On web, the existing managed Lovable popup flow is unchanged.
 
-## Option B: what gets built (if needed later)
+3. **Deep-link listener** — `@capacitor/app`'s `appUrlOpen`, registered once at startup in `src/routes/__root.tsx` (this project's `main.tsx` equivalent), inside a `useEffect` so it never runs during SSR. It parses the returned URL for `access_token`/`refresh_token` or a PKCE `code`, calls `supabase.auth.setSession` / `exchangeCodeForSession`, closes the in-app browser, and navigates to `/home`. Errors surface as a toast rather than hanging on the sign-in screen.
 
-1. Native detection helper using `Capacitor.isNativePlatform()`, branching every sign-in path; web untouched.
-2. Native OAuth opens the provider in the **system browser** via `@capacitor/browser` (Google blocks embedded webviews with `disallowed_useragent`), with `redirectTo` set to `com.nerdcatwizard.cyrano://auth-callback`. Note: `capacitor://localhost/` is not a registered OS scheme and will not reliably reach `appUrlOpen` — that part of the original request needs changing.
-3. `@capacitor/app` deep-link listener registered once in the root route: parses `access_token`/`refresh_token` (or PKCE `code`), calls `supabase.auth.setSession` / `exchangeCodeForSession`, closes the browser, routes to `/home`, toasts on failure.
-4. Register the scheme in `ios/App/App/Info.plist` and `android/app/src/main/AndroidManifest.xml`, and add it to the backend redirect allow-list.
+4. **Native project config** — register `com.nerdcatwizard.cyrano` as a URL scheme in `ios/App/App/Info.plist` (`CFBundleURLTypes`) and add a matching `intent-filter` with `BROWSABLE`/`DEFAULT` to `android/app/src/main/AndroidManifest.xml` (the activity is already `singleTask`, which is what the listener needs).
 
-## Apple, either way
+5. **Backend redirect allow-list** — add the custom scheme so the provider accepts it as a valid `redirectTo`. Without this the round trip fails with a redirect-mismatch error.
 
-Apple requires native Sign in with Apple for App Store approval when other third-party sign-in is offered. Both options above use the web flow, which is fine for testing and Android; native Apple sign-in is a separate follow-up needing an Apple Developer account.
+## Apple specifics
+
+Apple requires **native** Sign in with Apple for App Store approval when other third-party sign-in is offered. The browser flow above is correct for Android and fine for testing on iOS, but before submission iOS needs a native Apple sign-in plugin plus an Apple Developer account, Services ID, and key. Flagging it now so it is not a surprise at review; it is a separate follow-up, not part of this change.
 
 ## Verification
 
-- Web sign-in (Google, Apple, email) unchanged in preview.
-- Native round trip can only be confirmed on a device/simulator after `npx cap sync`.
+- Web sign-in (Google, Apple, email/password) still works in preview — checked first, since that is the regression risk.
+- Native path: build succeeds and the code is reviewed here. The actual round trip through the system browser can only be confirmed by you on a device or simulator after `npx cap sync`.
 
-## Recommendation
+## Technical notes
 
-Start with Option A. It is one config line versus a subsystem, and it makes both buttons work immediately on device. Move to Option B only if you decide the app must run from bundled assets.
+- Adds `@capacitor/browser`; `@capacitor/app` is installed with it.
+- Scheme `com.nerdcatwizard.cyrano://auth-callback` matches the existing Capacitor `appId`.
+- The managed Lovable auth client stays for web only — it is popup/`web_message`-based and has no native equivalent, which is why native calls the Supabase client directly.
+- No changes to the API routes, CORS setup, or Bearer-token auth you already built; the session that lands from the deep link is the same JWT those calls already use.
