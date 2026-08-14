@@ -1,71 +1,48 @@
-# Fix native Google/Apple sign-in ("missing OAuth secret")
+# Fix "Cannot read properties of null (reading 'chatId')" in the native app
 
-## Why the error happens
+## What's happening
 
-There are two different sign-in paths in this app:
+In the native (Xcode) build the app's files are served from `capacitor://localhost`. The AI calls in `src/lib/ai-client.ts` use a base URL that only gets set at build time, from the `VITE_API_BASE_URL` variable baked in by the `build:capacitor` script. If the bundle was produced any other way (plain `vite build`, or a build where that variable wasn't passed), the base is empty and the app requests `capacitor://localhost/api/ai/send-coach-message` — which is the local static shell, not your server.
 
-- **Web** (`/auth` in a browser) uses Lovable's managed OAuth broker. It works today because Lovable supplies the Google/Apple credentials behind the scenes.
-- **Native** (the iOS/Android Capacitor build) calls the backend's Auth service directly, because the managed broker has no native equivalent. That path uses whatever Google/Apple credentials are stored in **your** backend Auth settings.
+That request comes back as the HTML shell (or an empty/opaque response), so `res.json()` fails, the code turns it into `null`, and then reads `.chatId` off `null`. Hence the error you see. It's a wiring/config symptom, not a chat bug — the same failure would hit every AI feature, not just the coach.
 
-Right now the native path has no Google client secret stored, so the backend rejects it with `Unsupported provider: missing OAuth secret`. This is a configuration gap, not a code bug — nothing in the app code needs to change to fix it.
+## The fix
 
-## Important security note first
+### 1. Resolve the API base at runtime, not only at build time
 
-The Apple client-secret JWT was pasted into chat in plain text. Chat is not a secure channel. Before shipping, regenerate that secret in the Apple Developer console (or via the Generate Secret form in the backend Auth settings) and use the new value. The Google client ID and secret were sent as secure secret references, so those are fine.
+In `src/lib/ai-client.ts`, compute the base as:
 
-Also note: the Google/Apple credentials must be entered in the backend's **Auth settings**, not stored as app secrets. Secrets in the project secret store are for your own server code — the Auth service does not read them.
+1. `VITE_API_BASE_URL` if it was baked in, else
+2. when running inside Capacitor (`isNative()` from `src/lib/native.ts`) or the page origin isn't http/https, fall back to the published origin `https://connection-context-coach.lovable.app`, else
+3. empty (relative) for normal web.
 
-## Steps
+This makes the native app work regardless of how the bundle was built, and leaves web behaviour untouched.
 
-### 1. Enter your Google credentials in the backend
+### 2. Fail loudly instead of returning null
 
-In the backend view: **Users → Authentication Settings → Sign In Methods → Google**
+In the `post()` helper, read the response as text and parse it defensively:
 
-- Switch to "Use your own credentials"
-- Paste your Google client ID and client secret
-- Copy the **callback URL** shown on that screen
+- non-JSON body → throw a clear error like "Unexpected response from the server (HTTP 200) — the app may be pointed at the wrong API URL", including the first part of the body for diagnosis
+- JSON body but `!res.ok` → keep throwing the server's `error` message
+- network failure → throw a "Couldn't reach Cyrano's server" message
 
-Then in the Google Cloud console, under your OAuth client's **Authorized redirect URIs**, add that exact callback URL. Without it Google rejects the round trip with a redirect mismatch.
+No caller can then read a property off `null`.
 
-### 2. Enter your Apple credentials in the backend
+### 3. Confirm the server accepts the native origin
 
-Same screen, **Apple** section:
+`src/lib/cors.ts` already allows `capacitor://localhost`, `ionic://localhost` and `http://localhost`, and `/api/ai/$action` handles preflight. Verify the deployed site responds to an `OPTIONS` and a `POST` from those origins after the change; adjust the allow-list only if something is missing.
 
-- Client ID: `com.nerdcatwizard.cyrano.web` (your Services ID)
-- Client Secret: the **newly regenerated** JWT
+### 4. Rebuild for native
 
-In the Apple Developer console, on that Services ID under "Sign In with Apple → Configure", add the same backend callback URL as a Return URL, plus your published domain.
+Use `bun run build:capacitor` (not plain `bun run build`), then `npx cap sync`, then run in Xcode. After the change in step 1 the app works even without the env var, but this script remains the correct build path.
 
-Apple secrets expire after six months (Apple's maximum) — set yourself a reminder to regenerate.
+## Verification
 
-### 3. Add the native deep-link redirect to the allowed list
+- Web preview: coach chat still works, requests stay relative.
+- Native: from Xcode, sign in and send a coach message — expect a reply, and in Safari's Web Inspector a request to `https://connection-context-coach.lovable.app/api/ai/send-coach-message` returning JSON.
+- If it still fails, the new error message will name the cause (auth 401, CORS, or wrong URL) instead of the null read.
 
-In the backend: **Users → Authentication Settings → URL Configuration → Redirect URLs**
+## Files touched
 
-Add:
-
-```text
-com.nerdcatwizard.cyrano://auth-callback
-```
-
-This is what lets the backend accept the native app's `redirectTo` value. Without it, the round trip fails with a redirect-not-allowed error even after the credentials are correct.
-
-Also confirm these are present for the web path:
-
-```text
-https://connection-context-coach.lovable.app
-https://connection-context-coach.lovable.app/**
-```
-
-### 4. Verify
-
-- **Web:** sign in with Google in the preview — should behave exactly as before (managed broker, unaffected by the above).
-- **Native:** after `npx cap sync`, tap "Continue with Google" on a device or simulator. The system browser should open, Google should accept the redirect, and the app should return to the dashboard signed in. Same for Apple.
-
-## Apple App Store note
-
-Apple requires **native** Sign in with Apple for App Store approval when other third-party sign-in is offered. The system-browser flow above works for Android and for testing on iOS, but before submission the iOS build needs a native Apple sign-in plugin. That is a separate follow-up, not part of this fix.
-
-## What changes in code
-
-Nothing. All four steps are backend configuration. The native OAuth code, deep-link listener, URL scheme registration in `Info.plist` and `AndroidManifest.xml`, and the web broker path are already correct and were verified.
+- `src/lib/ai-client.ts` (base URL resolution + safe response parsing)
+- possibly `src/lib/cors.ts` if a native origin turns out to be rejected
