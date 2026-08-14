@@ -59,13 +59,16 @@ const features = [
 function Home() {
   const [name, setName] = useState<string>("");
   const [question, setQuestion] = useState("");
+  const [usage, setUsage] = useState<{ remaining: number; limit: number; unlimited: boolean } | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const meta = data.user?.user_metadata as { name?: string; full_name?: string } | undefined;
       setName(meta?.name || meta?.full_name || data.user?.email?.split("@")[0] || "");
     });
+    getUsage().then(setUsage).catch(() => {});
   }, []);
+
 
   function ask(e: React.FormEvent) {
     e.preventDefault();
