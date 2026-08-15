@@ -119,8 +119,11 @@ async function callGateway(messages: Message[], opts: { model?: string } = {}): 
 const ChatInput = z.object({
   chatId: z.string().uuid().nullable().optional(),
   connectionId: z.string().uuid().nullable().optional(),
-  message: z.string().min(1).max(8000),
+  message: z.string().max(8000).optional().default(""),
+  images: z.array(z.string().url().or(z.string().startsWith("data:"))).max(10).optional(),
   analysis: z.boolean().optional().default(false),
+}).refine((v) => !!v.message?.trim() || (v.images?.length ?? 0) > 0, {
+  message: "Write a message or attach a screenshot.",
 });
 
 const HelpMeReplyInput = z
@@ -130,7 +133,7 @@ const HelpMeReplyInput = z
     tone: z.string().max(60).optional(),
     history: z.string().max(4000).optional(),
     analysis: z.boolean().optional().default(false),
-    images: z.array(z.string().url().or(z.string().startsWith("data:"))).max(6).optional(),
+    images: z.array(z.string().url().or(z.string().startsWith("data:"))).max(10).optional(),
   })
   .refine((v) => !!v.received?.trim() || (v.images?.length ?? 0) > 0, {
     message: "Paste their message or upload a screenshot.",
@@ -197,9 +200,12 @@ async function sendCoachMessage(raw: unknown, ctx: AuthedContext) {
   const data = ChatInput.parse(raw);
   const { supabase, userId } = ctx;
 
+  const coachImages = data.images ?? [];
+  const messageText = data.message?.trim() || "Read the attached screenshot(s) and tell me how to respond.";
+
   let chatId = data.chatId ?? null;
   if (!chatId) {
-    const title = data.message.slice(0, 60);
+    const title = messageText.slice(0, 60);
     const { data: created, error } = await supabase
       .from("chats")
       .insert({ user_id: userId, title, connection_id: data.connectionId ?? null })
@@ -223,14 +229,23 @@ async function sendCoachMessage(raw: unknown, ctx: AuthedContext) {
       role: m.role as "user" | "assistant" | "system",
       content: m.content,
     })),
-    { role: "user", content: data.message },
+    {
+      role: "user",
+      content:
+        coachImages.length > 0
+          ? [
+              { type: "text" as const, text: messageText },
+              ...coachImages.map((url) => ({ type: "image_url" as const, image_url: { url } })),
+            ]
+          : messageText,
+    },
   ];
 
   await supabase.from("chat_messages").insert({
     chat_id: chatId,
     user_id: userId,
     role: "user",
-    content: data.message,
+    content: messageText,
   });
 
   const reply = await callGateway(messages);
