@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Plus, X } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
@@ -37,6 +37,7 @@ function CoachPage() {
   const [chatId, setChatId] = useState<string | null>(chat ?? null);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -83,14 +84,37 @@ function CoachPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
+  async function addFiles(files: FileList | File[] | null) {
+    if (!files) return;
+    const arr = Array.from(files).slice(0, 10 - images.length);
+    for (const f of arr) {
+      if (f.size > 6 * 1024 * 1024) {
+        setError(`${f.name || "Image"} is larger than 6MB.`);
+        continue;
+      }
+      const data = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.onerror = () => reject(new Error("Failed to read file"));
+        r.readAsDataURL(f);
+      }).catch(() => "");
+      if (data) setImages((prev) => [...prev, data].slice(0, 10));
+    }
+  }
+
   async function submit(text: string) {
-    if (!text.trim() || busy) return;
+    const attached = images;
+    if ((!text.trim() && attached.length === 0) || busy) return;
     setError(null);
     setBusy(true);
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: text || `(${attached.length} screenshot${attached.length > 1 ? "s" : ""} attached)` },
+    ]);
     setInput("");
+    setImages([]);
     try {
-      const res = await send({ data: { chatId, message: text, analysis } });
+      const res = await send({ data: { chatId, message: text, images: attached, analysis } });
       setChatId(res.chatId);
       setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
     } catch (e) {
@@ -150,6 +174,24 @@ function CoachPage() {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {images.map((src, i) => (
+            <div key={i} className="relative">
+              <img src={src} alt={`Attachment ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" />
+              <button
+                type="button"
+                onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
+                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-foreground text-background"
+                aria-label="Remove"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -157,6 +199,17 @@ function CoachPage() {
         }}
         className="flex items-end gap-2"
       >
+        <label className="grid h-12 w-12 shrink-0 cursor-pointer place-items-center rounded-xl border border-input bg-background text-muted-foreground hover:bg-accent">
+          <Plus className="h-5 w-5" />
+          <span className="sr-only">Attach photos</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => void addFiles(e.target.files)}
+          />
+        </label>
         <AutoGrowTextarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -169,13 +222,13 @@ function CoachPage() {
           maxRows={8}
           placeholder="Message Cyrano…"
           autoFocus
-          className="flex-1 rounded-xl border border-input bg-background px-4 py-4 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className="min-w-0 flex-1 rounded-xl border border-input bg-background px-3 py-3.5 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           disabled={busy}
         />
         <button
           type="submit"
-          disabled={busy || !input.trim()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          disabled={busy || (!input.trim() && images.length === 0)}
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           Send <ArrowRight className="h-4 w-4" />
         </button>
