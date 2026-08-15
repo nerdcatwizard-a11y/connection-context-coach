@@ -82,7 +82,8 @@ type Args<T> = { data: T };
 export const sendCoachMessage = (a: Args<{
   chatId?: string | null;
   connectionId?: string | null;
-  message: string;
+  message?: string;
+  images?: string[];
   analysis?: boolean;
 }>) => post<{ chatId: string; reply: string }>("send-coach-message", a.data);
 
