@@ -30,6 +30,7 @@ import { Route as AuthenticatedConversationStarterRouteImport } from './routes/_
 import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedConnectionsIndexRouteImport } from './routes/_authenticated/connections.index'
+import { Route as ApiIapVerifyRouteImport } from './routes/api/iap/verify'
 import { Route as ApiAiActionRouteImport } from './routes/api/ai/$action'
 import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections.$id'
 
@@ -143,6 +144,11 @@ const AuthenticatedConnectionsIndexRoute =
     path: '/connections/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiIapVerifyRoute = ApiIapVerifyRouteImport.update({
+  id: '/api/iap/verify',
+  path: '/api/iap/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAiActionRoute = ApiAiActionRouteImport.update({
   id: '/api/ai/$action',
   path: '/api/ai/$action',
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
   '/api/ai/$action': typeof ApiAiActionRoute
+  '/api/iap/verify': typeof ApiIapVerifyRoute
   '/connections/': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
   '/api/ai/$action': typeof ApiAiActionRoute
+  '/api/iap/verify': typeof ApiIapVerifyRoute
   '/connections': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRoutesById {
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
   '/api/ai/$action': typeof ApiAiActionRoute
+  '/api/iap/verify': typeof ApiIapVerifyRoute
   '/_authenticated/connections/': typeof AuthenticatedConnectionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/connections/$id'
     | '/api/ai/$action'
+    | '/api/iap/verify'
     | '/connections/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/connections/$id'
     | '/api/ai/$action'
+    | '/api/iap/verify'
     | '/connections'
   id:
     | '__root__'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/connections/$id'
     | '/api/ai/$action'
+    | '/api/iap/verify'
     | '/_authenticated/connections/'
   fileRoutesById: FileRoutesById
 }
@@ -317,6 +329,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   ApiAiActionRoute: typeof ApiAiActionRoute
+  ApiIapVerifyRoute: typeof ApiIapVerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -468,6 +481,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConnectionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/iap/verify': {
+      id: '/api/iap/verify'
+      path: '/api/iap/verify'
+      fullPath: '/api/iap/verify'
+      preLoaderRoute: typeof ApiIapVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ai/$action': {
       id: '/api/ai/$action'
       path: '/api/ai/$action'
@@ -530,6 +550,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   ApiAiActionRoute: ApiAiActionRoute,
+  ApiIapVerifyRoute: ApiIapVerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
