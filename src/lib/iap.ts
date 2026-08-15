@@ -33,6 +33,18 @@ function globalStore(): AnyStore | undefined {
 
 let readyPromise: Promise<AnyStore | null> | null = null;
 
+/** Waits (briefly) for Capacitor to inject the Cordova purchase plugin. */
+async function waitForPlugin(): Promise<AnyStore | undefined> {
+  for (let i = 0; i < 40; i++) {
+    const cdv = (globalThis as any).CdvPurchase;
+    if (cdv?.store) return cdv;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  return (globalThis as any).CdvPurchase;
+}
+
+
+
 /** Loads and initializes the store plugin. Resolves null on web. */
 export async function initStore(): Promise<AnyStore | null> {
   if (!isNative()) return null;
