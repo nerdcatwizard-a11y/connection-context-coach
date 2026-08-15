@@ -159,7 +159,7 @@ function NewEntryDialog({ onClose, onSaved }: { onClose: () => void; onSaved: ()
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           />
         </label>
 
@@ -170,7 +170,7 @@ function NewEntryDialog({ onClose, onSaved }: { onClose: () => void; onSaved: ()
             rows={7}
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Write freely — no one else will read this."
           />
         </label>

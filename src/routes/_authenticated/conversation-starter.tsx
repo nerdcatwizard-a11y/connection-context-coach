@@ -109,7 +109,7 @@ function StarterPage() {
             value={profileNotes}
             onChange={(e) => setProfileNotes(e.target.value)}
             rows={5}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Where you met or matched, what they're like, photos, prompts, bio details — whatever caught your attention"
           />
         </label>
@@ -172,7 +172,7 @@ function StarterPage() {
           <select
             value={datingApp}
             onChange={(e) => setDatingApp(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">—</option>
             {DATING_APPS.map((a) => (

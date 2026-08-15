@@ -167,7 +167,7 @@ function ScreenshotsPage() {
           <select
             value={requestType}
             onChange={(e) => setRequestType(e.target.value as typeof requestType)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             {(Object.keys(REQUEST_LABELS) as Array<keyof typeof REQUEST_LABELS>).map((k) => (
               <option key={k} value={k}>
@@ -183,7 +183,7 @@ function ScreenshotsPage() {
             value={userContext}
             onChange={(e) => setUserContext(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Context, history, what you're feeling"
           />
         </label>

@@ -169,7 +169,7 @@ Upload a screenshot of the conversation. Cyrano will offer three natural, respec
             value={history}
             onChange={(e) => setHistory(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Optional — what came before this message"
           />
         </Field>

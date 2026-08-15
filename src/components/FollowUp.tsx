@@ -103,7 +103,7 @@ export function FollowUp({
           }}
           maxRows={10}
           placeholder="Ask anything about the response above…"
-          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 rounded-xl border border-input bg-background p-2.5 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
