@@ -36,12 +36,14 @@ export function AppShell({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-screen gradient-app text-foreground">
-      {/* Hamburger button */}
+      {/* Hamburger button — inside the white card on mobile, not above the purple gradient */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="fixed left-3 top-3 z-50 grid h-10 w-10 place-items-center rounded-xl border border-border bg-card/90 text-foreground shadow-soft backdrop-blur md:hidden"
+        className={`fixed left-4 z-50 grid h-10 w-10 place-items-center rounded-xl border border-border bg-card/90 text-foreground shadow-soft backdrop-blur md:hidden ${
+          path === "/home" ? "top-16" : "top-3"
+        }`}
       >
         <Menu className="h-5 w-5" />
       </button>
