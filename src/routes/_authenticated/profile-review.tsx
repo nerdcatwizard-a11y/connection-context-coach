@@ -17,7 +17,7 @@ import { logToConnection } from "@/lib/connection-log";
 export const Route = createFileRoute("/_authenticated/profile-review")({
   head: () => ({
     meta: [
-      { title: "Review a Profile — Cyrano - Dating Coach" },
+      { title: "Review A Dating Profile — Cyrano - Dating Coach" },
       { name: "robots", content: "noindex" },
     ],
   }),

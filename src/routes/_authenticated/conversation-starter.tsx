@@ -230,7 +230,7 @@ function StarterPage() {
             feature="Conversation Starter"
             priorLabel="openers"
             priorOutput={reply}
-            situationContext={`${datingApp ? `App: ${datingApp}\n` : ""}${profileNotes ? `Profile notes: ${profileNotes}` : "(screenshots only)"}${goal ? `\nGoal: ${goal}` : ""}${tone ? `\nTone: ${tone}` : ""}`}
+            situationContext={`${datingApp ? `App: ${datingApp}\n` : ""}${profileNotes ? `Profile notes: ${profileNotes}` : "(screenshots only)"}${tone ? `\nTone: ${tone}` : ""}`}
           />
         </div>
       )}
