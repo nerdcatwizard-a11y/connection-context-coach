@@ -1,10 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  MessageCircle, Feather, Image as ImageIcon, UserCheck, BookOpen, Users, ArrowRight, Sparkle,
-} from "lucide-react";
+import { ArrowRight, Sparkle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
+import { ScreenshotUploader } from "@/components/ScreenshotUploader";
+import { setPendingReplyImages } from "@/lib/pending-reply";
 import { getUsage } from "@/lib/ai-client";
 
 export const Route = createFileRoute("/_authenticated/home")({
@@ -18,48 +18,11 @@ export const Route = createFileRoute("/_authenticated/home")({
   component: Home,
 });
 
-const features = [
-  {
-    to: "/help-me-reply",
-    icon: MessageCircle,
-    title: "Help Me Reply",
-    body: "Get natural, respectful reply suggestions based on the message you received and what you want to happen next.",
-  },
-  {
-    to: "/conversation-starter",
-    icon: Feather,
-    title: "Help Me Get the Conversation Started",
-    body: "Start a dating conversation using something specific from their profile without sounding generic, cheesy, or overly clever.",
-  },
-  {
-    to: "/screenshots",
-    icon: ImageIcon,
-    title: "Read a Conversation",
-    body: "Upload screenshots or paste a conversation to understand the tone, context, and possible next step.",
-  },
-  {
-    to: "/profile-review",
-    icon: UserCheck,
-    title: "Review a Profile",
-    body: "Upload your own profile or one from a person you're connected with for practical feedback on photos, bio, prompts, and tone.",
-  },
-  {
-    to: "/journal",
-    icon: BookOpen,
-    title: "My Journal",
-    body: "Privately reflect on dating experiences, communication, feelings, boundaries, and lessons learned.",
-  },
-  {
-    to: "/connections",
-    icon: Users,
-    title: "My Connections",
-    body: "Keep the full history of each connection in one private place so Cyrano can give more relevant advice over time.",
-  },
-] as const;
-
 function Home() {
+  const navigate = useNavigate();
   const [name, setName] = useState<string>("");
   const [question, setQuestion] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [usage, setUsage] = useState<{ remaining: number; limit: number; unlimited: boolean } | null>(null);
 
   useEffect(() => {
@@ -70,98 +33,85 @@ function Home() {
     getUsage().then(setUsage).catch(() => {});
   }, []);
 
-
   function ask(e: React.FormEvent) {
     e.preventDefault();
     if (!question.trim()) return;
-    const target = `/coach?q=${encodeURIComponent(question)}`;
-    window.location.href = target;
+    void navigate({ to: "/coach", search: { q: question } });
+  }
+
+  function goReply(next: string[]) {
+    setImages(next);
+    if (next.length === 0) return;
+    setPendingReplyImages(next);
+    void navigate({ to: "/help-me-reply", search: { auto: 1 } });
   }
 
   return (
-    <div className="gradient-hero -mx-4 -mt-6 space-y-8 px-4 pt-6 md:-mx-8 md:-mt-10 md:px-8 md:pt-10 pb-8">
-    <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-6 md:min-h-[calc(100dvh-6rem)] md:p-8">
-      <div className="flex flex-col items-center gap-3">
-        <span className="grid h-20 w-20 place-items-center rounded-3xl bg-primary text-primary-foreground md:h-24 md:w-24">
-          <Sparkle className="h-10 w-10 md:h-12 md:w-12" />
-        </span>
-        <span className="font-serif text-4xl md:text-5xl">Cyrano</span>
-        <p className="text-sm text-muted-foreground">Your Dating Assistant</p>
-      </div>
-      <div className="flex flex-1 flex-col justify-center">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          {greeting()}{name ? `, ${name}` : ""}
-        </p>
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Cyrano — your dating assistant
-        </p>
-        <h1 className="mt-2 font-serif text-3xl md:text-4xl">What can I help you with?</h1>
-        <form onSubmit={ask} className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <AutoGrowTextarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask Cyrano anything…"
-            rows={2}
-            maxRows={4}
-            className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none placeholder:text-xs sm:placeholder:text-sm focus:ring-2 focus:ring-ring"
-          />
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-95"
-          >
-            Ask Cyrano <ArrowRight className="h-4 w-4" />
-          </button>
-        </form>
-        <p className="mt-3 text-xs text-muted-foreground">
-          {usage?.unlimited ? (
-            "Unlimited AI messages."
-          ) : (
-            <>
-              {usage
-                ? `${usage.remaining} of ${usage.limit} messages left today.`
-                : "Free plan: 10 AI messages per day."}{" "}
-              <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
-            </>
-          )}
-        </p>
-      </div>
-    </section>
-
-      <section>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {features.map((f) => (
-            <Link
-              key={f.to}
-              to={f.to}
-              className="soft-card group flex gap-4 p-5 transition hover:shadow-lift"
-            >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                <f.icon className="h-5 w-5" />
-              </span>
-              <div className="min-w-0">
-                <h3 className="font-serif text-lg">{f.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{f.body}</p>
-              </div>
-            </Link>
-          ))}
+    <div className="gradient-hero -mx-4 -mt-14 space-y-8 px-4 pt-14 md:-mx-8 md:-mt-10 md:px-8 md:pt-10 pb-8">
+      <section className="soft-card flex min-h-[calc(100dvh-5rem)] flex-col p-5 md:min-h-[calc(100dvh-6rem)] md:p-8">
+        <div className="flex flex-col items-center gap-2">
+          <span className="grid h-16 w-16 place-items-center rounded-3xl bg-primary text-primary-foreground md:h-24 md:w-24">
+            <Sparkle className="h-8 w-8 md:h-12 md:w-12" />
+          </span>
+          <span className="font-serif text-3xl md:text-5xl">Cyrano</span>
+          <p className="text-xs text-muted-foreground md:text-sm">Your Dating Assistant</p>
         </div>
-      </section>
 
-      <section className="soft-card p-6">
-        <div className="flex items-center gap-2">
-          <Sparkle className="h-4 w-4 text-primary" />
-          <h2 className="font-serif text-lg">Upgrade to Premium</h2>
+        <div className="flex flex-1 flex-col justify-center gap-6 py-6">
+          <div>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+              {greeting()}{name ? `, ${name}` : ""}
+            </p>
+            <h1 className="mt-1.5 font-serif text-2xl md:text-4xl">What can I help you with?</h1>
+            <form onSubmit={ask} className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <AutoGrowTextarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Ask Cyrano anything…"
+                rows={2}
+                maxRows={4}
+                className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none placeholder:text-xs focus:ring-2 focus:ring-ring sm:placeholder:text-sm"
+              />
+              <button
+                type="submit"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-95"
+              >
+                Ask Cyrano <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+            <p className="mt-3 text-xs text-muted-foreground">
+              {usage?.unlimited ? (
+                "Unlimited AI messages."
+              ) : (
+                <>
+                  {usage
+                    ? `${usage.remaining} of ${usage.limit} messages left today.`
+                    : "Free plan: 10 AI messages per day."}{" "}
+                  <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+                </>
+              )}
+            </p>
+          </div>
+
+          <div className="space-y-2 border-t border-border pt-5">
+            <h2 className="font-serif text-lg md:text-xl">How do I respond to this text?</h2>
+            {images.length > 0 ? (
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Taking you to Help Me Reply…
+              </p>
+            ) : (
+              <ScreenshotUploader
+                images={images}
+                onChange={goReply}
+                max={10}
+                title="Upload photos (up to 10)"
+                label="Upload photos"
+                showPasteHint={false}
+                dropClassName="h-28 md:h-32"
+              />
+            )}
+          </div>
         </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Unlimited coaching, unlimited connections, pattern insights, and Write Like Me
-          personalization.
-        </p>
-        <Link
-          to="/pricing"
-          className="mt-4 inline-flex rounded-full border border-border px-4 py-2 text-sm hover:bg-accent"
-        >
-          See plans
-        </Link>
       </section>
     </div>
   );
