@@ -221,7 +221,6 @@ function CoachPage() {
           }}
           maxRows={8}
           placeholder="Message Cyrano…"
-          autoFocus
           className="min-w-0 flex-1 rounded-xl border border-input bg-background px-3 py-3.5 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           disabled={busy}
         />

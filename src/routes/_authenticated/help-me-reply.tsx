@@ -139,7 +139,7 @@ function HelpMeReplyPage() {
     <div className="space-y-4">
       <Link
         to="/home"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="ml-11 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground md:ml-0"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to dashboard
