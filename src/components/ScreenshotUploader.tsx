@@ -34,12 +34,16 @@ export function ScreenshotUploader({
   max = 6,
   label = "Upload a screenshot of the conversation",
   title = "Screenshots (optional)",
+  showPasteHint = true,
+  dropClassName = "",
 }: {
   images: string[];
   onChange: (next: string[]) => void;
   max?: number;
   label?: string;
   title?: string;
+  showPasteHint?: boolean;
+  dropClassName?: string;
 }) {
   const [error, setError] = useState<string | null>(null);
 
@@ -66,12 +70,19 @@ export function ScreenshotUploader({
         </span>
       </div>
       {images.length === 0 ? (
-        <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center hover:bg-primary/10">
+        <label
+          className={
+            "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center hover:bg-primary/10 " +
+            dropClassName
+          }
+        >
           <Upload className="h-6 w-6 text-primary" />
           <span className="text-sm font-medium">{label}</span>
-          <span className="text-xs text-muted-foreground">
-            or paste with ⌘/Ctrl+V — PNG or JPG up to 6MB
-          </span>
+          {showPasteHint && (
+            <span className="text-xs text-muted-foreground">
+              or paste with ⌘/Ctrl+V — PNG or JPG up to 6MB
+            </span>
+          )}
           <input
             type="file"
             accept="image/*"

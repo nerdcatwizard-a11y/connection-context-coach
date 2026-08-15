@@ -17,7 +17,7 @@ import { logToConnection } from "@/lib/connection-log";
 export const Route = createFileRoute("/_authenticated/profile-review")({
   head: () => ({
     meta: [
-      { title: "Review a Profile — Cyrano - Dating Coach" },
+      { title: "Review A Dating Profile — Cyrano - Dating Coach" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -103,7 +103,7 @@ function ProfileReviewPage() {
     <div className="space-y-4">
       <BackToDashboard />
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl">Review a Profile</h1>
+        <h1 className="font-serif text-2xl md:text-3xl">Review A Dating Profile</h1>
         <p className="text-sm text-muted-foreground">
           Upload screenshots of your own dating profile — or one of someone you're interested in — for honest, practical feedback.
         </p>

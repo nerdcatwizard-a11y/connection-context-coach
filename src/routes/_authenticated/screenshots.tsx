@@ -16,7 +16,7 @@ import { logToConnection } from "@/lib/connection-log";
 export const Route = createFileRoute("/_authenticated/screenshots")({
   head: () => ({
     meta: [
-      { title: "Read a Conversation — Cyrano - Dating Coach" },
+      { title: "Text Analyzer — Cyrano - Dating Coach" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -102,7 +102,7 @@ function ScreenshotsPage() {
     <div className="space-y-4">
       <BackToDashboard />
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl">Read a Conversation</h1>
+        <h1 className="font-serif text-2xl md:text-3xl">Text Analyzer</h1>
         <p className="text-sm text-muted-foreground">
           Upload up to {MAX} screenshots — or paste one directly (⌘/Ctrl+V). Blur names you want to protect first.
         </p>
