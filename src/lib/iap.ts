@@ -39,10 +39,12 @@ export async function initStore(): Promise<AnyStore | null> {
   if (readyPromise) return readyPromise;
 
   readyPromise = (async () => {
-    await import("cordova-plugin-purchase");
-    const CdvPurchase = (globalThis as any).CdvPurchase;
+    // Capacitor injects the Cordova plugin JS into the webview at startup, so we
+    // wait for the CdvPurchase global rather than importing the package.
+    const CdvPurchase = await waitForPlugin();
     const store: AnyStore = CdvPurchase?.store;
     if (!store) return null;
+
 
     const platform =
       (globalThis as any).Capacitor?.getPlatform?.() === "android"
