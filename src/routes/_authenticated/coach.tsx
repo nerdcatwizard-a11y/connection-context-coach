@@ -18,7 +18,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/_authenticated/coach")({
   head: () => ({
     meta: [
-      { title: "Coach — Cyrano - Dating Coach" },
+      { title: "Advice — Cyrano - Dating Coach" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -104,7 +104,7 @@ function CoachPage() {
     <div className="flex h-[calc(100dvh-8rem)] flex-col gap-3">
       <BackToDashboard />
       <div className="flex items-baseline justify-between">
-        <h1 className="font-serif text-2xl md:text-3xl">AI Coach</h1>
+        <h1 className="font-serif text-2xl md:text-3xl">Advice</h1>
       </div>
       <CyranoDisclaimer />
       <AnalysisToggle

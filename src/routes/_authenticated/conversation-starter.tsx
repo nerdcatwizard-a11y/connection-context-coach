@@ -17,7 +17,7 @@ import { logToConnection } from "@/lib/connection-log";
 export const Route = createFileRoute("/_authenticated/conversation-starter")({
   head: () => ({
     meta: [
-      { title: "Conversation Starter — Cyrano - Dating Coach" },
+      { title: "Pickup Lines — Cyrano - Dating Coach" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -25,14 +25,13 @@ export const Route = createFileRoute("/_authenticated/conversation-starter")({
 });
 
 const TONES = ["Warm", "Playful", "Curious", "Direct", "Flirty"];
-const MAX = 6;
+const MAX = 10;
 
 function StarterPage() {
   const call = conversationStarter;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
   const [profileNotes, setProfileNotes] = useState("");
   const [datingApp, setDatingApp] = useState("");
-  const [goal, setGoal] = useState("");
   const [tone, setTone] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [reply, setReply] = useState<string | null>(null);
@@ -78,7 +77,7 @@ function StarterPage() {
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { profileNotes, datingApp, goal, tone, images, analysis } });
+      const res = await call({ data: { profileNotes, datingApp, tone, images, analysis } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Conversation starters", body: res.reply });
@@ -94,9 +93,9 @@ function StarterPage() {
     <div className="space-y-4">
       <BackToDashboard />
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl">Help Me Get the Conversation Started</h1>
+        <h1 className="font-serif text-2xl md:text-3xl">Pickup Lines</h1>
         <p className="text-sm text-muted-foreground">
-          Tell Cyrano a little about the situation, person you are approaching, or what you noticed about their profile — or upload/paste a screenshot of the bio. You'll get openers grounded in something real.
+          Describe the scenario you're in, or upload a screenshot of their dating profile bio — either one works, and you can do both. You'll get openers grounded in something real.
         </p>
       </div>
       <CyranoDisclaimer />
@@ -104,7 +103,7 @@ function StarterPage() {
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">
-            Tell Cyrano about the situation or person
+            Describe the scenario (or upload a bio screenshot below)
           </span>
           <textarea
             value={profileNotes}
@@ -184,15 +183,6 @@ function StarterPage() {
           </select>
         </label>
 
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium">What are you hoping for? (optional)</span>
-          <input
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="e.g. see if there's a spark, land a first date"
-          />
-        </label>
 
         <div className="space-y-1.5">
           <span className="text-sm font-medium">Preferred tone (optional)</span>
