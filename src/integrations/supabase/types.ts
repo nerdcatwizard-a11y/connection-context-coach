@@ -715,6 +715,9 @@ export type Database = {
       subscriptions: {
         Row: {
           renews_at: string | null
+          store: string | null
+          store_product_id: string | null
+          store_transaction_id: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           tier: Database["public"]["Enums"]["subscription_tier"]
@@ -723,6 +726,9 @@ export type Database = {
         }
         Insert: {
           renews_at?: string | null
+          store?: string | null
+          store_product_id?: string | null
+          store_transaction_id?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tier?: Database["public"]["Enums"]["subscription_tier"]
@@ -731,6 +737,9 @@ export type Database = {
         }
         Update: {
           renews_at?: string | null
+          store?: string | null
+          store_product_id?: string | null
+          store_transaction_id?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           tier?: Database["public"]["Enums"]["subscription_tier"]

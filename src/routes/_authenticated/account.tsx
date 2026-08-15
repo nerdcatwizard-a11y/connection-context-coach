@@ -28,6 +28,19 @@ function Account() {
         </button>
       </div>
       <div className="soft-card p-6">
+        <h2 className="font-serif text-lg">Cyrano Premium</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Unlimited coaching, replies and screenshot reads. Purchased through your App Store
+          account.
+        </p>
+        <button
+          onClick={() => navigate({ to: "/pricing" })}
+          className="mt-3 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Upgrade or restore purchase
+        </button>
+      </div>
+      <div className="soft-card p-6">
         <h2 className="font-serif text-lg">Onboarding</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Review or update your preferences.
@@ -39,6 +52,7 @@ function Account() {
           Update preferences
         </button>
       </div>
+
       <CyranoDisclaimer />
     </div>
   );
