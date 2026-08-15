@@ -2,8 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CAPACITOR_DEBUG</key>
+  <key>NSPhotoLibraryUsageDescription</key>
+	<string>Cyrano needs access to your photos so you can upload screenshots of conversations and dating profiles for Cyrano to read and give you advice on.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Cyrano needs permission to save images to your photo library when you choose to save something from the app.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Cyrano needs camera access so you can take a photo of a conversation or dating profile to get advice on it.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Cyrano can use your approximate location only if you choose to share it, to suggest nearby date ideas. Location is never required to use the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cyrano can use your approximate location only if you choose to share it, to suggest nearby date ideas. Location is never required to use the app.</string>
+	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
