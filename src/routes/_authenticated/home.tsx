@@ -62,14 +62,14 @@ function Home() {
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
               {greeting()}{name ? `, ${name}` : ""}
             </p>
-            <h1 className="mt-0.5 font-serif text-lg md:text-2xl">What can I help you with?</h1>
+            <h1 className="mt-0.5 font-serif text-base md:text-xl">What can I help you with?</h1>
             <form onSubmit={ask} className="mt-2 flex flex-col gap-2 sm:flex-row">
               <AutoGrowTextarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask Cyrano anything…"
-                rows={1}
-                maxRows={2}
+                rows={2}
+                maxRows={4}
                 className="min-w-0 flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-xs focus:ring-2 focus:ring-ring"
               />
               <button
@@ -93,7 +93,7 @@ function Home() {
             </p>
           </div>
 
-          <div className="space-y-1.5 border-t border-border pt-2">
+          <div className="mt-6 space-y-1.5 border-t border-border pt-6">
             <h2 className="font-serif text-sm md:text-lg">How do I respond to this text?</h2>
             {images.length > 0 ? (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -107,7 +107,8 @@ function Home() {
                 title="Upload photos (up to 10)"
                 label="Upload photos"
                 showPasteHint={false}
-                dropClassName="h-16 md:h-28"
+                dropClassName="h-14 md:h-24"
+                titleClassName="text-[10px] font-normal uppercase tracking-wider text-muted-foreground"
               />
             )}
           </div>

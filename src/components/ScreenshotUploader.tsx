@@ -34,6 +34,7 @@ export function ScreenshotUploader({
   max = 6,
   label = "Upload a screenshot of the conversation",
   title = "Screenshots (optional)",
+  titleClassName = "",
   showPasteHint = true,
   dropClassName = "",
 }: {
@@ -42,6 +43,7 @@ export function ScreenshotUploader({
   max?: number;
   label?: string;
   title?: string;
+  titleClassName?: string;
   showPasteHint?: boolean;
   dropClassName?: string;
 }) {
@@ -64,7 +66,7 @@ export function ScreenshotUploader({
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
-        <span className="text-sm font-medium">{title}</span>
+        <span className={"text-sm font-medium " + titleClassName}>{title}</span>
         <span className="text-xs text-muted-foreground">
           {images.length}/{max}
         </span>
