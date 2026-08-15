@@ -187,7 +187,7 @@ function NewConnectionDialog({
               setNickname(e.target.value);
               setFirstName("");
             }}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           />
         </Field>
 
@@ -195,7 +195,7 @@ function NewConnectionDialog({
           <select
             value={datingApp}
             onChange={(e) => setDatingApp(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">—</option>
             {DATING_APPS.map((a) => (
@@ -210,7 +210,7 @@ function NewConnectionDialog({
           <select
             value={stage}
             onChange={(e) => setStage(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             {CONNECTION_STAGES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -225,7 +225,7 @@ function NewConnectionDialog({
             rows={2}
             value={userGoal}
             onChange={(e) => setUserGoal(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="e.g. see if there's real potential"
           />
         </Field>

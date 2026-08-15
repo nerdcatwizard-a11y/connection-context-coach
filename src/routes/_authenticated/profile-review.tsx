@@ -193,7 +193,7 @@ function ProfileReviewPage() {
           <select
             value={datingApp}
             onChange={(e) => setDatingApp(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">—</option>
             {DATING_APPS.map((a) => (
@@ -210,7 +210,7 @@ function ProfileReviewPage() {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Paste the bio here"
           />
         </label>
@@ -221,7 +221,7 @@ function ProfileReviewPage() {
             value={prompts}
             onChange={(e) => setPrompts(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Prompt: answer&#10;Prompt: answer"
           />
         </label>
@@ -232,7 +232,7 @@ function ProfileReviewPage() {
           <input
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="e.g. serious partner, casual dating, take my time"
           />
         </label>
@@ -242,7 +242,7 @@ function ProfileReviewPage() {
           <input
             value={audience}
             onChange={(e) => setAudience(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="Describe the kind of person"
           />
         </label>
@@ -253,7 +253,7 @@ function ProfileReviewPage() {
             value={whatIsntWorking}
             onChange={(e) => setWhatIsntWorking(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="No matches, wrong matches, no replies…"
           />
         </label>

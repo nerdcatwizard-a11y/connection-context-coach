@@ -87,7 +87,7 @@ export function ConnectionField({
           <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">{items === null ? "Loading…" : "— None —"}</option>
             {(items ?? []).map((c) => (
@@ -117,7 +117,7 @@ export function ConnectionField({
               }
             }}
             placeholder="First name or nickname"
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-xl border border-input bg-background p-3 text-base outline-none focus:ring-2 focus:ring-ring"
           />
           <button
             type="button"

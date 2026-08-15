@@ -248,7 +248,7 @@ function AuthPage() {
               spellCheck={false}
               placeholder="you@example.com"
               onInput={(e) => setEmail(e.currentTarget.value)}
-              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-base outline-none focus:ring-2 focus:ring-ring"
             />
             <div className="relative">
               <label htmlFor="signin-password" className="sr-only">Password</label>
@@ -265,7 +265,7 @@ function AuthPage() {
                 placeholder="Password"
                 onInput={(e) => setPassword(e.currentTarget.value)}
                 onBlur={() => setTouchedPassword(true)}
-                className="w-full rounded-xl border border-input bg-background px-4 py-2.5 pr-16 text-sm outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-xl border border-input bg-background px-4 py-2.5 pr-16 text-base outline-none focus:ring-2 focus:ring-ring"
               />
               <button
                 type="button"
@@ -288,7 +288,7 @@ function AuthPage() {
                   spellCheck={false}
                   placeholder="Repeat password"
                   onInput={(e) => setConfirmPassword(e.currentTarget.value)}
-                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-base outline-none focus:ring-2 focus:ring-ring"
                 />
 
                 <ul className="space-y-1 rounded-xl bg-muted/50 p-3 text-xs">
