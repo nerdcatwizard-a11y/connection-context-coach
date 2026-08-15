@@ -55,39 +55,68 @@ function Pricing() {
             cta="Get started"
             to="/auth"
           />
-          <Plan
-            name="Premium"
-            price="$14"
-            note="per month, or $9/mo billed annually"
-            highlight
-            features={[
-              "Unlimited AI coaching & replies",
-              "Unlimited screenshot analysis",
-              "Unlimited profile reviews",
-              "Unlimited connections + full timelines",
-              "Pattern insights & health overviews",
-              "Write Like Me personalization",
-              "Full journal search + opt-in insights",
-            ]}
-            cta="Start Premium"
-            to="/auth"
-          />
+          <PremiumPlan />
         </div>
-        <p className="mt-6 text-xs text-muted-foreground">
-          Prices are placeholders and will finalize at launch.
-        </p>
       </div>
     </div>
   );
 }
 
-function Plan({ name, price, note, features, cta, to, highlight }: {
-  name: string; price: string; note: string; features: string[]; cta: string; to: string; highlight?: boolean;
-}) {
+function PremiumPlan() {
+  const native = storeAvailable();
+  const [prices, setPrices] = useState<Record<string, string | null>>({});
+  const [busy, setBusy] = useState<PremiumProductId | "restore" | null>(null);
+
+  useEffect(() => {
+    if (!native) return;
+    void getPrices()
+      .then((list) => setPrices(Object.fromEntries(list.map((p) => [p.id, p.price]))))
+      .catch(() => undefined);
+  }, [native]);
+
+  async function buy(id: PremiumProductId) {
+    setBusy(id);
+    try {
+      await purchasePremium(id);
+      toast.success("Thanks! Your Premium access unlocks as soon as Apple confirms the purchase.");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function restore() {
+    setBusy("restore");
+    try {
+      await restorePurchases();
+      toast.success("Checked the App Store for previous purchases.");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const features = [
+    "Unlimited AI coaching & replies",
+    "Unlimited screenshot analysis",
+    "Unlimited profile reviews",
+    "Unlimited connections + full timelines",
+    "Pattern insights & health overviews",
+    "Write Like Me personalization",
+    "Full journal search + opt-in insights",
+  ];
+
   return (
-    <div className={`soft-card p-6 ${highlight ? "ring-2 ring-primary" : ""}`}>
-      <h2 className="font-serif text-2xl">{name}</h2>
-      <p className="mt-2"><span className="font-serif text-4xl">{price}</span> <span className="text-sm text-muted-foreground">{note}</span></p>
+    <div className="soft-card p-6 ring-2 ring-primary">
+      <h2 className="font-serif text-2xl">Premium</h2>
+      <p className="mt-2">
+        <span className="font-serif text-4xl">{prices[PREMIUM_MONTHLY_ID] ?? "$14"}</span>{" "}
+        <span className="text-sm text-muted-foreground">
+          per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} billed annually
+        </span>
+      </p>
       <ul className="mt-5 space-y-2 text-sm">
         {features.map((f) => (
           <li key={f} className="flex gap-2">
@@ -96,14 +125,51 @@ function Plan({ name, price, note, features, cta, to, highlight }: {
           </li>
         ))}
       </ul>
-      <Link
-        to={to}
-        className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium ${
-          highlight ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"
-        }`}
-      >
-        {cta}
-      </Link>
+
+      {native ? (
+        <div className="mt-6 space-y-2">
+          <button
+            onClick={() => void buy(PREMIUM_MONTHLY_ID)}
+            disabled={busy !== null}
+            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          >
+            {busy === PREMIUM_MONTHLY_ID ? "Opening App Store…" : "Subscribe monthly"}
+          </button>
+          <button
+            onClick={() => void buy(PREMIUM_YEARLY_ID)}
+            disabled={busy !== null}
+            className="inline-flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-60"
+          >
+            {busy === PREMIUM_YEARLY_ID ? "Opening App Store…" : "Subscribe yearly (save 35%)"}
+          </button>
+          <button
+            onClick={() => void restore()}
+            disabled={busy !== null}
+            className="w-full py-1 text-xs text-muted-foreground underline disabled:opacity-60"
+          >
+            Restore purchases
+          </button>
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            Payment is charged to your Apple ID at confirmation. Subscriptions renew automatically
+            unless cancelled at least 24 hours before the period ends. Manage or cancel in your
+            device Settings &gt; Apple ID &gt; Subscriptions. See our{" "}
+            <Link to="/terms" className="underline">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="underline">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="mt-6 rounded-2xl bg-accent/60 p-4 text-sm text-muted-foreground">
+          Premium is purchased inside the Cyrano app for iPhone or Android through your App Store
+          account. Open the app and tap Upgrade to subscribe or restore a purchase.
+        </p>
+      )}
     </div>
   );
 }
+
