@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -35,6 +36,11 @@ import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authen
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
   '/coach': typeof AuthenticatedCoachRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
   '/coach': typeof AuthenticatedCoachRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/coach': typeof AuthenticatedCoachRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/account'
     | '/coach'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/account'
     | '/coach'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/_authenticated/account'
     | '/_authenticated/coach'
@@ -302,6 +314,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   ApiAiActionRoute: typeof ApiAiActionRoute
 }
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -507,6 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   ApiAiActionRoute: ApiAiActionRoute,
 }
