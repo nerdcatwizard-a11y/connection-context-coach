@@ -86,7 +86,14 @@ export function AppShell({ children }: { children?: ReactNode }) {
                 />
               ))}
             </nav>
-            <div className="p-4 text-xs text-muted-foreground">Private. Yours only.</div>
+            <div className="p-4 text-xs text-muted-foreground">
+              <p>Private. Yours only.</p>
+              <p className="mt-2 flex gap-2">
+                <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+                <span>·</span>
+                <Link to="/support" className="hover:text-foreground">Support</Link>
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -113,6 +120,11 @@ export function AppShell({ children }: { children?: ReactNode }) {
         </nav>
         <div className="p-4 text-xs text-muted-foreground">
           <p>Private. Yours only.</p>
+          <p className="mt-2 flex gap-2">
+            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+            <span>·</span>
+            <Link to="/support" className="hover:text-foreground">Support</Link>
+          </p>
         </div>
       </aside>
 
