@@ -57,12 +57,12 @@ function Home() {
           <p className="text-[10px] text-muted-foreground md:text-xs">Your Dating Assistant</p>
         </div>
 
-        <div className="flex flex-1 flex-col justify-start gap-2 pt-2 pb-1">
+        <div className="flex flex-1 flex-col justify-start gap-2 pt-5 pb-1">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            <p className="text-center text-[10px] uppercase tracking-widest text-muted-foreground">
               {greeting()}{name ? `, ${name}` : ""}
             </p>
-            <h1 className="mt-0.5 font-serif text-base md:text-xl">What can I help you with?</h1>
+            <h1 className="mt-0.5 text-center font-serif text-base md:text-xl">What can I help you with?</h1>
             <form onSubmit={ask} className="mt-2 flex flex-col gap-2 sm:flex-row">
               <AutoGrowTextarea
                 value={question}
@@ -94,7 +94,7 @@ function Home() {
           </div>
 
           <div className="mt-6 space-y-1.5 border-t border-border pt-6">
-            <h2 className="font-serif text-sm md:text-lg">How do I respond to this text?</h2>
+            <h2 className="text-center font-serif text-sm md:text-lg">How do I respond to this text?</h2>
             {images.length > 0 ? (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Taking you to Help Me Reply…
@@ -108,7 +108,7 @@ function Home() {
                 label="Upload photos"
                 showPasteHint={false}
                 dropClassName="h-14 md:h-24"
-                titleClassName="text-[10px] font-normal uppercase tracking-wider text-muted-foreground"
+                titleClassName="text-center text-[10px] font-normal uppercase tracking-wider text-muted-foreground"
               />
             )}
           </div>
