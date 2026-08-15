@@ -173,3 +173,31 @@ function PremiumPlan() {
   );
 }
 
+
+function Plan({ name, price, note, features, cta, to }: {
+  name: string; price: string; note: string; features: string[]; cta: string; to: string;
+}) {
+  return (
+    <div className="soft-card p-6">
+      <h2 className="font-serif text-2xl">{name}</h2>
+      <p className="mt-2">
+        <span className="font-serif text-4xl">{price}</span>{" "}
+        <span className="text-sm text-muted-foreground">{note}</span>
+      </p>
+      <ul className="mt-5 space-y-2 text-sm">
+        {features.map((f) => (
+          <li key={f} className="flex gap-2">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+      <Link
+        to={to}
+        className="mt-6 inline-flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium hover:bg-accent"
+      >
+        {cta}
+      </Link>
+    </div>
+  );
+}
