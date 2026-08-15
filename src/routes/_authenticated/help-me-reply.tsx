@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { z } from "zod";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import { AnalysisToggle } from "@/components/AnalysisToggle";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
@@ -11,6 +12,7 @@ import { ScreenshotUploader } from "@/components/ScreenshotUploader";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { logToConnection } from "@/lib/connection-log";
+import { takePendingReplyImages } from "@/lib/pending-reply";
 
 export const Route = createFileRoute("/_authenticated/help-me-reply")({
   head: () => ({
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/help-me-reply")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  validateSearch: (s) => z.object({ auto: z.coerce.number().optional() }).parse(s),
   component: HelpMeReplyPage,
 });
 
@@ -71,11 +74,10 @@ function parseOptions(reply: string): { options: Option[]; footer: string | null
 }
 
 function HelpMeReplyPage() {
+  const { auto } = useSearch({ from: "/_authenticated/help-me-reply" });
   const call = helpMeReply;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
-  const [received, setReceived] = useState("");
   const [history, setHistory] = useState("");
-  const [goal, setGoal] = useState("");
   const [tone, setTone] = useState<string>("");
   const [reply, setReply] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -90,13 +92,12 @@ function HelpMeReplyPage() {
     [reply],
   );
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function run(imgs: string[], hist: string, toneValue: string) {
     setError(null);
     setReply(null);
     setBusy(true);
     try {
-      const res = await call({ data: { received, goal, tone, history, images, analysis } });
+      const res = await call({ data: { tone: toneValue, history: hist, images: imgs, analysis } });
       setReply(res.reply);
       if (connectionId) {
         void logToConnection({ connectionId, title: "Cyrano: Help Me Reply", body: res.reply });
@@ -107,6 +108,22 @@ function HelpMeReplyPage() {
       setBusy(false);
     }
   }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    void run(images, history, tone);
+  }
+
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (!auto || autoRan.current) return;
+    autoRan.current = true;
+    const pending = takePendingReplyImages();
+    if (pending.length === 0) return;
+    setImages(pending);
+    void run(pending, "", "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto]);
 
   async function copyText(text: string, idx: number) {
     try {
@@ -131,7 +148,7 @@ function HelpMeReplyPage() {
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Help Me Reply</h1>
         <p className="text-sm text-muted-foreground">
-          Paste what you received. Cyrano will offer three natural, respectful options.
+Upload a screenshot of the conversation. Cyrano will offer three natural, respectful options.
         </p>
       </div>
       <CyranoDisclaimer />
@@ -140,36 +157,20 @@ function HelpMeReplyPage() {
         <ScreenshotUploader
           images={images}
           onChange={setImages}
-          title="Screenshot of your text conversation (optional)"
+          max={10}
+          title="Upload photos (up to 10)"
           label="Upload a screenshot of the conversation"
         />
 
         <ConnectionField value={connectionId} onChange={setConnectionId} />
 
-        <Field label="What did they send you?">
-          <textarea
-            value={received}
-            onChange={(e) => setReceived(e.target.value)}
-            rows={4}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Paste their message here — or just upload a screenshot above"
-          />
-        </Field>
-        <Field label="Any prior conversation for context? (optional)">
+        <Field label="Context? (optional)">
           <textarea
             value={history}
             onChange={(e) => setHistory(e.target.value)}
             rows={3}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             placeholder="Optional — what came before this message"
-          />
-        </Field>
-        <Field label="What do you want to happen next? (optional)">
-          <input
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="e.g. keep it going, ask them out, slow things down"
           />
         </Field>
         <Field label="Preferred tone (optional)">
@@ -194,7 +195,7 @@ function HelpMeReplyPage() {
         <AnalysisToggle analysis={analysis} onToggle={toggleAnalysis} className="rounded-xl bg-muted/40 px-3 py-2" />
         <button
           type="submit"
-          disabled={busy || (!received.trim() && images.length === 0)}
+          disabled={busy || (!history.trim() && images.length === 0)}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -245,7 +246,7 @@ function HelpMeReplyPage() {
                 feature="Help Me Reply"
                 priorLabel="reply suggestions"
                 priorOutput={reply}
-                situationContext={`They received: ${received}${history ? `\nPrior: ${history}` : ""}${goal ? `\nGoal: ${goal}` : ""}${tone ? `\nTone: ${tone}` : ""}`}
+                situationContext={`${history ? `Context: ${history}\n` : ""}${tone ? `Tone: ${tone}` : ""}`}
               />
             </div>
           ) : (
@@ -276,7 +277,7 @@ function HelpMeReplyPage() {
               feature="Help Me Reply"
               priorLabel="reply suggestions"
               priorOutput={reply}
-              situationContext={`They received: ${received}`}
+              situationContext={history ? `Context: ${history}` : ""}
             />
             </>
           )}
