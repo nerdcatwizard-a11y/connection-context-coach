@@ -57,7 +57,7 @@ function Home() {
           <p className="text-[10px] text-muted-foreground md:text-xs">Your Dating Assistant</p>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center gap-2 py-1">
+        <div className="flex flex-1 flex-col justify-start gap-2 pt-2 pb-1">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
               {greeting()}{name ? `, ${name}` : ""}
