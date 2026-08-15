@@ -125,7 +125,7 @@ function CoachPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-8rem)] flex-col gap-3">
+    <div className="flex h-[calc(100dvh-12rem)] flex-col gap-3 md:h-[calc(100dvh-9rem)]">
       <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <h1 className="font-serif text-2xl md:text-3xl">Advice</h1>

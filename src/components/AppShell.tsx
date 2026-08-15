@@ -115,7 +115,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
       </aside>
 
       <main className="pb-24 md:ml-60 md:pb-6">
-        <div className="mx-auto max-w-3xl px-4 pt-14 md:px-8 md:pt-10">
+        <div className="mx-auto max-w-3xl px-4 pt-16 md:px-8 md:pt-10">
           {children ?? <Outlet />}
         </div>
       </main>
