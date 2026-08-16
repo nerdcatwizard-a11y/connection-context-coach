@@ -110,11 +110,14 @@ function PremiumPlan() {
 
   return (
     <div className="soft-card p-6 ring-2 ring-primary">
-      <h2 className="font-serif text-2xl">Premium</h2>
+      <h2 className="font-serif text-2xl">Cyrano Premium</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Auto-renewable subscription — 1 month or 1 year
+      </p>
       <p className="mt-2">
         <span className="font-serif text-4xl">{prices[PREMIUM_MONTHLY_ID] ?? "$14"}</span>{" "}
         <span className="text-sm text-muted-foreground">
-          per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} billed annually
+          per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} per year
         </span>
       </p>
       <ul className="mt-5 space-y-2 text-sm">
@@ -150,17 +153,10 @@ function PremiumPlan() {
             Restore purchases
           </button>
           <p className="text-[11px] leading-snug text-muted-foreground">
-            Payment is charged to your Apple ID at confirmation. Subscriptions renew automatically
-            unless cancelled at least 24 hours before the period ends. Manage or cancel in your
-            device Settings &gt; Apple ID &gt; Subscriptions. See our{" "}
-            <Link to="/terms" className="underline">
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link to="/privacy" className="underline">
-              Privacy Policy
-            </Link>
-            .
+            Payment is charged to your Apple ID at confirmation of purchase. The subscription
+            renews automatically at the same price and period unless auto-renew is turned off at
+            least 24 hours before the period ends. Manage or cancel in your device Settings &gt;
+            Apple ID &gt; Subscriptions.
           </p>
         </div>
       ) : (
@@ -169,6 +165,16 @@ function PremiumPlan() {
           account. Open the app and tap Upgrade to subscribe or restore a purchase.
         </p>
       )}
+
+      <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
+        <Link to="/terms" className="underline">
+          Terms of Use (EULA)
+        </Link>{" "}
+        ·{" "}
+        <Link to="/privacy" className="underline">
+          Privacy Policy
+        </Link>
+      </p>
     </div>
   );
 }
