@@ -32,6 +32,7 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedConnectionsIndexRouteImport } from './routes/_authenticated/connections.index'
 import { Route as ApiIapVerifyRouteImport } from './routes/api/iap/verify'
 import { Route as ApiAiActionRouteImport } from './routes/api/ai/$action'
+import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections.$id'
 
 const TermsRoute = TermsRouteImport.update({
@@ -154,6 +155,11 @@ const ApiAiActionRoute = ApiAiActionRouteImport.update({
   path: '/api/ai/$action',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
+  id: '/api/account/delete',
+  path: '/api/account/delete',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedConnectionsIdRoute =
   AuthenticatedConnectionsIdRouteImport.update({
     id: '/connections/$id',
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/ai/$action': typeof ApiAiActionRoute
   '/api/iap/verify': typeof ApiIapVerifyRoute
   '/connections/': typeof AuthenticatedConnectionsIndexRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/screenshots': typeof AuthenticatedScreenshotsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/ai/$action': typeof ApiAiActionRoute
   '/api/iap/verify': typeof ApiIapVerifyRoute
   '/connections': typeof AuthenticatedConnectionsIndexRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/_authenticated/screenshots': typeof AuthenticatedScreenshotsRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/ai/$action': typeof ApiAiActionRoute
   '/api/iap/verify': typeof ApiIapVerifyRoute
   '/_authenticated/connections/': typeof AuthenticatedConnectionsIndexRoute
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/screenshots'
     | '/welcome'
     | '/connections/$id'
+    | '/api/account/delete'
     | '/api/ai/$action'
     | '/api/iap/verify'
     | '/connections/'
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/screenshots'
     | '/welcome'
     | '/connections/$id'
+    | '/api/account/delete'
     | '/api/ai/$action'
     | '/api/iap/verify'
     | '/connections'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/_authenticated/screenshots'
     | '/_authenticated/welcome'
     | '/_authenticated/connections/$id'
+    | '/api/account/delete'
     | '/api/ai/$action'
     | '/api/iap/verify'
     | '/_authenticated/connections/'
@@ -328,6 +340,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiAiActionRoute: typeof ApiAiActionRoute
   ApiIapVerifyRoute: typeof ApiIapVerifyRoute
 }
@@ -495,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiActionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/account/delete': {
+      id: '/api/account/delete'
+      path: '/api/account/delete'
+      fullPath: '/api/account/delete'
+      preLoaderRoute: typeof ApiAccountDeleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/connections/$id': {
       id: '/_authenticated/connections/$id'
       path: '/connections/$id'
@@ -549,6 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiAiActionRoute: ApiAiActionRoute,
   ApiIapVerifyRoute: ApiIapVerifyRoute,
 }
