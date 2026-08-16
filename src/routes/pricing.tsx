@@ -153,17 +153,10 @@ function PremiumPlan() {
             Restore purchases
           </button>
           <p className="text-[11px] leading-snug text-muted-foreground">
-            Payment is charged to your Apple ID at confirmation. Subscriptions renew automatically
-            unless cancelled at least 24 hours before the period ends. Manage or cancel in your
-            device Settings &gt; Apple ID &gt; Subscriptions. See our{" "}
-            <Link to="/terms" className="underline">
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link to="/privacy" className="underline">
-              Privacy Policy
-            </Link>
-            .
+            Payment is charged to your Apple ID at confirmation of purchase. The subscription
+            renews automatically at the same price and period unless auto-renew is turned off at
+            least 24 hours before the period ends. Manage or cancel in your device Settings &gt;
+            Apple ID &gt; Subscriptions.
           </p>
         </div>
       ) : (
@@ -172,6 +165,16 @@ function PremiumPlan() {
           account. Open the app and tap Upgrade to subscribe or restore a purchase.
         </p>
       )}
+
+      <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
+        <Link to="/terms" className="underline">
+          Terms of Use (EULA)
+        </Link>{" "}
+        ·{" "}
+        <Link to="/privacy" className="underline">
+          Privacy Policy
+        </Link>
+      </p>
     </div>
   );
 }
