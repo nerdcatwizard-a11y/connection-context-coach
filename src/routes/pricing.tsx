@@ -110,11 +110,14 @@ function PremiumPlan() {
 
   return (
     <div className="soft-card p-6 ring-2 ring-primary">
-      <h2 className="font-serif text-2xl">Premium</h2>
+      <h2 className="font-serif text-2xl">Cyrano Premium</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Auto-renewable subscription — 1 month or 1 year
+      </p>
       <p className="mt-2">
         <span className="font-serif text-4xl">{prices[PREMIUM_MONTHLY_ID] ?? "$14"}</span>{" "}
         <span className="text-sm text-muted-foreground">
-          per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} billed annually
+          per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} per year
         </span>
       </p>
       <ul className="mt-5 space-y-2 text-sm">
