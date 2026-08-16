@@ -344,6 +344,19 @@ function AuthPage() {
 
           </form>
 
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            By {mode === "signup" ? "creating an account" : "signing in"} you agree to our{" "}
+            <Link to="/terms" className="underline hover:text-foreground">
+              Terms of Use (EULA)
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="underline hover:text-foreground">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+
+
 
           <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
             <button type="button" onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="hover:text-foreground">
