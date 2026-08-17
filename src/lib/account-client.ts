@@ -52,5 +52,10 @@ export async function deleteMyAccount(): Promise<void> {
   } catch {
     json = null;
   }
+  if (!json && text.trimStart().startsWith("<")) {
+    throw new Error(
+      "Account deletion isn't available on the published server yet. Publish the latest app update, then try again.",
+    );
+  }
   if (!res.ok) throw new Error(json?.error || `Request failed (${res.status})`);
 }
