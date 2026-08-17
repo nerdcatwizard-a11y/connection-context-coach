@@ -42,7 +42,9 @@ export async function deleteMyAccount(): Promise<void> {
       body: "{}",
     });
   } catch {
-    throw new Error("Couldn't reach Cyrano's server. Check your connection and try again.");
+    throw new Error(
+      "Couldn't reach Cyrano's server. If you just updated the app, publish the latest web update first — otherwise check your connection and try again.",
+    );
   }
 
   const text = await res.text();
@@ -51,6 +53,11 @@ export async function deleteMyAccount(): Promise<void> {
     json = text ? (JSON.parse(text) as { error?: string }) : null;
   } catch {
     json = null;
+  }
+  if (!json && text.trimStart().startsWith("<")) {
+    throw new Error(
+      "Account deletion isn't available on the published server yet. Publish the latest app update, then try again.",
+    );
   }
   if (!res.ok) throw new Error(json?.error || `Request failed (${res.status})`);
 }
