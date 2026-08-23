@@ -33,9 +33,25 @@ function globalStore(): AnyStore | undefined {
 
 let readyPromise: Promise<AnyStore | null> | null = null;
 
-/** Waits (briefly) for Capacitor to inject the Cordova purchase plugin. */
+/** Cordova plugins only clobber their globals after `deviceready` fires. */
+function waitForDeviceReady(timeoutMs = 15000): Promise<void> {
+  if (typeof document === "undefined") return Promise.resolve();
+  const anyDoc = document as any;
+  if (anyDoc.__cordovaDeviceReady) return Promise.resolve();
+  return new Promise((resolve) => {
+    const done = () => {
+      anyDoc.__cordovaDeviceReady = true;
+      resolve();
+    };
+    document.addEventListener("deviceready", done, { once: true });
+    setTimeout(done, timeoutMs);
+  });
+}
+
+/** Waits (up to ~15s) for Capacitor to inject the Cordova purchase plugin. */
 async function waitForPlugin(): Promise<AnyStore | undefined> {
-  for (let i = 0; i < 40; i++) {
+  await waitForDeviceReady();
+  for (let i = 0; i < 60; i++) {
     const cdv = (globalThis as any).CdvPurchase;
     if (cdv?.store) return cdv;
     await new Promise((r) => setTimeout(r, 250));
@@ -43,20 +59,31 @@ async function waitForPlugin(): Promise<AnyStore | undefined> {
   return (globalThis as any).CdvPurchase;
 }
 
-
+/** Human-readable reason the store is unavailable, or null when it should work. */
+export function storeUnavailableReason(): string | null {
+  if (!isNative()) {
+    return "Subscriptions are purchased inside the Cyrano app for iPhone or Android.";
+  }
+  if (!globalStore()) {
+    return "The App Store connection isn't ready yet. Close and reopen Cyrano, then try again. If it keeps failing, this build is missing the purchase plugin — rebuild with `bun run build:capacitor` and run the app again from Xcode.";
+  }
+  return null;
+}
 
 /** Loads and initializes the store plugin. Resolves null on web. */
 export async function initStore(): Promise<AnyStore | null> {
   if (!isNative()) return null;
   if (readyPromise) return readyPromise;
 
-  readyPromise = (async () => {
+  const attempt = (async () => {
     // Capacitor injects the Cordova plugin JS into the webview at startup, so we
     // wait for the CdvPurchase global rather than importing the package.
     const CdvPurchase = await waitForPlugin();
     const store: AnyStore = CdvPurchase?.store;
-    if (!store) return null;
-
+    if (!store) {
+      console.error("[iap] CdvPurchase global never appeared — native purchase plugin missing from this build");
+      return null;
+    }
 
     const platform =
       (globalThis as any).Capacitor?.getPlatform?.() === "android"
@@ -83,8 +110,19 @@ export async function initStore(): Promise<AnyStore | null> {
     return store;
   })();
 
-  return readyPromise;
+  readyPromise = attempt;
+  // Never cache a failed/empty init — the plugin may still arrive on a later tap.
+  attempt
+    .then((store) => {
+      if (!store) readyPromise = null;
+    })
+    .catch(() => {
+      readyPromise = null;
+    });
+
+  return attempt;
 }
+
 
 /** Sends the store receipt to our server, which unlocks Premium after validation. */
 async function verifyAndFinish(tx: AnyStore) {
