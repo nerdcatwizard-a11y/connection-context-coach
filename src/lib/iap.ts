@@ -177,19 +177,29 @@ export async function getPrices(): Promise<StorePrice[]> {
 /** Starts the native purchase sheet. */
 export async function purchasePremium(id: PremiumProductId): Promise<void> {
   const store = await initStore();
-  if (!store) throw new Error("In-app purchases are only available in the Cyrano app.");
-  const offer = store.get(id)?.getOffer?.();
-  if (!offer) throw new Error("This subscription isn't available right now. Please try again.");
+  if (!store) throw new Error(storeUnavailableReason() ?? "The App Store isn't available right now.");
+  // Products load asynchronously after initialize(); give App Store Connect a moment.
+  let offer = store.get(id)?.getOffer?.();
+  for (let i = 0; !offer && i < 20; i++) {
+    await new Promise((r) => setTimeout(r, 250));
+    offer = store.get(id)?.getOffer?.();
+  }
+  if (!offer) {
+    throw new Error(
+      `"${id}" isn't loading from the App Store. Check that the subscription is Ready to Submit, the bundle ID matches, and you're signed into a sandbox account.`,
+    );
+  }
   await store.order(offer);
 }
 
 /** Restores previous purchases (required by App Review). */
 export async function restorePurchases(): Promise<void> {
   const store = await initStore();
-  if (!store) throw new Error("Restoring purchases is only available in the Cyrano app.");
+  if (!store) throw new Error(storeUnavailableReason() ?? "The App Store isn't available right now.");
   await store.restorePurchases();
 }
 
 export function storeAvailable(): boolean {
   return isNative();
 }
+
