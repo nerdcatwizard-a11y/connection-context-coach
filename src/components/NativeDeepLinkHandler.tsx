@@ -15,6 +15,10 @@ export function NativeDeepLinkHandler() {
   useEffect(() => {
     if (!isNative()) return;
 
+    // Warm up the store plugin at launch so the first Subscribe tap is instant.
+    void import("@/lib/iap").then(({ initStore }) => initStore()).catch(() => undefined);
+
+
     let removeListener: (() => void) | undefined;
     let cancelled = false;
 
