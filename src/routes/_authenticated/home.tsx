@@ -82,8 +82,8 @@ function Home() {
             {!isPremium && (
               <p className="mt-1.5 text-[10px] text-muted-foreground md:text-xs">
                 {usage
-                  ? `${usage.chat.remaining} of ${usage.chat.limit} chat messages and ${usage.pickup.remaining} of ${usage.pickup.limit} pickup lines left today.`
-                  : "Free plan: 5 chat messages and 2 pickup lines per day."}{" "}
+                  ? `${usage.chat.remaining} of ${usage.chat.limit} chat messages and ${usage.pickup.remaining} of ${usage.pickup.limit} Help Me Reply / Pickup Lines left today.`
+                  : "Free plan: 5 chat messages and 2 Help Me Reply / Pickup Lines per day."}{" "}
                 <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
               </p>
             )}
