@@ -1,4 +1,3 @@
-import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -109,6 +108,7 @@ function HelpMeReplyPage() {
       setError((err as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -153,6 +153,12 @@ function HelpMeReplyPage() {
         <p className="text-sm text-muted-foreground">
 Upload a screenshot of the conversation. Cyrano will offer three natural, respectful options.
         </p>
+        {!isPremium && usage && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {usage.pickup.remaining} of {usage.pickup.limit} free Help Me Reply / Pickup Lines left today.{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade for unlimited</Link>.
+          </p>
+        )}
       </div>
       <CyranoDisclaimer />
 
