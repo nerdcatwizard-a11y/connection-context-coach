@@ -64,21 +64,28 @@ function Pricing() {
 
 function PremiumPlan() {
   const native = storeAvailable();
+  const { usage, isPremium, loading } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [prices, setPrices] = useState<Record<string, string | null>>({});
   const [busy, setBusy] = useState<PremiumProductId | "restore" | null>(null);
 
   useEffect(() => {
-    if (!native) return;
+    if (!native || isPremium) return;
     void getPrices()
       .then((list) => setPrices(Object.fromEntries(list.map((p) => [p.id, p.price]))))
       .catch(() => undefined);
-  }, [native]);
+  }, [native, isPremium]);
 
   async function buy(id: PremiumProductId) {
+    if (isPremium) {
+      toast.info("You're already subscribed to Cyrano Premium.");
+      return;
+    }
     setBusy(id);
     try {
       await purchasePremium(id);
       toast.success("Thanks! Your Premium access unlocks as soon as Apple confirms the purchase.");
+      void refreshUsage();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -91,12 +98,14 @@ function PremiumPlan() {
     try {
       await restorePurchases();
       toast.success("Checked the App Store for previous purchases.");
+      void refreshUsage();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
       setBusy(null);
     }
   }
+
 
   const features = [
     "Unlimited AI coaching & replies",
