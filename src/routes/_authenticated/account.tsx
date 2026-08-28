@@ -51,17 +51,32 @@ function Account() {
       </div>
       <div className="soft-card p-6">
         <h2 className="font-serif text-lg">Cyrano Premium</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Unlimited coaching, replies and screenshot reads. Purchased through your App Store
-          account.
-        </p>
-        <button
-          onClick={() => navigate({ to: "/pricing" })}
-          className="mt-3 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-        >
-          Upgrade or restore purchase
-        </button>
+        {isPremium ? (
+          <>
+            <p className="mt-1 text-sm text-muted-foreground">
+              You're subscribed — everything is unlocked. Manage or cancel in device Settings &gt;
+              Apple ID &gt; Subscriptions.
+            </p>
+            <span className="mt-3 inline-flex rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+              Premium active
+            </span>
+          </>
+        ) : (
+          <>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Unlimited coaching, replies and screenshot reads. Purchased through your App Store
+              account.
+            </p>
+            <button
+              onClick={() => navigate({ to: "/pricing" })}
+              className="mt-3 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            >
+              Upgrade or restore purchase
+            </button>
+          </>
+        )}
       </div>
+
       <div className="soft-card p-6">
         <h2 className="font-serif text-lg">Onboarding</h2>
         <p className="mt-1 text-sm text-muted-foreground">
