@@ -23,11 +23,8 @@ export const Route = createFileRoute("/_authenticated/help-me-reply")({
     ],
   }),
   validateSearch: (s) => z.object({ auto: z.coerce.number().optional() }).parse(s),
-  component: () => (
-    <PremiumGate feature="Text Response">
-      <HelpMeReplyPage />
-    </PremiumGate>
-  ),
+  component: HelpMeReplyPage,
+
 
 });
 
