@@ -105,7 +105,7 @@ function StarterPage() {
         </p>
         {!isPremium && usage && (
           <p className="mt-1 text-xs text-muted-foreground">
-            {usage.pickup.remaining} of {usage.pickup.limit} free pickup line generations left today.{" "}
+            {usage.pickup.remaining} of {usage.pickup.limit} free Help Me Reply / Pickup Lines left today.{" "}
             <Link to="/pricing" className="text-primary underline">Upgrade for unlimited</Link>.
           </p>
         )}

@@ -156,7 +156,7 @@ function PremiumPlan() {
       {usage && (
         <p className="mt-2 text-xs text-muted-foreground">
           Free plan today: {usage.chat.remaining} of {usage.chat.limit} chat messages and{" "}
-          {usage.pickup.remaining} of {usage.pickup.limit} pickup line generations left.
+          {usage.pickup.remaining} of {usage.pickup.limit} Help Me Reply / Pickup Lines left.
         </p>
       )}
       <ul className="mt-5 space-y-2 text-sm">

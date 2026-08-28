@@ -1,5 +1,5 @@
-import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
@@ -23,11 +23,8 @@ export const Route = createFileRoute("/_authenticated/help-me-reply")({
     ],
   }),
   validateSearch: (s) => z.object({ auto: z.coerce.number().optional() }).parse(s),
-  component: () => (
-    <PremiumGate feature="Text Response">
-      <HelpMeReplyPage />
-    </PremiumGate>
-  ),
+  component: HelpMeReplyPage,
+
 
 });
 
@@ -83,6 +80,8 @@ function HelpMeReplyPage() {
   const { auto } = useSearch({ from: "/_authenticated/help-me-reply" });
   const call = helpMeReply;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { usage, isPremium } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [history, setHistory] = useState("");
   const [tone, setTone] = useState<string>("");
   const [reply, setReply] = useState<string | null>(null);
@@ -112,6 +111,7 @@ function HelpMeReplyPage() {
       setError((err as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -156,6 +156,12 @@ function HelpMeReplyPage() {
         <p className="text-sm text-muted-foreground">
 Upload a screenshot of the conversation. Cyrano will offer three natural, respectful options.
         </p>
+        {!isPremium && usage && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {usage.pickup.remaining} of {usage.pickup.limit} free Help Me Reply / Pickup Lines left today.{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade for unlimited</Link>.
+          </p>
+        )}
       </div>
       <CyranoDisclaimer />
 
