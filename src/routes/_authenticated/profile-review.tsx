@@ -1,3 +1,4 @@
+import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { useCallback, useState } from "react";

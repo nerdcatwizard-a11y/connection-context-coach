@@ -1,3 +1,4 @@
+import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
