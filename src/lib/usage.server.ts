@@ -17,8 +17,10 @@ const POLICIES: Record<string, Policy> = {
   "get-chat": { kind: "free" },
   "get-usage": { kind: "free" },
   "send-coach-message": { kind: "metered", metric: "ai_message", limit: CHAT_DAILY_LIMIT, label: "chat messages" },
-  "conversation-starter": { kind: "metered", metric: "pickup_line", limit: PICKUP_DAILY_LIMIT, label: "pickup line generations" },
-  "help-me-reply": { kind: "premium", label: "Text Response" },
+  // Pickup Lines and Help Me Reply share one daily allowance.
+  "conversation-starter": { kind: "metered", metric: "pickup_line", limit: PICKUP_DAILY_LIMIT, label: "Pickup Lines / Help Me Reply generations" },
+  "help-me-reply": { kind: "metered", metric: "pickup_line", limit: PICKUP_DAILY_LIMIT, label: "Pickup Lines / Help Me Reply generations" },
+
   "analyze-screenshots": { kind: "premium", label: "Text Analyzer" },
   "review-profile": { kind: "premium", label: "Dating profile reviews" },
   "connection-insight": { kind: "premium", label: "Connection insights" },
