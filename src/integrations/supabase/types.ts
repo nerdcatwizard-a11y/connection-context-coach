@@ -854,10 +854,25 @@ export type Database = {
           used: number
         }[]
       }
+      consume_usage: {
+        Args: { _limit: number; _metric: string }
+        Returns: {
+          allowed: boolean
+          limit: number
+          used: number
+        }[]
+      }
       get_ai_usage: {
         Args: never
         Returns: {
           used: number
+        }[]
+      }
+      get_usage_counts: {
+        Args: never
+        Returns: {
+          chat_used: number
+          pickup_used: number
         }[]
       }
     }
