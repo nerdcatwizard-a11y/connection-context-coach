@@ -91,6 +91,7 @@ function StarterPage() {
       setError((err as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -102,7 +103,14 @@ function StarterPage() {
         <p className="text-sm text-muted-foreground">
           Describe the scenario you're in, or upload a screenshot of their dating profile bio — either one works, and you can do both. You'll get openers grounded in something real.
         </p>
+        {!isPremium && usage && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {usage.pickup.remaining} of {usage.pickup.limit} free pickup line generations left today.{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade for unlimited</Link>.
+          </p>
+        )}
       </div>
+
       <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">
