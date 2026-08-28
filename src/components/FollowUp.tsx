@@ -58,12 +58,28 @@ export function FollowUp({
     }
   }
 
+  if (!isPremium) {
+    return (
+      <div className="soft-card space-y-2 p-4 text-sm">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Follow-up questions are part of Cyrano Premium.{" "}
+          <Link to="/pricing" className="text-primary underline">Unlock with Premium</Link>.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="soft-card space-y-3 p-4">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
       </div>
+
 
 
       {turns.length > 0 && (
