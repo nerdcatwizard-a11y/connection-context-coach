@@ -24,6 +24,8 @@ export function FollowUp({
 }) {
   const call = askFollowUp;
   const { analysis } = useAnalysisMode();
+  const { isPremium } = useUsage();
+
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
