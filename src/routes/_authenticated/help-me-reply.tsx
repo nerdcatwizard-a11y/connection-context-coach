@@ -1,3 +1,4 @@
+import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -22,7 +23,12 @@ export const Route = createFileRoute("/_authenticated/help-me-reply")({
     ],
   }),
   validateSearch: (s) => z.object({ auto: z.coerce.number().optional() }).parse(s),
-  component: HelpMeReplyPage,
+  component: () => (
+    <PremiumGate feature="Text Response">
+      <HelpMeReplyPage />
+    </PremiumGate>
+  ),
+
 });
 
 const TONES = ["Warm", "Playful", "Direct", "Curious", "Flirty", "Grounded"];

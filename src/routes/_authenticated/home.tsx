@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { ScreenshotUploader } from "@/components/ScreenshotUploader";
 import { setPendingReplyImages } from "@/lib/pending-reply";
-import { getUsage } from "@/lib/ai-client";
+import { useUsage } from "@/hooks/use-usage";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -23,15 +23,15 @@ function Home() {
   const [name, setName] = useState<string>("");
   const [question, setQuestion] = useState("");
   const [images, setImages] = useState<string[]>([]);
-  const [usage, setUsage] = useState<{ remaining: number; limit: number; unlimited: boolean } | null>(null);
+  const { usage, isPremium } = useUsage();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const meta = data.user?.user_metadata as { name?: string; full_name?: string } | undefined;
       setName(meta?.name || meta?.full_name || data.user?.email?.split("@")[0] || "");
     });
-    getUsage().then(setUsage).catch(() => {});
   }, []);
+
 
   function ask(e: React.FormEvent) {
     e.preventDefault();
@@ -79,23 +79,24 @@ function Home() {
                 Ask Cyrano <ArrowRight className="h-4 w-4" />
               </button>
             </form>
-            <p className="mt-1.5 text-[10px] text-muted-foreground md:text-xs">
-              {usage?.unlimited ? (
-                "Unlimited AI messages."
-              ) : (
-                <>
-                  {usage
-                    ? `${usage.remaining} of ${usage.limit} messages left today.`
-                    : "Free plan: 10 AI messages per day."}{" "}
-                  <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
-                </>
-              )}
-            </p>
+            {!isPremium && (
+              <p className="mt-1.5 text-[10px] text-muted-foreground md:text-xs">
+                {usage
+                  ? `${usage.chat.remaining} of ${usage.chat.limit} chat messages and ${usage.pickup.remaining} of ${usage.pickup.limit} pickup lines left today.`
+                  : "Free plan: 5 chat messages and 2 pickup lines per day."}{" "}
+                <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
+              </p>
+            )}
           </div>
 
           <div className="mt-6 space-y-1.5 border-t border-border pt-6">
             <h2 className="text-center font-serif text-sm md:text-lg">How do I respond to this text?</h2>
-            {images.length > 0 ? (
+            {!isPremium ? (
+              <p className="text-center text-[11px] text-muted-foreground md:text-xs">
+                Premium feature.{" "}
+                <Link to="/pricing" className="text-primary hover:underline">Unlock with Premium</Link>.
+              </p>
+            ) : images.length > 0 ? (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Taking you to Help Me Reply…
               </p>
@@ -112,6 +113,7 @@ function Home() {
               />
             )}
           </div>
+
         </div>
       </section>
     </div>

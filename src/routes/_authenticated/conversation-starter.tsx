@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
+
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { conversationStarter } from "@/lib/ai-client";
@@ -30,6 +32,8 @@ const MAX = 10;
 function StarterPage() {
   const call = conversationStarter;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { usage, isPremium } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [profileNotes, setProfileNotes] = useState("");
   const [datingApp, setDatingApp] = useState("");
   const [tone, setTone] = useState("");
@@ -39,6 +43,7 @@ function StarterPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState("");
+
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
@@ -86,6 +91,7 @@ function StarterPage() {
       setError((err as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -97,7 +103,14 @@ function StarterPage() {
         <p className="text-sm text-muted-foreground">
           Describe the scenario you're in, or upload a screenshot of their dating profile bio — either one works, and you can do both. You'll get openers grounded in something real.
         </p>
+        {!isPremium && usage && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            {usage.pickup.remaining} of {usage.pickup.limit} free pickup line generations left today.{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade for unlimited</Link>.
+          </p>
+        )}
       </div>
+
       <CyranoDisclaimer />
 
       <form onSubmit={submit} className="soft-card space-y-4 p-5">

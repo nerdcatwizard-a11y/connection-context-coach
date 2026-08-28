@@ -846,18 +846,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      consume_ai_message: {
-        Args: { _limit: number }
+      consume_usage: {
+        Args: { _limit: number; _metric: string }
         Returns: {
           allowed: boolean
           limit: number
           used: number
         }[]
       }
-      get_ai_usage: {
+      get_usage_counts: {
         Args: never
         Returns: {
-          used: number
+          chat_used: number
+          pickup_used: number
         }[]
       }
     }

@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Loader2, MessageCircle, Send } from "lucide-react";
 import { CyranoText } from "@/components/CyranoText";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { askFollowUp } from "@/lib/ai-client";
 import { useAnalysisMode } from "@/hooks/use-analysis-mode";
+import { useUsage } from "@/hooks/use-usage";
+
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -21,6 +24,8 @@ export function FollowUp({
 }) {
   const call = askFollowUp;
   const { analysis } = useAnalysisMode();
+  const { isPremium } = useUsage();
+
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
@@ -58,12 +63,28 @@ export function FollowUp({
     }
   }
 
+  if (!isPremium) {
+    return (
+      <div className="soft-card space-y-2 p-4 text-sm">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Follow-up questions are part of Cyrano Premium.{" "}
+          <Link to="/pricing" className="text-primary underline">Unlock with Premium</Link>.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="soft-card space-y-3 p-4">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-medium">Follow-up with Cyrano</h3>
       </div>
+
 
 
       {turns.length > 0 && (

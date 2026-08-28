@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
+
 import {
   PREMIUM_MONTHLY_ID,
   PREMIUM_YEARLY_ID,
@@ -64,21 +66,28 @@ function Pricing() {
 
 function PremiumPlan() {
   const native = storeAvailable();
+  const { usage, isPremium, loading } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [prices, setPrices] = useState<Record<string, string | null>>({});
   const [busy, setBusy] = useState<PremiumProductId | "restore" | null>(null);
 
   useEffect(() => {
-    if (!native) return;
+    if (!native || isPremium) return;
     void getPrices()
       .then((list) => setPrices(Object.fromEntries(list.map((p) => [p.id, p.price]))))
       .catch(() => undefined);
-  }, [native]);
+  }, [native, isPremium]);
 
   async function buy(id: PremiumProductId) {
+    if (isPremium) {
+      toast.info("You're already subscribed to Cyrano Premium.");
+      return;
+    }
     setBusy(id);
     try {
       await purchasePremium(id);
       toast.success("Thanks! Your Premium access unlocks as soon as Apple confirms the purchase.");
+      void refreshUsage();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -91,12 +100,14 @@ function PremiumPlan() {
     try {
       await restorePurchases();
       toast.success("Checked the App Store for previous purchases.");
+      void refreshUsage();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
       setBusy(null);
     }
   }
+
 
   const features = [
     "Unlimited AI coaching & replies",
@@ -107,6 +118,28 @@ function PremiumPlan() {
     "Write Like Me personalization",
     "Full journal search + opt-in insights",
   ];
+
+  if (!loading && isPremium) {
+    return (
+      <div className="soft-card p-6 ring-2 ring-primary">
+        <h2 className="font-serif text-2xl">You're on Cyrano Premium</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Everything is unlocked — unlimited coaching, replies, analysis and profile reviews.
+        </p>
+        <ul className="mt-5 space-y-2 text-sm">
+          {features.map((f) => (
+            <li key={f} className="flex gap-2">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-xs text-muted-foreground">
+          Manage or cancel in device Settings &gt; Apple ID &gt; Subscriptions.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="soft-card p-6 ring-2 ring-primary">
@@ -120,6 +153,12 @@ function PremiumPlan() {
           per month, or {prices[PREMIUM_YEARLY_ID] ?? "$108"} per year
         </span>
       </p>
+      {usage && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Free plan today: {usage.chat.remaining} of {usage.chat.limit} chat messages and{" "}
+          {usage.pickup.remaining} of {usage.pickup.limit} pickup line generations left.
+        </p>
+      )}
       <ul className="mt-5 space-y-2 text-sm">
         {features.map((f) => (
           <li key={f} className="flex gap-2">
@@ -130,6 +169,7 @@ function PremiumPlan() {
       </ul>
 
       {native ? (
+
         <div className="mt-6 space-y-2">
           <button
             onClick={() => void buy(PREMIUM_MONTHLY_ID)}

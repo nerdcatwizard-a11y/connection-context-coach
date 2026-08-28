@@ -144,4 +144,10 @@ export const askFollowUp = (a: Args<{
 }>) => post<{ reply: string }>("ask-follow-up", a.data);
 
 export const getUsage = () =>
-  post<{ used: number; limit: number; remaining: number; unlimited: boolean }>("get-usage", {});
+  post<{
+    tier: "free" | "premium";
+    unlimited: boolean;
+    chat: { used: number; limit: number; remaining: number };
+    pickup: { used: number; limit: number; remaining: number };
+  }>("get-usage", {});
+

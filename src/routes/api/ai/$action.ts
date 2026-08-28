@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AI_ACTIONS, HttpError, requireAuth, type AiAction } from "@/lib/ai.server";
-import { consumesQuota, consumeAiMessage, getUsage } from "@/lib/usage.server";
+import { enforceEntitlement, getUsage } from "@/lib/usage.server";
 import { jsonWithCors, preflight } from "@/lib/cors";
 
 async function handle(request: Request, action: string): Promise<Response> {
@@ -13,7 +13,8 @@ async function handle(request: Request, action: string): Promise<Response> {
       return jsonWithCors(request, { error: "Unknown action" }, 404);
     }
     const ctx = await requireAuth(request);
-    if (consumesQuota(action)) await consumeAiMessage(ctx);
+    await enforceEntitlement(ctx, action);
+
     const raw = request.method === "GET" ? {} : await request.json().catch(() => ({}));
     const result = await AI_ACTIONS[action as AiAction](raw, ctx);
     return jsonWithCors(request, result, 200);

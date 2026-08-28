@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowRight, Loader2, Plus, X } from "lucide-react";
@@ -9,6 +9,7 @@ import { useAnalysisMode } from "@/hooks/use-analysis-mode";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import { sendCoachMessage, getChat } from "@/lib/ai-client";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -33,6 +34,8 @@ function CoachPage() {
   const send = sendCoachMessage;
   const load = getChat;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { usage, isPremium } = useUsage();
+  const refreshUsage = useRefreshUsage();
 
   const [chatId, setChatId] = useState<string | null>(chat ?? null);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -121,6 +124,7 @@ function CoachPage() {
       setError((e as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -129,7 +133,14 @@ function CoachPage() {
       <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <h1 className="font-serif text-2xl md:text-3xl">Advice</h1>
+        {!isPremium && usage && (
+          <span className="text-xs text-muted-foreground">
+            {usage.chat.remaining}/{usage.chat.limit} today ·{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade</Link>
+          </span>
+        )}
       </div>
+
       <CyranoDisclaimer />
       <AnalysisToggle
         analysis={analysis}

@@ -1,3 +1,4 @@
+import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { useCallback, useState } from "react";
@@ -20,7 +21,12 @@ export const Route = createFileRoute("/_authenticated/screenshots")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ScreenshotsPage,
+  component: () => (
+    <PremiumGate feature="Text Analyzer">
+      <ScreenshotsPage />
+    </PremiumGate>
+  ),
+
 });
 
 const REQUEST_LABELS: Record<"understand" | "reply" | "review", string> = {

@@ -1,3 +1,4 @@
+import { PremiumGate } from "@/components/PremiumGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
 import { useCallback, useState } from "react";
@@ -21,7 +22,12 @@ export const Route = createFileRoute("/_authenticated/profile-review")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ProfileReviewPage,
+  component: () => (
+    <PremiumGate feature="Review A Dating Profile">
+      <ProfileReviewPage />
+    </PremiumGate>
+  ),
+
 });
 
 function ProfileReviewPage() {
