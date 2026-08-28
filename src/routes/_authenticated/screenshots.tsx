@@ -20,7 +20,12 @@ export const Route = createFileRoute("/_authenticated/screenshots")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ScreenshotsPage,
+  component: () => (
+    <PremiumGate feature="Text Analyzer">
+      <ScreenshotsPage />
+    </PremiumGate>
+  ),
+
 });
 
 const REQUEST_LABELS: Record<"understand" | "reply" | "review", string> = {
