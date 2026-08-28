@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, Lock } from "lucide-react";
 import type { ReactNode } from "react";
 import { useUsage } from "@/hooks/use-usage";
+import { BackToDashboard } from "@/components/BackToDashboard";
+
 
 /**
  * Renders children only for Premium accounts. Free accounts see a lock card.
