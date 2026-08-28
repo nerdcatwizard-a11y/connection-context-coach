@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AutoGrowTextarea } from "@/components/AutoGrowTextarea";
 import { ScreenshotUploader } from "@/components/ScreenshotUploader";
 import { setPendingReplyImages } from "@/lib/pending-reply";
-import { getUsage } from "@/lib/ai-client";
+import { useUsage } from "@/hooks/use-usage";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -23,15 +23,15 @@ function Home() {
   const [name, setName] = useState<string>("");
   const [question, setQuestion] = useState("");
   const [images, setImages] = useState<string[]>([]);
-  const [usage, setUsage] = useState<{ remaining: number; limit: number; unlimited: boolean } | null>(null);
+  const { usage, isPremium } = useUsage();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const meta = data.user?.user_metadata as { name?: string; full_name?: string } | undefined;
       setName(meta?.name || meta?.full_name || data.user?.email?.split("@")[0] || "");
     });
-    getUsage().then(setUsage).catch(() => {});
   }, []);
+
 
   function ask(e: React.FormEvent) {
     e.preventDefault();
