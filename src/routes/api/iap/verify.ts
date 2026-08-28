@@ -74,7 +74,24 @@ async function handle(request: Request): Promise<Response> {
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // One store subscription unlocks exactly one Cyrano account.
+    if (originalTransactionId) {
+      const { data: owner } = await supabaseAdmin
+        .from("subscriptions")
+        .select("user_id")
+        .eq("store_transaction_id", originalTransactionId)
+        .maybeSingle();
+      if (owner && owner.user_id !== ctx.userId) {
+        throw new HttpError(
+          409,
+          "This subscription is already linked to another Cyrano account. Sign in with that account, or cancel it before subscribing here.",
+        );
+      }
+    }
+
     const { error } = await supabaseAdmin.from("subscriptions").upsert(
+
       {
         user_id: ctx.userId,
         tier: "premium",
