@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft, Check, Copy, Loader2, Sparkles } from "lucide-react";
@@ -79,6 +80,8 @@ function HelpMeReplyPage() {
   const { auto } = useSearch({ from: "/_authenticated/help-me-reply" });
   const call = helpMeReply;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { usage, isPremium } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [history, setHistory] = useState("");
   const [tone, setTone] = useState<string>("");
   const [reply, setReply] = useState<string | null>(null);
