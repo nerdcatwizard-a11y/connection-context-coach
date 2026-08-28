@@ -5,6 +5,7 @@ import { BackToDashboard } from "@/components/BackToDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { CyranoDisclaimer } from "@/components/CyranoDisclaimer";
 import { deleteMyAccount } from "@/lib/account-client";
+import { useUsage } from "@/hooks/use-usage";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({ meta: [{ title: "Account — Cyrano" }, { name: "robots", content: "noindex" }] }),
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/account")({
 
 function Account() {
   const navigate = useNavigate();
+  const { isPremium } = useUsage();
   const [confirming, setConfirming] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [busy, setBusy] = useState(false);
