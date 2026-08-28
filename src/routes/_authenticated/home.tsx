@@ -91,12 +91,8 @@ function Home() {
 
           <div className="mt-6 space-y-1.5 border-t border-border pt-6">
             <h2 className="text-center font-serif text-sm md:text-lg">How do I respond to this text?</h2>
-            {!isPremium ? (
-              <p className="text-center text-[11px] text-muted-foreground md:text-xs">
-                Premium feature.{" "}
-                <Link to="/pricing" className="text-primary hover:underline">Unlock with Premium</Link>.
-              </p>
-            ) : images.length > 0 ? (
+            {images.length > 0 ? (
+
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Taking you to Help Me Reply…
               </p>
