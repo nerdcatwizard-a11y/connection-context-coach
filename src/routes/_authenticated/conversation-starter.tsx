@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useUsage, useRefreshUsage } from "@/hooks/use-usage";
 import { useScrollToResult } from "@/hooks/use-scroll-to-result";
+
 import { useCallback, useState } from "react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { conversationStarter } from "@/lib/ai-client";
