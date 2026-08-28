@@ -30,6 +30,8 @@ const MAX = 10;
 function StarterPage() {
   const call = conversationStarter;
   const { analysis, toggle: toggleAnalysis } = useAnalysisMode();
+  const { usage, isPremium } = useUsage();
+  const refreshUsage = useRefreshUsage();
   const [profileNotes, setProfileNotes] = useState("");
   const [datingApp, setDatingApp] = useState("");
   const [tone, setTone] = useState("");
@@ -39,6 +41,7 @@ function StarterPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState("");
+
 
   const addFiles = useCallback(async (files: FileList | File[] | null) => {
     if (!files) return;
