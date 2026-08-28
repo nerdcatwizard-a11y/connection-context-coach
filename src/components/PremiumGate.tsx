@@ -31,21 +31,25 @@ export function PremiumGate({
   if (isPremium) return <>{children}</>;
 
   return (
-    <div className="soft-card space-y-3 p-6 text-center">
-      <span className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
-        <Lock className="h-5 w-5" />
-      </span>
-      <h2 className="font-serif text-xl">{feature} is a Premium feature</h2>
-      <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-        {blurb ??
-          "Unlock it with Cyrano Premium — unlimited coaching, replies, screenshot reads and profile reviews."}
-      </p>
-      <Link
-        to="/pricing"
-        className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
-      >
-        Unlock with Premium
-      </Link>
+    <div className="space-y-4">
+      <BackToDashboard />
+      <div className="soft-card space-y-3 p-6 text-center">
+        <span className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+          <Lock className="h-5 w-5" />
+        </span>
+        <h2 className="font-serif text-xl">{feature} is a Premium feature</h2>
+        <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+          {blurb ??
+            "Unlock it with Cyrano Premium — unlimited coaching, replies, screenshot reads and profile reviews."}
+        </p>
+        <Link
+          to="/pricing"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
+        >
+          Unlock with Premium
+        </Link>
+      </div>
     </div>
   );
 }
+
