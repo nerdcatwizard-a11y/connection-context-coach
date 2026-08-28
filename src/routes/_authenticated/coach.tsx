@@ -121,6 +121,7 @@ function CoachPage() {
       setError((e as Error).message);
     } finally {
       setBusy(false);
+      void refreshUsage();
     }
   }
 
@@ -129,7 +130,14 @@ function CoachPage() {
       <BackToDashboard />
       <div className="flex items-baseline justify-between">
         <h1 className="font-serif text-2xl md:text-3xl">Advice</h1>
+        {!isPremium && usage && (
+          <span className="text-xs text-muted-foreground">
+            {usage.chat.remaining}/{usage.chat.limit} today ·{" "}
+            <Link to="/pricing" className="text-primary underline">Upgrade</Link>
+          </span>
+        )}
       </div>
+
       <CyranoDisclaimer />
       <AnalysisToggle
         analysis={analysis}
