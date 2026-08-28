@@ -80,19 +80,25 @@ function Home() {
               </button>
             </form>
             {!isPremium && (
-              <p className="mt-1.5 text-[10px] text-muted-foreground md:text-xs">
-                {usage
-                  ? `${usage.chat.remaining} of ${usage.chat.limit} chat messages and ${usage.pickup.remaining} of ${usage.pickup.limit} Help Me Reply / Pickup Lines left today.`
-                  : "Free plan: 5 chat messages and 2 Help Me Reply / Pickup Lines per day."}{" "}
-                <Link to="/pricing" className="text-primary hover:underline">Upgrade for unlimited</Link>.
-              </p>
+              <div className="mt-1.5 flex items-center justify-between gap-2 text-[10px] text-muted-foreground md:text-xs">
+                <span>
+                  {usage
+                    ? `${usage.chat.remaining} of ${usage.chat.limit} chat messages left today`
+                    : "Free plan: 5 chat messages per day"}
+                </span>
+                <Link
+                  to="/pricing"
+                  className="shrink-0 rounded-lg bg-primary/10 px-2 py-1 font-medium text-primary hover:opacity-90"
+                >
+                  Upgrade
+                </Link>
+              </div>
             )}
           </div>
 
-          <div className="mt-6 space-y-1.5 border-t border-border pt-6">
+          <div className="mt-4 space-y-1.5 border-t border-border pt-4">
             <h2 className="text-center font-serif text-sm md:text-lg">How do I respond to this text?</h2>
             {images.length > 0 ? (
-
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Taking you to Help Me Reply…
               </p>
@@ -107,6 +113,21 @@ function Home() {
                 dropClassName="h-14 md:h-24"
                 titleClassName="text-center text-[10px] font-normal uppercase tracking-wider text-muted-foreground"
               />
+            )}
+            {!isPremium && (
+              <div className="mt-1.5 flex items-center justify-between gap-2 text-[10px] text-muted-foreground md:text-xs">
+                <span>
+                  {usage
+                    ? `${usage.pickup.remaining} of ${usage.pickup.limit} Help Me Reply / Pickup Lines left today`
+                    : "Free plan: 2 Help Me Reply / Pickup Lines per day"}
+                </span>
+                <Link
+                  to="/pricing"
+                  className="shrink-0 rounded-lg bg-primary/10 px-2 py-1 font-medium text-primary hover:opacity-90"
+                >
+                  Upgrade
+                </Link>
+              </div>
             )}
           </div>
 
