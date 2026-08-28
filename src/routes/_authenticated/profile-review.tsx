@@ -21,7 +21,12 @@ export const Route = createFileRoute("/_authenticated/profile-review")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ProfileReviewPage,
+  component: () => (
+    <PremiumGate feature="Review A Dating Profile">
+      <ProfileReviewPage />
+    </PremiumGate>
+  ),
+
 });
 
 function ProfileReviewPage() {
